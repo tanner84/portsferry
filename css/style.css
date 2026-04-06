@@ -667,6 +667,126 @@ button { font-family: inherit; cursor: pointer; }
   flex-shrink: 0;
 }
 
+/* ── Organizational context — command chain diagram ────────────── */
+
+.cmd-chain {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0 0.25rem;
+}
+
+/* Each node in the chain */
+.cmd-chain-node {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.32rem 0.6rem;
+  background: var(--panel-bg-dark);
+  border: 1px solid var(--panel-border);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.cmd-chain-node:hover { background: #e4e1d9; color: var(--text-primary); }
+
+/* Individual's immediate context node — slightly distinguished */
+.cmd-chain-node.cmd-chain-primary {
+  border-left: 3px solid var(--accent);
+}
+
+.cmd-unit-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.cmd-unit-affil {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.cmd-unit-dates {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* Vertical connector line between chain nodes */
+.cmd-chain-connector {
+  width: 1px;
+  height: 14px;
+  background: var(--panel-border);
+  margin-left: 1.1rem;
+  position: relative;
+}
+.cmd-chain-connector::after {
+  content: '↑';
+  position: absolute;
+  left: -5px;
+  top: -1px;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+/* No unit membership */
+.cmd-chain-empty {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 0.25rem 0;
+}
+
+/* Lateral coordination list */
+.lateral-list {
+  list-style: none;
+  margin-top: 0.3rem;
+}
+.lateral-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  padding: 0.28rem 0;
+  border-bottom: 1px dotted var(--panel-border-soft);
+  cursor: pointer;
+  transition: color 0.1s;
+}
+.lateral-list li:last-child { border-bottom: none; }
+.lateral-list li:hover { color: var(--text-primary); }
+
+.lateral-rel-type {
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-style: italic;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* Affiliation timeline */
+.affil-timeline {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.affil-timeline-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+.affil-timeline-period {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
 /* ── Order of Battle — left panel hierarchy ────────────────────── */
 
 /* Affiliation group — top-level collapsible */

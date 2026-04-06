@@ -384,6 +384,75 @@ PF.data.search = function (query) {
   };
 };
 
+/* ================================================================
+   Organizational context queries (used by Step 3 story panel)
+   ================================================================ */
+
+/**
+ * All IND_UNIT memberships for an individual, sorted by date_from.
+ * Most individuals have one; some will have multiple if they
+ * changed units or served in multiple capacities.
+ *
+ * @param {string} ind_id
+ * @returns {Array} IND_UNIT rows
+ */
+PF.data.getUnitMemberships = function (ind_id) {
+  return (PF.data.raw.IND_UNIT || [])
+    .filter(link => link.ind_id === ind_id)
+    .sort((a, b) => (a.date_from || '0') < (b.date_from || '0') ? -1 : 1);
+};
+
+/**
+ * Command chain for an individual: immediate unit → parent → grandparent → …
+ * Returns an object with the primary membership and an ordered unit array
+ * (index 0 = closest to the individual).
+ *
+ * @param {string} ind_id
+ * @returns {{ membership: Object|null, chain: Array }}
+ */
+PF.data.getCommandChain = function (ind_id) {
+  const memberships = PF.data.getUnitMemberships(ind_id);
+  if (!memberships.length) return { membership: null, chain: [] };
+
+  const membership = memberships[0];   // primary (earliest) unit
+  const chain  = [];
+  const visited = new Set();
+  let currentId = membership.unit_id;
+
+  while (currentId && !visited.has(currentId)) {
+    visited.add(currentId);
+    const unit = PF.data.getUnitById(currentId);
+    if (!unit) break;
+    chain.push(unit);
+    currentId = unit.parent_unit || null;
+    if (chain.length > 8) break;       // guard against malformed data
+  }
+
+  return { membership, chain };
+};
+
+/**
+ * Lateral coordination edges for an individual.
+ * These are IND_IND rows whose relationship type indicates cross-institutional
+ * contact rather than kinship or command — the horizontal network layer.
+ *
+ * Relationship types treated as lateral:
+ *   'intelligence contact', 'coordination contact', 'supply contact'
+ *
+ * @param {string} ind_id
+ * @returns {Array} [{ individual, relationship, source_ids, edge }]
+ */
+PF.data.getLateralCoordination = function (ind_id) {
+  const LATERAL = new Set([
+    'intelligence contact',
+    'coordination contact',
+    'supply contact',
+  ]);
+  return PF.data.getNetworkNeighbors(ind_id).filter(
+    ({ relationship }) => LATERAL.has((relationship || '').toLowerCase())
+  );
+};
+
 /* Expose parse helpers for use in other modules */
 PF.data._parseCoord = _parseCoord;
 PF.data._parseList  = _parseList;

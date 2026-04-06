@@ -373,10 +373,19 @@ PF.panels._renderBattleMarkers = function () {
 PF.panels.showIndividual = function (ind) {
   _setActive('browser-tob', `[data-ind-id="${ind.ind_id}"]`);
 
-  const sources   = PF.data.getSourcesForEntity(ind);
-  const neighbors = PF.data.getNetworkNeighbors(ind.ind_id);
-  const aff       = ind.affiliation || 'Unknown';
-  const affCls    = PF.map.affiliationClass(aff);
+  const sources  = PF.data.getSourcesForEntity(ind);
+  const aff      = ind.affiliation || 'Unknown';
+  const affCls   = PF.map.affiliationClass(aff);
+
+  /* Split social neighbors: lateral coordination vs regular social */
+  const LATERAL_TYPES = new Set(['intelligence contact', 'coordination contact', 'supply contact']);
+  const allNeighbors  = PF.data.getNetworkNeighbors(ind.ind_id);
+  const socialNeighbors  = allNeighbors.filter(({ relationship }) =>
+    !LATERAL_TYPES.has((relationship || '').toLowerCase())
+  );
+  const lateralNeighbors = allNeighbors.filter(({ relationship }) =>
+    LATERAL_TYPES.has((relationship || '').toLowerCase())
+  );
 
   const html = `
     <div class="story-section">
@@ -391,29 +400,38 @@ PF.panels.showIndividual = function (ind) {
 
     <div class="story-section">
       <div class="story-section-label">Biographical</div>
-      ${_dataRow('Lived',       `${h(ind.birth_year || '?')} – ${h(ind.death_year || '?')}`)}
-      ${ind.affiliation ? _dataRow('Affiliation', h(ind.affiliation)) : ''}
-      ${ind.evidence_type ? _dataRow('Evidence',    h(ind.evidence_type)) : ''}
+      ${_dataRow('Lived', `${h(ind.birth_year || '?')} – ${h(ind.death_year || '?')}`)}
+      ${ind.evidence_type ? _dataRow('Evidence', h(ind.evidence_type)) : ''}
       ${ind.pension_filed === 'Y' ? _dataRow('Pension', 'Filed pension application') : ''}
     </div>
 
+    ${_buildOrgContext(ind, lateralNeighbors)}
+
     ${ind.battles_present ? `
     <div class="story-section">
-      <div class="story-section-label">Military service</div>
+      <div class="story-section-label">Military record</div>
       <p class="story-prose">${h(ind.battles_present)}</p>
     </div>` : ''}
 
-    ${neighbors.length > 0 ? `
+    ${ind.exception_reason ? `
     <div class="story-section">
-      <div class="story-section-label">Social network — ${neighbors.length} connection${neighbors.length !== 1 ? 's' : ''}</div>
+      <div class="story-section-label">Exception criteria</div>
+      <p class="story-prose">${h(ind.exception_reason)}</p>
+    </div>` : ''}
+
+    ${socialNeighbors.length > 0 ? `
+    <div class="story-section">
+      <div class="story-section-label">Social network — ${socialNeighbors.length} connection${socialNeighbors.length !== 1 ? 's' : ''}</div>
       <ul class="conn-list">
-        ${neighbors.slice(0, 14).map(({ individual: n, relationship }) => `
+        ${socialNeighbors.slice(0, 14).map(({ individual: n, relationship }) => `
           <li data-ind-id="${h(n.ind_id)}" role="button" tabindex="0">
             <span class="dot dot-${PF.map.affiliationClass(n.affiliation)}"></span>
             ${h(n.full_name || 'Unknown')}
             <span class="conn-rel">${h(relationship)}</span>
           </li>`).join('')}
-        ${neighbors.length > 14 ? `<li style="font-style:italic;color:var(--text-muted)">…and ${neighbors.length - 14} more</li>` : ''}
+        ${socialNeighbors.length > 14
+          ? `<li style="font-style:italic;color:var(--text-muted)">…and ${socialNeighbors.length - 14} more</li>`
+          : ''}
       </ul>
     </div>` : ''}
 
@@ -429,7 +447,7 @@ PF.panels.showIndividual = function (ind) {
 
   _showEntity(ind.full_name || 'Individual', html);
 
-  /* Wire neighbor clicks */
+  /* Wire social neighbor clicks */
   document.querySelectorAll('#story-entity .conn-list li[data-ind-id]').forEach(li => {
     const go = () => {
       const neighbor = PF.data.getIndividualById(li.dataset.indId);
@@ -440,7 +458,126 @@ PF.panels.showIndividual = function (ind) {
     li.addEventListener('click', go);
     li.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
   });
+
+  /* Wire lateral coordination clicks */
+  document.querySelectorAll('#story-entity .lateral-list li[data-ind-id]').forEach(li => {
+    li.addEventListener('click', () => {
+      const n = PF.data.getIndividualById(li.dataset.indId);
+      if (n) { PF.panels.showIndividual(n); PF.network.renderForIndividual(n.ind_id); }
+    });
+  });
+
+  /* Wire command chain unit clicks */
+  document.querySelectorAll('#story-entity .cmd-chain-node[data-unit-id]').forEach(node => {
+    node.addEventListener('click', () => {
+      const unit = PF.data.getUnitById(node.dataset.unitId);
+      if (unit) PF.panels.showUnit(unit);
+    });
+  });
 };
+
+/**
+ * Build the Organizational Context section HTML for an individual.
+ * Shows: command chain diagram, affiliation/service timeline, lateral coordination.
+ *
+ * @param {Object} ind        — INDIVIDUALS row
+ * @param {Array}  lateralNeighbors — pre-filtered lateral coordination neighbors
+ * @returns {string} HTML
+ */
+function _buildOrgContext(ind, lateralNeighbors) {
+  const { membership, chain } = PF.data.getCommandChain(ind.ind_id);
+  const allMemberships = PF.data.getUnitMemberships(ind.ind_id);
+
+  /* ── Command chain diagram ───────────────────────────────── */
+  let chainHtml = '';
+  if (chain.length === 0) {
+    chainHtml = `<div class="cmd-chain-empty">No unit record in database.</div>`;
+  } else {
+    chainHtml = `<div class="cmd-chain">`;
+    chain.forEach((unit, i) => {
+      const affCls   = PF.map.affiliationClass(unit.affiliation);
+      const affColor = PF.map.affiliationColor(unit.affiliation);
+      const dateStr  = unit.active_from
+        ? (unit.active_to ? `${unit.active_from}–${unit.active_to}` : `from ${unit.active_from}`)
+        : '';
+
+      chainHtml += `
+        <div class="cmd-chain-node ${i === 0 ? 'cmd-chain-primary' : ''}"
+             data-unit-id="${h(unit.unit_id)}" tabindex="0" role="button"
+             title="Click to open unit record">
+          <span class="dot dot-${affCls}" style="flex-shrink:0"></span>
+          <span class="cmd-unit-name">${h(unit.name || unit.unit_id)}</span>
+          ${unit.affiliation && i > 0 ? `<span class="cmd-unit-affil">${h(unit.affiliation)}</span>` : ''}
+          ${dateStr ? `<span class="cmd-unit-dates">${h(dateStr)}</span>` : ''}
+        </div>`;
+
+      if (i < chain.length - 1) {
+        chainHtml += `<div class="cmd-chain-connector"></div>`;
+      }
+    });
+
+    /* If the chain ends without reaching a top-level parent, show open terminus */
+    const topUnit = chain[chain.length - 1];
+    if (topUnit && topUnit.parent_unit) {
+      chainHtml += `
+        <div class="cmd-chain-connector"></div>
+        <div class="cmd-chain-node" style="border-style:dashed;color:var(--text-muted)">
+          <span style="font-style:italic;font-size:0.75rem;">parent unit not yet in database</span>
+        </div>`;
+    }
+
+    chainHtml += `</div>`;
+  }
+
+  /* ── Service/affiliation timeline ────────────────────────── */
+  let timelineHtml = '';
+  if (allMemberships.length > 0) {
+    timelineHtml = `<div class="affil-timeline">`;
+    allMemberships.forEach(link => {
+      const unit   = PF.data.getUnitById(link.unit_id);
+      const affCls = unit ? PF.map.affiliationClass(unit.affiliation) : 'unknown';
+      const period = link.date_from
+        ? (link.date_to ? `${link.date_from}–${link.date_to}` : `${link.date_from}–`)
+        : '';
+      timelineHtml += `
+        <div class="affil-timeline-entry">
+          <span class="affil-timeline-period">${h(period)}</span>
+          <span class="dot dot-${affCls}" style="flex-shrink:0"></span>
+          <span>${h(link.rank || '')}${unit ? ', ' + h(unit.name) : ''}</span>
+        </div>`;
+    });
+    timelineHtml += `</div>`;
+  }
+
+  /* ── Lateral coordination ─────────────────────────────────── */
+  let lateralHtml = '';
+  if (lateralNeighbors.length > 0) {
+    lateralHtml = `
+      <div style="margin-top:0.75rem">
+        <div class="story-section-label" style="margin-bottom:0.4rem">Lateral coordination</div>
+        <ul class="lateral-list">
+          ${lateralNeighbors.map(({ individual: n, relationship }) => `
+            <li data-ind-id="${h(n.ind_id)}" role="button" tabindex="0">
+              <span class="dot dot-${PF.map.affiliationClass(n.affiliation)}"></span>
+              ${h(n.full_name || 'Unknown')}
+              <span class="lateral-rel-type">${h(relationship)}</span>
+            </li>`).join('')}
+        </ul>
+      </div>`;
+  }
+
+  /* ── Assemble section ────────────────────────────────────── */
+  const hasContent = chain.length > 0 || allMemberships.length > 0 || lateralNeighbors.length > 0;
+  if (!hasContent) return '';
+
+  return `
+    <div class="story-section">
+      <div class="story-section-label">Organizational context</div>
+      ${chainHtml}
+      ${timelineHtml}
+      ${lateralHtml}
+    </div>`;
+}
 
 /* ================================================================
    Story panel — CHURCH
@@ -570,6 +707,48 @@ PF.panels.showEvent = function (evt) {
   `;
 
   _showEntity(evt.name || 'Event', html);
+};
+
+/* ================================================================
+   Story panel — UNIT (stub — fleshed out in Step 4)
+   ================================================================ */
+PF.panels.showUnit = function (unit) {
+  const affCls = PF.map.affiliationClass(unit.affiliation);
+  const members = PF.data.getUnitMembers(unit.unit_id);
+
+  const html = `
+    <div class="story-section">
+      <div class="story-name">${h(unit.name || unit.unit_id)}</div>
+      <div class="story-role">
+        <span class="affil-badge badge-${affCls}">${h(unit.affiliation || '')}</span>
+        ${unit.active_from ? ` · active ${h(unit.active_from)}${unit.active_to ? '–' + h(unit.active_to) : ''}` : ''}
+      </div>
+    </div>
+    ${unit.notes ? `<div class="story-section"><p class="story-prose">${h(unit.notes)}</p></div>` : ''}
+    ${members.length > 0 ? `
+    <div class="story-section">
+      <div class="story-section-label">Officers on record — ${members.length}</div>
+      <ul class="conn-list">
+        ${members.map(m => `
+          <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
+            <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
+            ${h(m.full_name || 'Unknown')}
+            <span class="conn-rel">${h(m.rank || m.tier || '')}</span>
+          </li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <p style="font-size:0.75rem;color:var(--text-muted);font-style:italic;margin-top:0.5rem">
+      Community origin section added in Step 4.
+    </p>`;
+
+  _showEntity(unit.name || 'Unit', html);
+
+  document.querySelectorAll('#story-entity .conn-list li[data-ind-id]').forEach(li => {
+    li.addEventListener('click', () => {
+      const ind = PF.data.getIndividualById(li.dataset.indId);
+      if (ind) { PF.panels.showIndividual(ind); PF.network.renderForIndividual(ind.ind_id); }
+    });
+  });
 };
 
 /* ================================================================
