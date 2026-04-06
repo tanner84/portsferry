@@ -200,7 +200,9 @@ PF.panels._renderOrderOfBattle = function (filterQuery) {
       /* Sort members: Command tier first, then Company */
       members.sort((a, b) => {
         const tierOrder = { Command: 0, Company: 1, Exception: 2 };
-        return (tierOrder[a.ind.tier] || 9) - (tierOrder[b.ind.tier] || 9);
+        const aOrd = tierOrder[a.ind.tier] ?? 9;
+        const bOrd = tierOrder[b.ind.tier] ?? 9;
+        return aOrd - bOrd;
       });
 
       html += `

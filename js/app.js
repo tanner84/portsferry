@@ -62,7 +62,12 @@
 
   } catch (err) {
     console.error('[PF] Fatal startup error:', err);
-    document.getElementById('map-status').classList.remove('hidden');
+    const statusEl = document.getElementById('map-status');
+    statusEl.innerHTML = `<p><strong>Startup error:</strong> ${err.message || err}</p>
+      <p style="font-size:0.8rem;margin-top:0.5rem;color:#aaa;">
+        Open browser DevTools → Console for the full stack trace.
+      </p>`;
+    statusEl.classList.remove('hidden');
 
   } finally {
     loadingEl.classList.add('hidden');
