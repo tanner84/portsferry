@@ -1,1 +1,65 @@
-[]
+[
+  {
+    "link_id": "iu_001",
+    "ind_id": "ind_005",
+    "unit_id": "unit_001",
+    "rank": "Colonel",
+    "date_from": "1775",
+    "date_to": "",
+    "source_ids": "src_006"
+  },
+  {
+    "link_id": "iu_002",
+    "ind_id": "ind_006",
+    "unit_id": "unit_001",
+    "rank": "Lieutenant Colonel",
+    "date_from": "1775",
+    "date_to": "",
+    "source_ids": "src_006"
+  },
+  {
+    "link_id": "iu_003",
+    "ind_id": "ind_007",
+    "unit_id": "unit_001",
+    "rank": "First Major",
+    "date_from": "1775",
+    "date_to": "",
+    "source_ids": "src_006"
+  },
+  {
+    "link_id": "iu_004",
+    "ind_id": "ind_008",
+    "unit_id": "unit_001",
+    "rank": "Second Major",
+    "date_from": "1775",
+    "date_to": "",
+    "source_ids": "src_006"
+  },
+  {
+    "link_id": "iu_005",
+    "ind_id": "ind_001",
+    "unit_id": "unit_002",
+    "rank": "Brigadier General",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_001"
+  },
+  {
+    "link_id": "iu_006",
+    "ind_id": "ind_002",
+    "unit_id": "unit_002",
+    "rank": "Lieutenant Colonel",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_001"
+  },
+  {
+    "link_id": "iu_007",
+    "ind_id": "ind_003",
+    "unit_id": "unit_002",
+    "rank": "Captain",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_001"
+  }
+]

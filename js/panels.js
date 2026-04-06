@@ -60,8 +60,7 @@ PF.panels.init = function () {
    ================================================================ */
 PF.panels._buildBrowser = function () {
   PF.panels._renderChurchList();
-  PF.panels._renderIndividualList();
-  PF.panels._renderUnitList();
+  PF.panels._renderOrderOfBattle();
   PF.panels._renderEventList();
 };
 
@@ -85,46 +84,199 @@ PF.panels._renderChurchList = function (subset) {
   });
 };
 
-PF.panels._renderIndividualList = function (subset) {
-  const list  = document.getElementById('individual-list');
-  const tiers = new Set(['Command', 'Company', 'Exception']);
-  const items = (subset || PF.data.getMappableIndividuals())
-    .filter(ind => tiers.has(ind.tier))
-    .slice(0, 50);
+/**
+ * Render the hierarchical Order of Battle in the left panel.
+ * Structure: Affiliation group → Unit → Individual members
+ * Exception-tier individuals appear below all groups.
+ *
+ * @param {string} [filterQuery] — optional search filter
+ */
+PF.panels._renderOrderOfBattle = function (filterQuery) {
+  const container = document.getElementById('browser-tob');
+  if (!container) return;
 
-  list.innerHTML = items.map(ind => {
-    const affCls = PF.map.affiliationClass(ind.affiliation);
-    return `
-      <li role="button" tabindex="0" data-ind-id="${h(ind.ind_id)}">
-        <span class="dot dot-${affCls}"></span>
-        <span>${h(ind.full_name || 'Unknown')}</span>
-        <span class="entity-meta">${h(ind.tier || '')}</span>
-      </li>`;
-  }).join('');
+  const q = filterQuery ? filterQuery.toLowerCase() : null;
 
-  list.querySelectorAll('li').forEach(li => {
+  /* ── Build unit → members index ───────────────────────────── */
+  const unitMemberMap = {};   // unit_id → [{ ind, rank }]
+  const inAnyUnit     = new Set();
+
+  (PF.data.raw.IND_UNIT || []).forEach(link => {
+    const ind = PF.data.getIndividualById(link.ind_id);
+    if (!ind) return;
+    if (!unitMemberMap[link.unit_id]) unitMemberMap[link.unit_id] = [];
+    unitMemberMap[link.unit_id].push({ ind, rank: link.rank || ind.rank || '' });
+    inAnyUnit.add(link.ind_id);
+  });
+
+  /* ── Gather relevant individuals ──────────────────────────── */
+  const renderTiers = new Set(['Command', 'Company', 'Exception']);
+  const allInds = (PF.data.raw.INDIVIDUALS || [])
+    .filter(ind => renderTiers.has(ind.tier));
+
+  /* Apply search filter across name, rank, affiliation */
+  const matchesFilter = ind => {
+    if (!q) return true;
+    return (ind.full_name  || '').toLowerCase().includes(q)
+        || (ind.rank       || '').toLowerCase().includes(q)
+        || (ind.affiliation|| '').toLowerCase().includes(q);
+  };
+
+  /* ── Determine affiliation order ──────────────────────────── */
+  const AFFIL_ORDER = [
+    'Continental Army',
+    'State Line',
+    'Patriot Militia',
+    'Patriot Volunteer',
+    'British Regular',
+    'Provincial Corps',
+    'Loyalist Militia',
+    'Associated Loyalist',
+    'Unknown',
+    'Neutral',
+  ];
+
+  /* ── Build affiliation → units map ────────────────────────── */
+  const affiliationUnits = {};   // affiliation → [UNITS rows]
+  (PF.data.raw.UNITS || []).forEach(unit => {
+    const aff = unit.affiliation || 'Unknown';
+    if (!affiliationUnits[aff]) affiliationUnits[aff] = [];
+    affiliationUnits[aff].push(unit);
+  });
+
+  /* Also collect unattached individuals per affiliation */
+  const unattachedByAffil = {};
+  allInds
+    .filter(ind => !inAnyUnit.has(ind.ind_id) && ind.tier !== 'Exception')
+    .forEach(ind => {
+      const aff = ind.affiliation || 'Unknown';
+      if (!unattachedByAffil[aff]) unattachedByAffil[aff] = [];
+      unattachedByAffil[aff].push(ind);
+    });
+
+  /* Exception tier individuals */
+  const exceptions = allInds.filter(ind => ind.tier === 'Exception' && matchesFilter(ind));
+
+  /* ── Render ────────────────────────────────────────────────── */
+  const allAffiliations = [...new Set([
+    ...AFFIL_ORDER,
+    ...Object.keys(affiliationUnits),
+    ...Object.keys(unattachedByAffil),
+  ])].filter(aff => affiliationUnits[aff] || unattachedByAffil[aff]);
+
+  let html = '';
+
+  allAffiliations.forEach(aff => {
+    const units       = affiliationUnits[aff]   || [];
+    const unattached  = unattachedByAffil[aff]  || [];
+    const affCls      = PF.map.affiliationClass(aff);
+    const affColor    = PF.map.affiliationColor(aff);
+
+    /* Filter units to those with at least one matching member */
+    const filteredUnits = units.map(unit => {
+      const members = (unitMemberMap[unit.unit_id] || [])
+        .filter(({ ind }) => matchesFilter(ind));
+      return { unit, members };
+    }).filter(({ members, unit }) =>
+      members.length > 0
+      || !q
+      || (unit.name || '').toLowerCase().includes(q)
+    );
+
+    const filteredUnattached = unattached.filter(matchesFilter);
+
+    if (filteredUnits.length === 0 && filteredUnattached.length === 0) return;
+
+    html += `
+    <details class="tob-group" open>
+      <summary class="tob-group-header">
+        <span class="tob-affil-swatch" style="background:${affColor}"></span>
+        <span class="tob-affil-label">${h(aff)}</span>
+        <span class="tob-chevron">&#9658;</span>
+      </summary>`;
+
+    /* Units with members */
+    filteredUnits.forEach(({ unit, members }) => {
+      /* Sort members: Command tier first, then Company */
+      members.sort((a, b) => {
+        const tierOrder = { Command: 0, Company: 1, Exception: 2 };
+        return (tierOrder[a.ind.tier] || 9) - (tierOrder[b.ind.tier] || 9);
+      });
+
+      html += `
+        <details class="tob-unit" open>
+          <summary class="tob-unit-header">
+            <span class="tob-chevron">&#9658;</span>
+            <span class="tob-unit-name">${h(unit.name || unit.unit_id)}</span>
+          </summary>
+          <ul class="tob-members">
+            ${members.map(({ ind, rank }) => `
+              <li class="tob-ind-row" data-ind-id="${h(ind.ind_id)}" role="button" tabindex="0">
+                <span class="dot dot-${affCls}" style="flex-shrink:0"></span>
+                <span class="tob-ind-name">${h(ind.full_name || 'Unknown')}</span>
+                <span class="tob-ind-rank">${h(rank)}</span>
+              </li>`).join('')}
+          </ul>
+        </details>`;
+    });
+
+    /* Unattached individuals (in this affiliation but not in any unit) */
+    if (filteredUnattached.length > 0) {
+      html += `<ul class="tob-members">
+        ${filteredUnattached.map(ind => `
+          <li class="tob-ind-row" data-ind-id="${h(ind.ind_id)}" role="button" tabindex="0">
+            <span class="dot dot-${affCls}" style="flex-shrink:0"></span>
+            <span class="tob-ind-name">${h(ind.full_name || 'Unknown')}</span>
+            <span class="tob-ind-rank">${h(ind.rank || '')}</span>
+          </li>`).join('')}
+      </ul>`;
+    }
+
+    html += `</details>`;
+  });
+
+  /* Exception individuals */
+  if (exceptions.length > 0) {
+    html += `
+    <div class="tob-exception-section">
+      <div class="tob-exception-header">
+        <span class="tob-exception-label">Exception individuals</span>
+      </div>
+      ${exceptions.map(ind => `
+        <div class="tob-exception-row" data-ind-id="${h(ind.ind_id)}" role="button" tabindex="0">
+          <span class="dot dot-${PF.map.affiliationClass(ind.affiliation)}" style="flex-shrink:0;margin-top:3px"></span>
+          <div>
+            <div class="tob-exception-name">${h(ind.full_name || 'Unknown')}</div>
+            <div class="tob-exception-reason">${h(ind.rank || '')}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if (!html) {
+    html = `<div style="padding:0.75rem 1rem;font-size:0.8rem;color:var(--text-muted);font-style:italic;">No results.</div>`;
+  }
+
+  container.innerHTML = html;
+
+  /* ── Wire click handlers ──────────────────────────────────── */
+  container.querySelectorAll('[data-ind-id]').forEach(el => {
     const activate = () => {
-      const ind = PF.data.getIndividualById(li.dataset.indId);
+      const ind = PF.data.getIndividualById(el.dataset.indId);
       if (!ind) return;
       PF.panels.showIndividual(ind);
       PF.network.renderForIndividual(ind.ind_id);
       const lat = PF.data._parseCoord(ind.lat);
       const lng = PF.data._parseCoord(ind.lng);
       if (lat !== null && lng !== null) PF.map.focusOn(lat, lng, 12);
+      /* Highlight active row */
+      container.querySelectorAll('.tob-ind-row, .tob-exception-row')
+        .forEach(r => r.classList.remove('active'));
+      el.classList.add('active');
     };
-    li.addEventListener('click', activate);
-    li.addEventListener('keydown', e => { if (e.key === 'Enter') activate(); });
+    el.addEventListener('click', activate);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') activate(); });
   });
-};
-
-PF.panels._renderUnitList = function () {
-  const list  = document.getElementById('unit-list');
-  const items = (PF.data.raw.UNITS || []).slice(0, 25);
-  list.innerHTML = items.map(u => `
-    <li role="button" tabindex="0" data-unit-id="${h(u.unit_id)}">
-      <span class="dot" style="background:#555;border-radius:2px;"></span>
-      <span>${h(u.name || u.unit_id)}</span>
-    </li>`).join('');
 };
 
 PF.panels._renderEventList = function () {
@@ -155,7 +307,8 @@ PF.panels._onSearch = function (query) {
   }
   const results = PF.data.search(query);
   PF.panels._renderChurchList(results.churches);
-  PF.panels._renderIndividualList(results.individuals);
+  PF.panels._renderOrderOfBattle(query);
+  /* Events list re-renders against full set — search filtering handled inside OOB */
 };
 
 /* ================================================================
@@ -218,7 +371,7 @@ PF.panels._renderBattleMarkers = function () {
    Story panel — INDIVIDUAL
    ================================================================ */
 PF.panels.showIndividual = function (ind) {
-  _setActive('individual-list', `[data-ind-id="${ind.ind_id}"]`);
+  _setActive('browser-tob', `[data-ind-id="${ind.ind_id}"]`);
 
   const sources   = PF.data.getSourcesForEntity(ind);
   const neighbors = PF.data.getNetworkNeighbors(ind.ind_id);
@@ -541,10 +694,10 @@ function _dataRow(label, value) {
   </div>`;
 }
 
-function _setActive(listId, selector) {
-  const list = document.getElementById(listId);
-  if (!list) return;
-  list.querySelectorAll('li.active').forEach(li => li.classList.remove('active'));
-  const target = list.querySelector(selector);
+function _setActive(containerId, selector) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+  const target = container.querySelector(selector);
   if (target) target.classList.add('active');
 }

@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "unit_id": "unit_001",
+    "name": "Cumberland County Militia Regiment",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "",
+    "active_from": "1775",
+    "active_to": "",
+    "source_ids": "src_006",
+    "notes": "Appointed by NC Provincial Congress, September 9, 1775. Active through end of war."
+  },
+  {
+    "unit_id": "unit_002",
+    "name": "Highland Loyalist Column",
+    "affiliation": "Loyalist Militia",
+    "parent_unit": "",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_001|src_002",
+    "notes": "Assembled Cross Creek, January–February 1776. Approximately 1,500 at muster, reduced to 700–800 by time of battle. Commanded by BG Donald MacDonald (ill); LTC Donald MacLeod led the charge, KIA February 27, 1776. Disbanded and largely captured after Moore's Creek Bridge."
+  }
+]
