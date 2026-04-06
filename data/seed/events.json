@@ -1,0 +1,32 @@
+[
+  {
+    "evt_id": "evt_001",
+    "name": "Battle of Moore's Creek Bridge",
+    "type": "battle",
+    "date": "1776-02-27",
+    "lat": "34.4600",
+    "lng": "-78.1092",
+    "description": "Loyalist Highland Scots column, assembled at Cross Creek and commanded by Brigadier General Donald MacDonald, was led into action by Lieutenant Colonel Donald MacLeod after MacDonald fell ill. MacLeod ordered a charge across the bridge at Moore's Creek, Pender County. The planking had been removed and the stringers greased. MacLeod was killed in the crossing. The rout that followed ended organized Loyalist military capacity in the Cape Fear valley for the remainder of the war.",
+    "source_ids": "src_001|src_002|src_003"
+  },
+  {
+    "evt_id": "evt_002",
+    "name": "Cumberland County Militia Appointments",
+    "type": "political",
+    "date": "1775-09-09",
+    "lat": "35.0527",
+    "lng": "-78.8784",
+    "description": "The North Carolina Provincial Congress appoints field officers for the Cumberland County Militia: Thomas Rutherford (Colonel), Alexander McAlister (Lieutenant Colonel), Duncan McNeill (1st Major), Alexander McDonald (2nd Major).",
+    "source_ids": "src_006"
+  },
+  {
+    "evt_id": "evt_003",
+    "name": "Old Bluff Presbyterian Church Founded",
+    "type": "ecclesiastical",
+    "date": "1758",
+    "lat": "35.1833",
+    "lng": "-78.7167",
+    "description": "Old Bluff Presbyterian Church established near the upper Cape Fear River, Cumberland County, serving the Highland Scots immigrant community settled in the area from the early 1740s.",
+    "source_ids": "src_007"
+  }
+]

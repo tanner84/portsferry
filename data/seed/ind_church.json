@@ -1,0 +1,22 @@
+[
+  {
+    "link_id": "ich_001",
+    "ind_id": "ind_003",
+    "ch_id": "ch_001",
+    "role": "member",
+    "date_from": "1774",
+    "date_to": "1776",
+    "source_ids": "src_007",
+    "notes": "Allan MacDonald — congregation member, Old Bluff"
+  },
+  {
+    "link_id": "ich_002",
+    "ind_id": "ind_004",
+    "ch_id": "ch_001",
+    "role": "member",
+    "date_from": "1774",
+    "date_to": "1776",
+    "source_ids": "src_007",
+    "notes": "Flora MacDonald — congregation member, Old Bluff"
+  }
+]

@@ -1,0 +1,37 @@
+# netlify.toml — Ports Ferry deployment configuration
+# Static site — no build step required.
+# Push repository root to Netlify; publish directory is "."
+
+[build]
+  publish = "."
+  # No build command — pure static HTML/CSS/JS
+
+# ── Security headers ──────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options            = "SAMEORIGIN"
+    X-Content-Type-Options     = "nosniff"
+    X-XSS-Protection           = "1; mode=block"
+    Referrer-Policy            = "strict-origin-when-cross-origin"
+    Permissions-Policy         = "geolocation=(), camera=(), microphone=()"
+
+# ── Cache: static assets ─────────────────────────────────────────
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=3600"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=3600"
+
+# ── Cache: seed data (short TTL — changes during development) ────
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# ── Redirects — none required for static prototype ───────────────
+# Add here when adding any URL aliases (e.g., /map → /index.html)

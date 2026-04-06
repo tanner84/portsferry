@@ -1,0 +1,66 @@
+[
+  {
+    "edge_id": "iind_001",
+    "ind_id_a": "ind_003",
+    "ind_id_b": "ind_004",
+    "relationship": "spouse",
+    "source_ids": "src_005",
+    "notes": "Allan and Flora MacDonald, married 1750"
+  },
+  {
+    "edge_id": "iind_002",
+    "ind_id_a": "ind_001",
+    "ind_id_b": "ind_002",
+    "relationship": "military",
+    "source_ids": "src_001",
+    "notes": "MacDonald commanded; MacLeod executed the assault"
+  },
+  {
+    "edge_id": "iind_003",
+    "ind_id_a": "ind_001",
+    "ind_id_b": "ind_003",
+    "relationship": "military",
+    "source_ids": "src_001",
+    "notes": "Both officers in the Loyalist column"
+  },
+  {
+    "edge_id": "iind_004",
+    "ind_id_a": "ind_003",
+    "ind_id_b": "ind_001",
+    "relationship": "kin",
+    "source_ids": "src_001",
+    "notes": "Clan MacDonald connection — clan network central to recruitment"
+  },
+  {
+    "edge_id": "iind_005",
+    "ind_id_a": "ind_004",
+    "ind_id_b": "ind_001",
+    "relationship": "kin",
+    "source_ids": "src_005",
+    "notes": "Flora MacDonald shared clan with Donald MacDonald"
+  },
+  {
+    "edge_id": "iind_006",
+    "ind_id_a": "ind_005",
+    "ind_id_b": "ind_006",
+    "relationship": "military",
+    "source_ids": "src_006",
+    "notes": "Rutherford (Colonel) — McAlister (Lt Col), same Cumberland County Militia chain of command"
+  },
+  {
+    "edge_id": "iind_007",
+    "ind_id_a": "ind_005",
+    "ind_id_b": "ind_007",
+    "relationship": "military",
+    "source_ids": "src_006",
+    "notes": "Rutherford — McNeill, same regiment"
+  },
+  {
+    "edge_id": "iind_008",
+    "ind_id_a": "ind_005",
+    "ind_id_b": "ind_008",
+    "relationship": "military",
+    "source_ids": "src_006",
+    "notes": "Rutherford — McDonald, same regiment"
+  }
+]

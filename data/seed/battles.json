@@ -1,0 +1,12 @@
+[
+  {
+    "battle_id": "bat_001",
+    "name": "Moore's Creek Bridge",
+    "date": "1776-02-27",
+    "lat": "34.4600",
+    "lng": "-78.1092",
+    "location": "Pender County, NC",
+    "description": "Decisive Patriot victory over the Loyalist Highland Scots column. Ended Loyalist military capacity in the Cape Fear region.",
+    "source_ids": "src_001|src_003"
+  }
+]

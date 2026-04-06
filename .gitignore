@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor artifacts
+.vscode/
+*.sublime-workspace
+
+# Netlify local dev
+.netlify/
+
+# Local notes — never commit API keys or working notes
+.env
+.env.local
+notes/
+scratch/

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ports Ferry — Cross Creek Loyalist Community, 1758–1783</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet.TimeDimension -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css" />
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══════════════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════════════════ -->
+  <header id="site-header">
+    <div id="site-title">
+      <h1>Ports Ferry</h1>
+      <span id="site-subtitle">Highland Scots Loyalists · Cross Creek, Cumberland County, NC · 1758–1783</span>
+    </div>
+    <nav id="view-controls" role="navigation" aria-label="Map views">
+      <button class="view-btn active" data-view="church">Church</button>
+      <button class="view-btn" data-view="individual">Individual</button>
+      <button class="view-btn" data-view="unit">Unit</button>
+      <button class="view-btn" data-view="battle">Battle</button>
+    </nav>
+    <div id="header-controls">
+      <button id="layer-toggle" title="Toggle base layer between David Rumsey and OpenStreetMap">
+        OSM / Rumsey
+      </button>
+      <div id="loading-indicator" class="hidden" aria-live="polite">
+        <span class="loading-dot"></span>
+        <span>Loading data…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════
+       MAIN — three-panel layout
+  ════════════════════════════════════════════════════ -->
+  <main id="main-layout">
+
+    <!-- LEFT: Entity browser -->
+    <aside id="panel-left" class="panel" aria-label="Entity browser">
+      <div class="panel-header">
+        <h2>Browse</h2>
+        <input type="search" id="entity-search" placeholder="Search names, places…" autocomplete="off" />
+      </div>
+      <div class="panel-body">
+        <div class="panel-section">
+          <div class="section-label">Churches</div>
+          <ul class="entity-list" id="church-list" role="list"></ul>
+        </div>
+        <div class="panel-section">
+          <div class="section-label">Command &amp; Company</div>
+          <ul class="entity-list" id="individual-list" role="list"></ul>
+        </div>
+        <div class="panel-section">
+          <div class="section-label">Units</div>
+          <ul class="entity-list" id="unit-list" role="list"></ul>
+        </div>
+        <div class="panel-section">
+          <div class="section-label">Events</div>
+          <ul class="entity-list" id="event-list" role="list"></ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: Map -->
+    <div id="map-container">
+      <div id="map" role="application" aria-label="Historical map of Cumberland County, NC"></div>
+      <div id="map-status" class="hidden" role="alert">
+        <p>Data could not be loaded. See browser console for details.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Story panel -->
+    <aside id="panel-right" class="panel" aria-label="Narrative panel">
+      <div class="panel-header">
+        <h2 id="story-title">Cross Creek, 1758–1783</h2>
+        <button id="story-close" class="hidden" title="Close narrative" aria-label="Close narrative panel">×</button>
+      </div>
+      <div id="story-content">
+        <div id="story-default">
+          <p class="story-intro">
+            Select a church, individual, unit, or battle from the map or browser
+            to open the narrative record.
+          </p>
+          <p class="story-intro">
+            This site reconstructs the Highland Scots Loyalist community of Cross
+            Creek, Cumberland County, North Carolina, from primary sources. All
+            assertions are source-cited. Click any
+            <span class="src-ref-demo">source reference</span>
+            to open the document record.
+          </p>
+          <p class="story-intro" style="margin-top:1.5em; font-size:0.88rem;">
+            <strong>Begin here:</strong> click <em>Old Bluff / Bluff Presbyterian
+            Church</em> in the browser or on the map, then press
+            <em>Animate Congregation Assembly</em> to see the pre-war community
+            gather spatially.
+          </p>
+        </div>
+        <div id="story-entity" class="hidden"></div>
+      </div>
+      <!-- Source document tray -->
+      <div id="source-tray" class="hidden" role="complementary" aria-label="Source document">
+        <div id="source-tray-header">
+          <span id="source-tray-title">Source</span>
+          <button id="source-tray-close" aria-label="Close source tray">×</button>
+        </div>
+        <div id="source-tray-body"></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════
+       TIMELINE BAR
+  ════════════════════════════════════════════════════ -->
+  <footer id="timeline-bar" aria-label="Timeline controls">
+    <div id="timeline-controls">
+      <button id="tl-play"      title="Play timeline"  aria-label="Play">&#9654;</button>
+      <button id="tl-pause"     title="Pause"          aria-label="Pause" class="hidden">&#9646;&#9646;</button>
+      <button id="tl-step-back" title="Step back one year" aria-label="Step back">&#9664;</button>
+      <button id="tl-step-fwd"  title="Step forward one year" aria-label="Step forward">&#9654;&#9654;</button>
+    </div>
+    <div id="timeline-slider-wrap">
+      <span class="tl-bound-label">1758</span>
+      <div id="tl-slider-container"></div>
+      <span class="tl-bound-label">1783</span>
+    </div>
+    <div id="timeline-resolution">
+      <label for="tl-resolution">Resolution</label>
+      <select id="tl-resolution" aria-label="Timeline resolution">
+        <option value="year" selected>Year</option>
+        <option value="month">Month</option>
+        <option value="day">Day</option>
+      </select>
+    </div>
+    <div id="tl-date-display" aria-live="polite" aria-atomic="true">1770</div>
+  </footer>
+
+</div><!-- #app -->
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS — order matters: library → data → map → modules → app
+════════════════════════════════════════════════════════ -->
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet.TimeDimension dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>
+<!-- Leaflet Omnivore (KMZ/KML route support — used in later phases) -->
+<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
+<!-- TODO Phase 3: Add Leaflet.Motion for animated troop movement
+     <script src="https://cdn.jsdelivr.net/npm/leaflet.motion/dist/leaflet.motion.min.js"></script> -->
+
+<!-- Application modules -->
+<script src="js/data.js"></script>
+<script src="js/map.js"></script>
+<script src="js/network.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/panels.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

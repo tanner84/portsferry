@@ -1,0 +1,90 @@
+[
+  {
+    "src_id": "src_001",
+    "title": "A Narrative of the Proceedings of a Body of Loyalists in North Carolina (1776)",
+    "type": "Primary — manuscript",
+    "repository": "The National Archives (UK), CO 5/93",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "TNA",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_002",
+    "title": "MacDonald, Donald — Papers and Correspondence, 1775–1776",
+    "type": "Primary — correspondence",
+    "repository": "National Records of Scotland",
+    "digitized": "N",
+    "url": "",
+    "record_system": "NRS",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_003",
+    "title": "Eyewitness account of the Battle of Moore's Creek Bridge, 1776",
+    "type": "Primary — deposition",
+    "repository": "NC State Archives, Revolutionary War Collection",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "NCSA",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_004",
+    "title": "Allan MacDonald — Examination before the NC Council of Safety, 1776",
+    "type": "Primary — official examination",
+    "repository": "NC State Archives",
+    "digitized": "N",
+    "url": "",
+    "record_system": "NCSA",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_005",
+    "title": "Flora MacDonald — Examination, 1776; Memoir (later)",
+    "type": "Primary — memoir and examination",
+    "repository": "Various; published in MacLean, J.P. (1909) Flora MacDonald in America",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "Published",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_006",
+    "title": "NC Provincial Congress Minutes, September 9, 1775",
+    "type": "Primary — official record",
+    "repository": "NC State Archives; published in NCCR vol. X",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "NCCR",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_007",
+    "title": "Old Bluff Presbyterian Church Session Records",
+    "type": "Primary — church records",
+    "repository": "Presbyterian Historical Society, Montreat, NC",
+    "digitized": "N",
+    "url": "",
+    "record_system": "PHS",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_008",
+    "title": "Foote, William Henry. Sketches of North Carolina (1846)",
+    "type": "Secondary — published history",
+    "repository": "Multiple libraries; digitized via HathiTrust",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "HathiTrust",
+    "zone": "3",
+    "evidence_type": "Secondary"
+  }
+]
