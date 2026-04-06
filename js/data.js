@@ -385,6 +385,92 @@ PF.data.search = function (query) {
 };
 
 /* ================================================================
+   Unit community origin query (used by Step 4 story panel)
+   ================================================================ */
+
+/**
+ * Cross-reference a unit's membership against IND_CHURCH and IND_PROPERTY
+ * to surface the pre-war community networks that fed the unit.
+ *
+ * This is the dissertation argument made computable: the unit's officers
+ * are the community network reorganized under military authority. The
+ * overlap between congregation membership and unit membership is the evidence.
+ *
+ * @param {string} unit_id
+ * @returns {{
+ *   churches:      Array<{ church: Object, members: Array }>,
+ *   properties:    Array<{ property: Object, members: Array }>,
+ *   totalMembers:  number,   — all members linked in IND_UNIT
+ *   linkedMembers: number,   — members with ≥1 community record
+ * }}
+ */
+PF.data.getUnitCommunityOrigin = function (unit_id) {
+  /* All ind_ids belonging to this unit */
+  const memberLinks = (PF.data.raw.IND_UNIT || []).filter(l => l.unit_id === unit_id);
+  const memberIds   = new Set(memberLinks.map(l => l.ind_id));
+
+  /* Church overlap — ch_id → deduplicated INDIVIDUALS array */
+  const churchMap = {};
+  (PF.data.raw.IND_CHURCH || []).forEach(link => {
+    if (!memberIds.has(link.ind_id)) return;
+    const ind = PF.data.getIndividualById(link.ind_id);
+    if (!ind) return;
+    if (!churchMap[link.ch_id]) churchMap[link.ch_id] = [];
+    if (!churchMap[link.ch_id].some(m => m.ind_id === ind.ind_id)) {
+      churchMap[link.ch_id].push(ind);
+    }
+  });
+
+  const churches = Object.entries(churchMap)
+    .map(([ch_id, members]) => ({ church: PF.data.getChurchById(ch_id), members }))
+    .filter(({ church }) => !!church)
+    .sort((a, b) => b.members.length - a.members.length);
+
+  /* Property overlap — prop_id → { property, members } */
+  const propMap = {};
+  (PF.data.raw.IND_PROPERTY || []).forEach(link => {
+    if (!memberIds.has(link.ind_id)) return;
+    const ind  = PF.data.getIndividualById(link.ind_id);
+    const prop = (PF.data.raw.PROPERTIES || []).find(p => p.prop_id === link.prop_id);
+    if (!ind || !prop) return;
+    if (!propMap[link.prop_id]) propMap[link.prop_id] = { property: prop, members: [] };
+    if (!propMap[link.prop_id].members.some(m => m.ind_id === ind.ind_id)) {
+      propMap[link.prop_id].members.push(ind);
+    }
+  });
+
+  const properties = Object.values(propMap)
+    .sort((a, b) => b.members.length - a.members.length);
+
+  /* Count members with at least one community link */
+  const linkedIds = new Set([
+    ...churches.flatMap(({ members }) => members.map(m => m.ind_id)),
+    ...properties.flatMap(({ members }) => members.map(m => m.ind_id)),
+  ]);
+
+  return {
+    churches,
+    properties,
+    totalMembers:  memberIds.size,
+    linkedMembers: linkedIds.size,
+  };
+};
+
+/**
+ * Unit-specific rank for an individual (from IND_UNIT, not INDIVIDUALS.rank).
+ * Falls back to the individual's general rank field.
+ *
+ * @param {string} ind_id
+ * @param {string} unit_id
+ * @returns {string}
+ */
+PF.data.getIndUnitRank = function (ind_id, unit_id) {
+  const link = (PF.data.raw.IND_UNIT || [])
+    .find(l => l.ind_id === ind_id && l.unit_id === unit_id);
+  return (link && link.rank) ? link.rank : '';
+};
+
+/* ================================================================
    Organizational context queries (used by Step 3 story panel)
    ================================================================ */
 

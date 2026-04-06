@@ -710,46 +710,180 @@ PF.panels.showEvent = function (evt) {
 };
 
 /* ================================================================
-   Story panel — UNIT (stub — fleshed out in Step 4)
+   Story panel — UNIT
    ================================================================ */
 PF.panels.showUnit = function (unit) {
-  const affCls = PF.map.affiliationClass(unit.affiliation);
+  const affCls  = PF.map.affiliationClass(unit.affiliation);
   const members = PF.data.getUnitMembers(unit.unit_id);
+  const sources = PF.data.getSourcesForEntity(unit);
+  const origin  = PF.data.getUnitCommunityOrigin(unit.unit_id);
+
+  const dateStr = unit.active_from
+    ? (unit.active_to
+        ? `${h(unit.active_from)}–${h(unit.active_to)}`
+        : `active from ${h(unit.active_from)}`)
+    : '';
 
   const html = `
     <div class="story-section">
       <div class="story-name">${h(unit.name || unit.unit_id)}</div>
       <div class="story-role">
         <span class="affil-badge badge-${affCls}">${h(unit.affiliation || '')}</span>
-        ${unit.active_from ? ` · active ${h(unit.active_from)}${unit.active_to ? '–' + h(unit.active_to) : ''}` : ''}
+        ${dateStr ? ` &nbsp;·&nbsp; ${dateStr}` : ''}
       </div>
     </div>
-    ${unit.notes ? `<div class="story-section"><p class="story-prose">${h(unit.notes)}</p></div>` : ''}
+
+    ${unit.notes ? `
+    <div class="story-section">
+      <p class="story-prose">${h(unit.notes)}</p>
+    </div>` : ''}
+
     ${members.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Officers on record — ${members.length}</div>
       <ul class="conn-list">
-        ${members.map(m => `
+        ${members.map(m => {
+          const unitRank = PF.data.getIndUnitRank(m.ind_id, unit.unit_id) || m.rank || m.tier || '';
+          return `
           <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
             <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
             ${h(m.full_name || 'Unknown')}
-            <span class="conn-rel">${h(m.rank || m.tier || '')}</span>
-          </li>`).join('')}
+            <span class="conn-rel">${h(unitRank)}</span>
+          </li>`;
+        }).join('')}
       </ul>
     </div>` : ''}
-    <p style="font-size:0.75rem;color:var(--text-muted);font-style:italic;margin-top:0.5rem">
-      Community origin section added in Step 4.
-    </p>`;
+
+    ${_buildCommunityOrigin(unit, origin)}
+
+    ${sources.length > 0 ? `
+    <div class="story-section">
+      <div class="story-section-label">Sources</div>
+      ${sources.map(src => `
+        <div class="data-row">
+          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
+        </div>`).join('')}
+    </div>` : ''}
+  `;
 
   _showEntity(unit.name || 'Unit', html);
 
+  /* Officer list clicks */
   document.querySelectorAll('#story-entity .conn-list li[data-ind-id]').forEach(li => {
     li.addEventListener('click', () => {
       const ind = PF.data.getIndividualById(li.dataset.indId);
       if (ind) { PF.panels.showIndividual(ind); PF.network.renderForIndividual(ind.ind_id); }
     });
   });
+
+  /* Community origin — church name clicks */
+  document.querySelectorAll('#story-entity .community-church-header[data-ch-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const ch = PF.data.getChurchById(el.dataset.chId);
+      if (ch) PF.panels.showChurch(ch);
+    });
+  });
+
+  /* Community origin — member name clicks */
+  document.querySelectorAll('#story-entity .community-member-list li[data-ind-id]').forEach(li => {
+    li.addEventListener('click', () => {
+      const ind = PF.data.getIndividualById(li.dataset.indId);
+      if (ind) { PF.panels.showIndividual(ind); PF.network.renderForIndividual(ind.ind_id); }
+    });
+  });
 };
+
+/**
+ * Build the Community Origin section HTML for a unit story panel.
+ * This section surfaces the pre-war community networks that fed the unit —
+ * churches and properties cross-referenced against unit membership.
+ *
+ * @param {Object} unit    — UNITS row
+ * @param {Object} origin  — result of PF.data.getUnitCommunityOrigin()
+ * @returns {string} HTML
+ */
+function _buildCommunityOrigin(unit, origin) {
+  const { churches, properties, totalMembers, linkedMembers } = origin;
+  const hasData = churches.length > 0 || properties.length > 0;
+
+  /* Interpretive lead sentence using live counts */
+  let lede = '';
+  if (totalMembers > 0 && linkedMembers > 0) {
+    const pct   = Math.round((linkedMembers / totalMembers) * 100);
+    const churchCount = churches.length;
+    lede = `
+      <p class="community-origin-lede">
+        <strong>${linkedMembers} of ${totalMembers}</strong> officers on record
+        share documented pre-war community ties in this area
+        (${pct}% of recorded membership).
+        ${churchCount === 1
+          ? `All traced to a single congregation, suggesting the unit drew its core from an existing parish network.`
+          : churchCount > 1
+            ? `Ties distributed across ${churchCount} congregations, indicating a broader community coalition.`
+            : ''}
+      </p>`;
+  }
+
+  /* Church entries */
+  let churchesHtml = '';
+  churches.forEach(({ church, members }) => {
+    churchesHtml += `
+      <div class="community-church-entry">
+        <div class="community-church-header" data-ch-id="${h(church.ch_id)}"
+             role="button" tabindex="0" title="Open church record">
+          <span class="dot dot-church"></span>
+          <span class="community-church-name">${h(church.name || church.ch_id)}</span>
+          <span class="community-church-count">${members.length} officer${members.length !== 1 ? 's' : ''}</span>
+        </div>
+        <ul class="community-member-list">
+          ${members.map(m => {
+            const rank = PF.data.getIndUnitRank(m.ind_id, unit.unit_id) || m.rank || '';
+            return `
+            <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
+              <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
+              ${h(m.full_name || 'Unknown')}
+              <span class="community-member-rank">${h(rank)}</span>
+            </li>`;
+          }).join('')}
+        </ul>
+      </div>`;
+  });
+
+  /* Property entries */
+  let propertiesHtml = '';
+  properties.forEach(({ property, members }) => {
+    propertiesHtml += `
+      <div class="community-property-entry">
+        <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.25rem">
+          <span style="font-size:0.78rem;font-weight:500;color:var(--text-secondary)">${h(property.name || property.prop_id)}</span>
+          <span class="community-church-count">${members.length}</span>
+        </div>
+        <ul class="community-member-list">
+          ${members.map(m => `
+            <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
+              <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
+              ${h(m.full_name || 'Unknown')}
+            </li>`).join('')}
+        </ul>
+      </div>`;
+  });
+
+  /* Empty state for seed data */
+  const emptyNote = !hasData && totalMembers > 0
+    ? `<p class="community-origin-empty">No church or property records yet linked for this unit's members. Add entries to IND_CHURCH and IND_PROPERTY to populate this section.</p>`
+    : '';
+
+  return `
+    <div class="story-section">
+      <div class="story-section-label">Community origin</div>
+      <div class="community-origin">
+        ${lede}
+        ${churchesHtml}
+        ${propertiesHtml}
+        ${emptyNote}
+      </div>
+    </div>`;
+}
 
 /* ================================================================
    Story panel — BATTLE

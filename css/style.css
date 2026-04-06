@@ -667,6 +667,103 @@ button { font-family: inherit; cursor: pointer; }
   flex-shrink: 0;
 }
 
+/* ── Community origin — unit story panel ───────────────────────── */
+
+/* The argument section — subtle warm accent to distinguish */
+.community-origin {
+  border-left: 3px solid var(--church);
+  padding-left: 0.75rem;
+  margin-top: 0.4rem;
+}
+
+/* Interpretive lead sentence */
+.community-origin-lede {
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.community-origin-lede strong { font-style: normal; }
+
+/* Church entry within community origin */
+.community-church-entry {
+  margin-bottom: 0.75rem;
+}
+
+.community-church-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+}
+.community-church-header:hover .community-church-name {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+}
+
+.community-church-name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 1px dashed var(--panel-border);
+  transition: color 0.1s, border-color 0.1s;
+  flex: 1;
+}
+
+.community-church-count {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  background: var(--panel-bg-dark);
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--panel-border);
+}
+
+.community-member-list {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+.community-member-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  padding: 0.22rem 0;
+  border-bottom: 1px solid var(--panel-border-soft);
+  cursor: pointer;
+  transition: color 0.1s;
+}
+.community-member-list li:last-child { border-bottom: none; }
+.community-member-list li:hover { color: var(--text-primary); }
+
+.community-member-rank {
+  margin-left: auto;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+/* Property entries — same structure as church but smaller */
+.community-property-entry {
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--panel-border);
+}
+
+/* Empty state */
+.community-origin-empty {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 /* ── Organizational context — command chain diagram ────────────── */
 
 .cmd-chain {
