@@ -35,14 +35,46 @@ const MAP_CONFIG = {
   osmAttribution:     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 };
 
-/* Affiliation → marker fill color */
+/* ================================================================
+   Affiliation → marker fill color
+   Ten-category taxonomy. Keys are stored affiliation field values
+   (canonical mixed-case + lowercase for lookup safety).
+   CSS custom properties in style.css must match these values exactly.
+   ================================================================ */
 const PIN_COLORS = {
-  Loyalist:  '#b03020',
-  loyalist:  '#b03020',
-  Patriot:   '#1f5f96',
-  patriot:   '#1f5f96',
-  Unknown:   '#6e6e72',
-  unknown:   '#6e6e72',
+  /* Patriot side — blue spectrum */
+  'Continental Army':     '#1a3a6b',
+  'continental army':     '#1a3a6b',
+  'State Line':           '#2e6da4',
+  'state line':           '#2e6da4',
+  'Patriot Militia':      '#5b9bd5',
+  'patriot militia':      '#5b9bd5',
+  'Patriot Volunteer':    '#a8c8e8',
+  'patriot volunteer':    '#a8c8e8',
+
+  /* Loyalist / British side — red spectrum */
+  'British Regular':      '#6b1a1a',
+  'british regular':      '#6b1a1a',
+  'Provincial Corps':     '#a43232',
+  'provincial corps':     '#a43232',
+  'Loyalist Militia':     '#c45c5c',
+  'loyalist militia':     '#c45c5c',
+  'Associated Loyalist':  '#d89090',
+  'associated loyalist':  '#d89090',
+
+  /* Neutral / Unknown */
+  'Unknown':              '#888888',
+  'unknown':              '#888888',
+  'Neutral':              '#b8a882',
+  'neutral':              '#b8a882',
+
+  /* Legacy aliases — old seed data used bare "Loyalist" / "Patriot".
+     Map to Loyalist Militia / Patriot Militia respectively.
+     Remove once seed data and Sheets are updated to full taxonomy. */
+  'Loyalist':             '#c45c5c',
+  'loyalist':             '#c45c5c',
+  'Patriot':              '#5b9bd5',
+  'patriot':              '#5b9bd5',
 };
 
 /* Tier → pin size (diameter px) */
@@ -142,7 +174,7 @@ PF.map.toggleBaseLayer = function () {
  * Command tier = larger; Exception tier = medium with dashed ring.
  */
 PF.map.makeIndividualIcon = function (individual) {
-  const color = PIN_COLORS[individual.affiliation] || PIN_COLORS.unknown;
+  const color = PF.map.affiliationColor(individual.affiliation);
   const size  = PIN_SIZES[individual.tier] || PIN_SIZES.Company;
   const ring  = individual.tier === 'Exception'
     ? `outline: 2px dashed ${color}; outline-offset: 2px;`
@@ -314,7 +346,7 @@ PF.map.animateAssembly = function (members, churchLat, churchLng) {
       lng = churchLng + r * Math.cos(angle);
     }
 
-    const color = PIN_COLORS[ind.affiliation] || PIN_COLORS.unknown;
+    const color = PF.map.affiliationColor(ind.affiliation);
 
     const marker = L.circleMarker([lat, lng], {
       radius:      5,
@@ -344,6 +376,45 @@ PF.map.animateAssembly = function (members, churchLat, churchLng) {
  */
 PF.map.clearAssembly = function () {
   PF.map.layers.assembly.clearLayers();
+};
+
+/* ================================================================
+   affiliationClass(str)
+   Converts a stored affiliation value to its CSS class slug.
+   "Patriot Militia" → "patriot-militia"
+   "Continental Army" → "continental-army"
+   Unknown values fall back to "unknown".
+   Used by panels.js and any module that builds dot/badge classes.
+   ================================================================ */
+const AFFIL_CLASS_MAP = {
+  'Continental Army':     'continental-army',
+  'State Line':           'state-line',
+  'Patriot Militia':      'patriot-militia',
+  'Patriot Volunteer':    'patriot-volunteer',
+  'British Regular':      'british-regular',
+  'Provincial Corps':     'provincial-corps',
+  'Loyalist Militia':     'loyalist-militia',
+  'Associated Loyalist':  'associated-loyalist',
+  'Unknown':              'unknown',
+  'Neutral':              'neutral',
+  /* Legacy */
+  'Loyalist':             'loyalist-militia',
+  'Patriot':              'patriot-militia',
+};
+
+PF.map.affiliationClass = function (affiliation) {
+  if (!affiliation) return 'unknown';
+  return AFFIL_CLASS_MAP[affiliation]
+    || AFFIL_CLASS_MAP[affiliation.trim()]
+    || affiliation.toLowerCase().replace(/\s+/g, '-');
+};
+
+/* Resolve pin color with fallback */
+PF.map.affiliationColor = function (affiliation) {
+  if (!affiliation) return PIN_COLORS.unknown;
+  return PIN_COLORS[affiliation]
+    || PIN_COLORS[affiliation.toLowerCase()]
+    || PIN_COLORS.unknown;
 };
 
 /* Internal HTML escape for tooltip strings */

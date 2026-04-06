@@ -93,10 +93,10 @@ PF.panels._renderIndividualList = function (subset) {
     .slice(0, 50);
 
   list.innerHTML = items.map(ind => {
-    const aff = (ind.affiliation || 'unknown').toLowerCase();
+    const affCls = PF.map.affiliationClass(ind.affiliation);
     return `
       <li role="button" tabindex="0" data-ind-id="${h(ind.ind_id)}">
-        <span class="dot dot-${aff}"></span>
+        <span class="dot dot-${affCls}"></span>
         <span>${h(ind.full_name || 'Unknown')}</span>
         <span class="entity-meta">${h(ind.tier || '')}</span>
       </li>`;
@@ -223,7 +223,7 @@ PF.panels.showIndividual = function (ind) {
   const sources   = PF.data.getSourcesForEntity(ind);
   const neighbors = PF.data.getNetworkNeighbors(ind.ind_id);
   const aff       = ind.affiliation || 'Unknown';
-  const affCls    = aff.toLowerCase();
+  const affCls    = PF.map.affiliationClass(aff);
 
   const html = `
     <div class="story-section">
@@ -256,7 +256,7 @@ PF.panels.showIndividual = function (ind) {
       <ul class="conn-list">
         ${neighbors.slice(0, 14).map(({ individual: n, relationship }) => `
           <li data-ind-id="${h(n.ind_id)}" role="button" tabindex="0">
-            <span class="dot dot-${(n.affiliation || 'unknown').toLowerCase()}"></span>
+            <span class="dot dot-${PF.map.affiliationClass(n.affiliation)}"></span>
             ${h(n.full_name || 'Unknown')}
             <span class="conn-rel">${h(relationship)}</span>
           </li>`).join('')}
@@ -305,8 +305,11 @@ PF.panels.showChurch = function (ch) {
     PF.map.highlightChurch(lat, lng);
   }
 
-  const loyalists = members.filter(m => (m.affiliation || '').toLowerCase() === 'loyalist').length;
-  const patriots  = members.filter(m => (m.affiliation || '').toLowerCase() === 'patriot').length;
+  /* Count members by side using the full taxonomy */
+  const PATRIOT_AFFILIATIONS  = new Set(['Continental Army','State Line','Patriot Militia','Patriot Volunteer','Patriot']);
+  const LOYALIST_AFFILIATIONS = new Set(['British Regular','Provincial Corps','Loyalist Militia','Associated Loyalist','Loyalist']);
+  const loyalists = members.filter(m => LOYALIST_AFFILIATIONS.has(m.affiliation)).length;
+  const patriots  = members.filter(m => PATRIOT_AFFILIATIONS.has(m.affiliation)).length;
   const unknowns  = members.length - loyalists - patriots;
 
   /* Coordinate provenance note — flag if the church record itself has a note */
@@ -342,7 +345,7 @@ PF.panels.showChurch = function (ch) {
       <ul class="conn-list">
         ${members.slice(0, 16).map(m => `
           <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
-            <span class="dot dot-${(m.affiliation || 'unknown').toLowerCase()}"></span>
+            <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
             ${h(m.full_name || 'Unknown')}
             <span class="conn-rel">${h(m.affiliation || '')}</span>
           </li>`).join('')}

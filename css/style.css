@@ -25,11 +25,29 @@
   --chrome-border: #252530;
   --chrome-text:   #e0dcd4;
 
-  /* Affiliation */
-  --loyalist:  #b03020;
-  --patriot:   #1f5f96;
-  --unknown:   #6e6e72;
-  --church:    #6b5528;
+  /* ── Affiliation color system ─────────────────────────────────
+     Ten-category taxonomy replacing the binary Loyalist/Patriot.
+     Values match PIN_COLORS in js/map.js exactly.
+     ─────────────────────────────────────────────────────────── */
+
+  /* Patriot side — blue spectrum, dark → light by formality */
+  --continental-army:    #1a3a6b;   /* deep navy — professional establishment */
+  --state-line:          #2e6da4;   /* medium blue — state regulars */
+  --patriot-militia:     #5b9bd5;   /* mid blue — county irregulars */
+  --patriot-volunteer:   #a8c8e8;   /* pale blue — self-organized */
+
+  /* Loyalist / British side — red spectrum, dark → light by formality */
+  --british-regular:     #6b1a1a;   /* deep crimson — Crown regulars */
+  --provincial-corps:    #a43232;   /* medium red — Loyalist establishment */
+  --loyalist-militia:    #c45c5c;   /* warm red — county irregulars */
+  --associated-loyalist: #d89090;   /* pale red — raiders, loosely organized */
+
+  /* Neutral / Unknown */
+  --unknown:             #888888;
+  --neutral:             #b8a882;   /* tan — documented non-participant */
+
+  /* Church pins — unchanged */
+  --church:              #6b5528;
 
   /* Accent — warm gold-brown */
   --accent:       #8a6b3a;
@@ -244,10 +262,28 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: 50%;
   flex-shrink: 0;
 }
-.dot-loyalist { background: var(--loyalist); }
-.dot-patriot  { background: var(--patriot); }
+/* Patriot side */
+.dot-continental-army    { background: var(--continental-army); }
+.dot-state-line          { background: var(--state-line); }
+.dot-patriot-militia     { background: var(--patriot-militia); }
+.dot-patriot-volunteer   { background: var(--patriot-volunteer); }
+
+/* Loyalist / British side */
+.dot-british-regular     { background: var(--british-regular); }
+.dot-provincial-corps    { background: var(--provincial-corps); }
+.dot-loyalist-militia    { background: var(--loyalist-militia); }
+.dot-associated-loyalist { background: var(--associated-loyalist); }
+
+/* Neutral / Unknown */
 .dot-unknown  { background: var(--unknown); }
-.dot-church   { background: var(--church); border-radius: 2px; transform: rotate(45deg); }
+.dot-neutral  { background: var(--neutral); }
+
+/* Legacy aliases — support old seed data values during transition */
+.dot-loyalist { background: var(--loyalist-militia); }
+.dot-patriot  { background: var(--patriot-militia); }
+
+/* Church diamond — shape applied separately */
+.dot-church { background: var(--church); border-radius: 2px; transform: rotate(45deg); }
 
 /* ── Map ───────────────────────────────────────────────────────── */
 #map-container {
@@ -379,9 +415,27 @@ button { font-family: inherit; cursor: pointer; }
   margin-left: 0.5rem;
   vertical-align: middle;
 }
-.badge-loyalist { background: #f9eae8; color: var(--loyalist); border: 1px solid #e8b8b4; }
-.badge-patriot  { background: #e8f0f9; color: var(--patriot);  border: 1px solid #a8c4e0; }
-.badge-unknown  { background: #f0f0f0; color: var(--unknown);  border: 1px solid #d0d0d0; }
+/* Patriot side badges */
+.badge-continental-army    { background: #e8ecf5; color: var(--continental-army);  border: 1px solid #a8b8d8; }
+.badge-state-line          { background: #eaf0f8; color: var(--state-line);         border: 1px solid #9fc0df; }
+.badge-patriot-militia     { background: #eef5fc; color: #3a7ab8;                   border: 1px solid #b0cfe8; }
+.badge-patriot-volunteer   { background: #f4f8fd; color: #5a90c0;                   border: 1px solid #c0d8ec; }
+
+/* Loyalist / British side badges */
+.badge-british-regular     { background: #f5e8e8; color: var(--british-regular);    border: 1px solid #d8a8a8; }
+.badge-provincial-corps    { background: #f8eeee; color: var(--provincial-corps);   border: 1px solid #e0b0b0; }
+.badge-loyalist-militia    { background: #faf2f2; color: #a44040;                   border: 1px solid #e8c0c0; }
+.badge-associated-loyalist { background: #fdf7f7; color: #b06060;                   border: 1px solid #f0d0d0; }
+
+/* Neutral / Unknown badges */
+.badge-unknown  { background: #f0f0f0; color: #666;                                 border: 1px solid #d0d0d0; }
+.badge-neutral  { background: #f5f2eb; color: #7a6a48;                              border: 1px solid #d8cca8; }
+
+/* Legacy aliases — support old seed data values during transition */
+.badge-loyalist { background: #faf2f2; color: #a44040; border: 1px solid #e8c0c0; }
+.badge-patriot  { background: #eef5fc; color: #3a7ab8; border: 1px solid #b0cfe8; }
+
+/* Exception tier — not an affiliation, marks non-military significance */
 .badge-exception { background: #f9f4e8; color: var(--accent); border: 1px solid #d8c090; }
 
 /* Story sections */
