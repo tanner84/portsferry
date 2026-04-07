@@ -170,6 +170,7 @@ button { font-family: inherit; cursor: pointer; }
   flex: 1;
   overflow: hidden;
   min-height: 0;
+  position: relative;   /* anchor for #battle-phase-nav */
 }
 
 /* ── Panels — shared ───────────────────────────────────────────── */
@@ -1100,45 +1101,50 @@ button { font-family: inherit; cursor: pointer; }
 .bb-conf-inferred { background: #1e2035; color: #7a8aaa; border: 1px solid #2e3a55; }
 
 /* ── Floating phase navigator — centered over map ───────────────── */
+/*
+  Positioned absolutely within #main-layout (which has position:relative).
+  Centred in the map column: offset from left by panel-left-w, then
+  centre of the remaining space. Works without knowing exact map width.
+*/
 #battle-phase-nav {
   position: absolute;
-  bottom: 28px;
-  left: 50%;
+  bottom: 20px;
+  left: calc(var(--panel-left-w) + (100% - var(--panel-left-w) - var(--panel-right-w)) / 2);
   transform: translateX(-50%);
-  z-index: 800;
+  z-index: 850;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
+  gap: 8px;
 
-  background: rgba(22, 28, 42, 0.92);
-  border: 1px solid rgba(94, 127, 160, 0.35);
-  border-radius: 8px;
-  padding: 12px 18px 10px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-  min-width: 280px;
-  max-width: 520px;
+  background: rgba(18, 24, 38, 0.93);
+  border: 1px solid rgba(94, 127, 160, 0.30);
+  border-radius: 10px;
+  padding: 14px 20px 12px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.04) inset;
+  backdrop-filter: blur(6px);
+  min-width: 300px;
+  max-width: 500px;
   pointer-events: all;
 }
 
-/* row: ◄  [node]──[node]──[node]  ► */
-#battle-phase-nav > div:first-of-type {
+/* Row containing ◄  track  ► */
+#bb-nav-row {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 10px;
   width: 100%;
 }
 
 .bb-nav-arrow {
-  background: none;
-  border: 1px solid rgba(94, 127, 160, 0.4);
-  border-radius: 4px;
+  background: rgba(40, 58, 82, 0.7);
+  border: 1px solid rgba(94, 127, 160, 0.35);
+  border-radius: 5px;
   color: #7a9ab8;
-  width: 30px;
-  height: 30px;
-  font-size: 0.75rem;
+  width: 32px;
+  height: 32px;
+  font-size: 0.7rem;
   cursor: pointer;
   flex-shrink: 0;
   display: flex;
@@ -1147,30 +1153,30 @@ button { font-family: inherit; cursor: pointer; }
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 .bb-nav-arrow:hover:not(:disabled) {
-  background: rgba(62, 90, 122, 0.6);
+  background: rgba(62, 90, 122, 0.85);
   color: #d0dce8;
-  border-color: rgba(94, 127, 160, 0.7);
+  border-color: rgba(94, 127, 160, 0.65);
 }
-.bb-nav-arrow:disabled { opacity: 0.25; cursor: default; }
+.bb-nav-arrow:disabled { opacity: 0.22; cursor: default; }
 
 #bb-phase-track {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: 0 10px;
   position: relative;
+  padding: 4px 0;
 }
 
-/* Connecting line behind nodes */
+/* Connecting line drawn behind the nodes */
 #bb-phase-track::before {
   content: '';
   position: absolute;
-  left: 20px;
-  right: 20px;
+  left: 13px;
+  right: 13px;
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: rgba(94, 127, 160, 0.3);
+  background: rgba(94, 127, 160, 0.22);
   pointer-events: none;
 }
 
@@ -1181,66 +1187,65 @@ button { font-family: inherit; cursor: pointer; }
   flex: 1;
   position: relative;
   cursor: pointer;
-  gap: 4px;
-  padding: 4px 2px;
+  gap: 5px;
+  padding: 2px 0;
+  transition: opacity 0.15s;
 }
+.bb-phase-node:hover { opacity: 0.85; }
 
 .bb-phase-dot {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 2px solid rgba(94, 127, 160, 0.5);
-  background: rgba(22, 28, 42, 0.9);
-  color: #6a8aaa;
+  border: 2px solid rgba(94, 127, 160, 0.45);
+  background: rgba(22, 28, 44, 0.95);
+  color: #5a7898;
   font-size: 0.72rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.18s;
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.18s;
   position: relative;
   z-index: 1;
 }
 
-.bb-phase-node:hover .bb-phase-dot {
-  border-color: var(--accent-light);
-  background: rgba(62, 90, 122, 0.5);
-  color: #c8d8e8;
-}
-
 .bb-phase-node.active .bb-phase-dot {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border: 2px solid var(--accent-light);
   background: var(--accent);
   color: #e8f0f8;
-  font-size: 0.82rem;
-  box-shadow: 0 0 0 4px rgba(94, 127, 160, 0.18);
+  font-size: 0.85rem;
+  box-shadow: 0 0 0 5px rgba(62, 90, 122, 0.25);
+  transform: translateY(-2px);
 }
 
 .bb-phase-node-label {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   letter-spacing: 0.04em;
-  color: #5a7a98;
+  color: #44647e;
   text-align: center;
-  max-width: 64px;
+  max-width: 70px;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color 0.18s;
 }
-.bb-phase-node.active .bb-phase-node-label { color: #9ab8d0; }
-.bb-phase-node:hover .bb-phase-node-label  { color: #8aaac4; }
+.bb-phase-node.active .bb-phase-node-label { color: #8ab0cc; }
 
+/* Phase label below the track */
 #bb-phase-label-float {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
-  color: #c8d8e4;
+  font-size: 0.92rem;
+  color: #b8ccd8;
   text-align: center;
-  margin-top: 6px;
   letter-spacing: 0.01em;
-  line-height: 1.3;
+  line-height: 1.35;
+  padding-top: 2px;
+  border-top: 1px solid rgba(94, 127, 160, 0.15);
+  width: 100%;
 }
 
 /* ── Battle story panel ─────────────────────────────────────────── */

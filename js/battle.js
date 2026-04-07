@@ -301,44 +301,48 @@ function _placeMarker(pos) {
 /**
  * Build a rectangular div icon styled by affiliation and confidence.
  *
- * Shape: wide rectangle (unit formation symbol) vs circle (individual).
- * Confidence:
- *   High     — solid fill, full opacity
- *   Medium   — solid fill, 80% opacity
- *   Low      — transparent fill, dashed border, 65% opacity
- *   Inferred — transparent fill, dotted border, 50% opacity
+ * Shape: wide rectangle (unit formation symbol).
+ * Confidence is shown through opacity and a small badge:
+ *   High     — full opacity, no badge
+ *   Medium   — 85% opacity
+ *   Low      — 55% opacity, "?" badge
+ *   Inferred — 40% opacity, "?" badge, italic label color
+ *
+ * Avoids CSS dashed/dotted borders which render as noise at small sizes.
  */
 function _makeIcon(pos, unit) {
-  const color = PF.map.affiliationColor(unit ? unit.affiliation : 'Unknown');
-  const conf  = (pos.confidence || 'Medium').toLowerCase();
-  const W = 26, H = 14;
+  const color  = PF.map.affiliationColor(unit ? unit.affiliation : 'Unknown');
+  const conf   = (pos.confidence || 'Medium').toLowerCase();
+  const arrow  = _facingGlyph(pos.facing);
+  const W = 30, H = 16;
 
-  let bg, border, opacity;
+  let opacity, badge;
   switch (conf) {
-    case 'high':
-      bg = color; border = `2px solid rgba(255,255,255,0.75)`; opacity = 1.0;   break;
-    case 'medium':
-      bg = color; border = `2px solid rgba(255,255,255,0.60)`; opacity = 0.82;  break;
-    case 'low':
-      bg = 'transparent'; border = `2px dashed ${color}`;      opacity = 0.65;  break;
-    default: /* inferred */
-      bg = 'transparent'; border = `2px dotted ${color}`;      opacity = 0.50;  break;
+    case 'high':     opacity = 1.00; badge = '';  break;
+    case 'medium':   opacity = 0.85; badge = '';  break;
+    case 'low':      opacity = 0.55; badge = '?'; break;
+    default:         opacity = 0.40; badge = '?'; break;  /* inferred */
   }
 
-  const arrow = _facingGlyph(pos.facing);
+  /* Lighten the color slightly for the stroke */
+  const innerHtml = badge
+    ? `<span style="font-size:8px;font-weight:700;color:rgba(255,255,255,0.9)">${badge}</span>`
+    : arrow
+      ? `<span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.95)">${arrow}</span>`
+      : '';
 
   return L.divIcon({
     className: '',
     html: `<div style="
       width:${W}px; height:${H}px;
-      background:${bg};
-      border:${border};
+      background:${color};
       opacity:${opacity};
-      box-shadow:0 2px 8px rgba(0,0,0,0.65);
+      border-radius:2px;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      box-shadow:0 2px 6px rgba(0,0,0,0.55);
       display:flex; align-items:center; justify-content:center;
-      font-size:9px; color:rgba(255,255,255,0.95); font-weight:700;
       pointer-events:none;
-    ">${arrow}</div>`,
+    ">${innerHtml}</div>`,
     iconSize:    [W, H],
     iconAnchor:  [W / 2, H / 2],
     popupAnchor: [0, -H / 2 - 4],

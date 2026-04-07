@@ -76,15 +76,16 @@
       <div id="map-status" class="hidden" role="alert">
         <p>Data could not be loaded. See browser console for details.</p>
       </div>
-      <!-- Floating phase navigator — visible only in Battle Mode -->
-      <div id="battle-phase-nav" class="hidden" role="navigation" aria-label="Battle phase navigation">
+    </div>
+
+    <!-- Floating phase navigator — sits over map, outside map-container to avoid overflow clip -->
+    <div id="battle-phase-nav" class="hidden" role="navigation" aria-label="Battle phase navigation">
+      <div id="bb-nav-row">
         <button id="bb-step-back" class="bb-nav-arrow" title="Previous phase" aria-label="Previous phase" disabled>&#9664;</button>
-        <div id="bb-phase-track">
-          <!-- Phase nodes injected by battle.js -->
-        </div>
+        <div id="bb-phase-track"><!-- nodes injected by battle.js --></div>
         <button id="bb-step-fwd" class="bb-nav-arrow" title="Next phase" aria-label="Next phase">&#9654;</button>
-        <div id="bb-phase-label-float"></div>
       </div>
+      <div id="bb-phase-label-float"></div>
     </div>
 
     <!-- RIGHT: Story panel -->
@@ -178,13 +179,13 @@
      <script src="https://cdn.jsdelivr.net/npm/leaflet.motion/dist/leaflet.motion.min.js"></script> -->
 
 <!-- Application modules — ?v= bust browser cache when files change -->
-<script src="js/data.js?v=20260409"></script>
-<script src="js/map.js?v=20260409"></script>
-<script src="js/network.js?v=20260409"></script>
-<script src="js/timeline.js?v=20260409"></script>
-<script src="js/panels.js?v=20260409"></script>
-<script src="js/battle.js?v=20260409"></script>
-<script src="js/app.js?v=20260409"></script>
+<script src="js/data.js?v=20260410"></script>
+<script src="js/map.js?v=20260410"></script>
+<script src="js/network.js?v=20260410"></script>
+<script src="js/timeline.js?v=20260410"></script>
+<script src="js/panels.js?v=20260410"></script>
+<script src="js/battle.js?v=20260410"></script>
+<script src="js/app.js?v=20260410"></script>
 
 </body>
 </html>
