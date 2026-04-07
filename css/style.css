@@ -21,9 +21,9 @@
   --text-muted:     #8a8070;
 
   /* Chrome — dark header/footer */
-  --chrome-bg:     #0e0e12;
-  --chrome-border: #252530;
-  --chrome-text:   #e0dcd4;
+  --chrome-bg:     #1a2030;
+  --chrome-border: #28354a;
+  --chrome-text:   #bcc6d4;
 
   /* ── Affiliation color system ─────────────────────────────────
      Ten-category taxonomy replacing the binary Loyalist/Patriot.
@@ -49,10 +49,10 @@
   /* Church pins — unchanged */
   --church:              #6b5528;
 
-  /* Accent — warm gold-brown */
-  --accent:       #8a6b3a;
-  --accent-light: #c0975a;
-  --accent-dim:   #5c4626;
+  /* Accent — institutional slate blue */
+  --accent:       #3d5a7a;
+  --accent-light: #5e7fa0;
+  --accent-dim:   #2a3f58;
 
   /* Layout dims */
   --header-h:      50px;
@@ -63,7 +63,7 @@
 
 /* ── Reset ─────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; background: #0e0e12; }
+html, body { height: 100%; overflow: hidden; background: #1a2030; }
 button { font-family: inherit; cursor: pointer; }
 
 /* ── App shell ─────────────────────────────────────────────────── */
@@ -104,7 +104,7 @@ button { font-family: inherit; cursor: pointer; }
 
 #site-subtitle {
   font-size: 0.7rem;
-  color: #666;
+  color: #6a7e98;
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
@@ -123,11 +123,11 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: 0.07em;
   text-transform: uppercase;
   background: transparent;
-  color: #666;
+  color: #6a7e98;
   border: 1px solid var(--chrome-border);
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
-.view-btn:hover  { background: #1a1a22; color: #bbb; border-color: #3a3a48; }
+.view-btn:hover  { background: #202c40; color: #bbb; border-color: #3a4f68; }
 .view-btn.active { background: var(--accent); color: #f5f2ec; border-color: var(--accent); }
 
 /* Header right controls */
@@ -142,19 +142,19 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: #18181f;
-  color: #888;
+  background: #202c40;
+  color: #7a8fa8;
   border: 1px solid var(--chrome-border);
   transition: color 0.12s, background 0.12s;
 }
-#layer-toggle:hover { background: #22222c; color: #ccc; }
+#layer-toggle:hover { background: #283a52; color: #bcc8d8; }
 
 #loading-indicator {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.7rem;
-  color: #666;
+  color: #6a7e98;
 }
 .loading-dot {
   width: 6px; height: 6px;
@@ -300,11 +300,19 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(14,14,18,0.75);
+  background: rgba(26,32,48,0.75);
   color: #aaa;
   font-size: 0.85rem;
   pointer-events: none;
   z-index: 500;
+}
+
+/* ── Historical map tile treatment ─────────────────────────────────
+   Apply sepia/parchment filter to tile layer only — markers and
+   overlays (in separate Leaflet panes) remain unaffected.
+   ─────────────────────────────────────────────────────────────── */
+.leaflet-tile-pane {
+  filter: sepia(0.55) contrast(0.82) brightness(1.12) saturate(0.55);
 }
 
 /* Leaflet overrides */
@@ -327,8 +335,8 @@ button { font-family: inherit; cursor: pointer; }
 .leaflet-popup-tip { background: var(--panel-bg); }
 
 .pf-tooltip {
-  background: #1a1a22 !important;
-  border: 1px solid #333 !important;
+  background: #1a2030 !important;
+  border: 1px solid #2e3f58 !important;
   border-radius: 0 !important;
   color: #ddd !important;
   font-size: 0.78rem !important;
@@ -611,14 +619,14 @@ button { font-family: inherit; cursor: pointer; }
   flex-shrink: 0;
 }
 #timeline-controls button {
-  background: #18181f;
+  background: #202c40;
   border: 1px solid var(--chrome-border);
-  color: #888;
+  color: #7a8fa8;
   padding: 0.22rem 0.5rem;
   font-size: 0.72rem;
   transition: color 0.1s, background 0.1s;
 }
-#timeline-controls button:hover { color: #ddd; background: #22222c; }
+#timeline-controls button:hover { color: #d0d8e4; background: #283a52; }
 
 #timeline-slider-wrap {
   flex: 1;
@@ -629,7 +637,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .tl-bound-label {
   font-size: 0.68rem;
-  color: #555;
+  color: #6a7e98;
   letter-spacing: 0.05em;
   flex-shrink: 0;
 }
@@ -645,13 +653,13 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 0.4rem;
   font-size: 0.7rem;
-  color: #666;
+  color: #6a7e98;
   flex-shrink: 0;
 }
 #timeline-resolution select {
   font-size: 0.7rem;
-  background: #18181f;
-  color: #999;
+  background: #202c40;
+  color: #8a9ab8;
   border: 1px solid var(--chrome-border);
   padding: 0.18rem 0.35rem;
   font-family: var(--font-sans);
