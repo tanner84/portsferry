@@ -170,7 +170,6 @@ button { font-family: inherit; cursor: pointer; }
   flex: 1;
   overflow: hidden;
   min-height: 0;
-  position: relative;   /* anchor for #battle-phase-nav */
 }
 
 /* ── Panels — shared ───────────────────────────────────────────── */
@@ -1045,23 +1044,29 @@ button { font-family: inherit; cursor: pointer; }
    BATTLE MODE
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Battle bar — slim title strip in Battle Mode ───────────────── */
+/* ── Battle bar — two-row footer replacing the timeline in Battle Mode ── */
 #battle-bar {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  padding: 0 1.25rem;
-  height: var(--timeline-h);
+  flex-direction: column;
   background: var(--chrome-bg);
   border-top: 2px solid var(--accent);
   flex-shrink: 0;
   z-index: 900;
 }
 
+/* Row 1: ← Back · battle title · confidence badge */
+#bb-top-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.3rem 1.25rem;
+  border-bottom: 1px solid var(--chrome-border);
+  height: 36px;
+}
+
 #bb-back-btn {
-  padding: 0.28rem 0.85rem;
-  font-size: 0.72rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1077,7 +1082,7 @@ button { font-family: inherit; cursor: pointer; }
 
 #bb-battle-title {
   font-family: var(--font-serif);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--chrome-text);
   letter-spacing: 0.02em;
   flex: 1;
@@ -1087,11 +1092,11 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .bb-confidence {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.14rem 0.55rem;
+  padding: 0.12rem 0.5rem;
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -1100,152 +1105,104 @@ button { font-family: inherit; cursor: pointer; }
 .bb-conf-low      { background: #2a1a1a; color: #b06060; border: 1px solid #4a2a2a; }
 .bb-conf-inferred { background: #1e2035; color: #7a8aaa; border: 1px solid #2e3a55; }
 
-/* ── Floating phase navigator — centered over map ───────────────── */
-/*
-  Positioned absolutely within #main-layout (which has position:relative).
-  Centred in the map column: offset from left by panel-left-w, then
-  centre of the remaining space. Works without knowing exact map width.
-*/
-#battle-phase-nav {
-  position: absolute;
-  bottom: 20px;
-  left: calc(var(--panel-left-w) + (100% - var(--panel-left-w) - var(--panel-right-w)) / 2);
-  transform: translateX(-50%);
-  z-index: 850;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-
-  background: rgba(18, 24, 38, 0.93);
-  border: 1px solid rgba(94, 127, 160, 0.30);
-  border-radius: 10px;
-  padding: 14px 20px 12px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.04) inset;
-  backdrop-filter: blur(6px);
-  min-width: 300px;
-  max-width: 500px;
-  pointer-events: all;
-}
-
-/* Row containing ◄  track  ► */
-#bb-nav-row {
+/* Row 2: ◄ · [phase dots on track] · ► · current phase label */
+#bb-phase-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
+  gap: 0.75rem;
+  padding: 0 1.25rem;
+  height: 48px;
 }
 
 .bb-nav-arrow {
-  background: rgba(40, 58, 82, 0.7);
-  border: 1px solid rgba(94, 127, 160, 0.35);
-  border-radius: 5px;
-  color: #7a9ab8;
-  width: 32px;
-  height: 32px;
-  font-size: 0.7rem;
+  background: #202c40;
+  border: 1px solid var(--chrome-border);
+  color: #7a8fa8;
+  width: 28px;
+  height: 28px;
+  font-size: 0.65rem;
   cursor: pointer;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: background 0.1s, color 0.1s;
 }
-.bb-nav-arrow:hover:not(:disabled) {
-  background: rgba(62, 90, 122, 0.85);
-  color: #d0dce8;
-  border-color: rgba(94, 127, 160, 0.65);
-}
-.bb-nav-arrow:disabled { opacity: 0.22; cursor: default; }
+.bb-nav-arrow:hover:not(:disabled) { background: #283a52; color: #d0d8e4; }
+.bb-nav-arrow:disabled { opacity: 0.3; cursor: default; }
 
+/* Phase dot track */
 #bb-phase-track {
   display: flex;
   align-items: center;
-  flex: 1;
+  flex: 0 0 auto;       /* don't grow — let label take the space */
   position: relative;
-  padding: 4px 0;
+  gap: 0;
 }
 
-/* Connecting line drawn behind the nodes */
+/* Horizontal connecting line behind dots */
 #bb-phase-track::before {
   content: '';
   position: absolute;
-  left: 13px;
-  right: 13px;
+  left: 14px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: rgba(94, 127, 160, 0.22);
+  background: #28354a;
   pointer-events: none;
+  z-index: 0;
 }
 
 .bb-phase-node {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  flex: 1;
+  justify-content: center;
   position: relative;
+  z-index: 1;
   cursor: pointer;
-  gap: 5px;
-  padding: 2px 0;
-  transition: opacity 0.15s;
+  padding: 0 6px;
 }
-.bb-phase-node:hover { opacity: 0.85; }
 
 .bb-phase-dot {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 2px solid rgba(94, 127, 160, 0.45);
-  background: rgba(22, 28, 44, 0.95);
-  color: #5a7898;
+  border: 2px solid #28354a;
+  background: #1a2030;
+  color: #4a6880;
   font-size: 0.72rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.18s;
-  position: relative;
-  z-index: 1;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.15s;
+  font-family: var(--font-sans);
 }
-
+.bb-phase-node:hover .bb-phase-dot {
+  border-color: var(--accent-light);
+  color: #a8c0d4;
+}
 .bb-phase-node.active .bb-phase-dot {
-  width: 34px;
-  height: 34px;
-  border: 2px solid var(--accent-light);
+  border-color: var(--accent-light);
   background: var(--accent);
-  color: #e8f0f8;
-  font-size: 0.85rem;
-  box-shadow: 0 0 0 5px rgba(62, 90, 122, 0.25);
-  transform: translateY(-2px);
+  color: #e0ecf4;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px rgba(62, 90, 122, 0.35);
 }
 
-.bb-phase-node-label {
-  font-size: 0.58rem;
-  letter-spacing: 0.04em;
-  color: #44647e;
-  text-align: center;
-  max-width: 70px;
-  line-height: 1.2;
+/* Phase label — takes remaining space */
+#bb-phase-label-float {
+  flex: 1;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--chrome-text);
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.18s;
-}
-.bb-phase-node.active .bb-phase-node-label { color: #8ab0cc; }
-
-/* Phase label below the track */
-#bb-phase-label-float {
-  font-family: var(--font-serif);
-  font-size: 0.92rem;
-  color: #b8ccd8;
-  text-align: center;
-  letter-spacing: 0.01em;
-  line-height: 1.35;
-  padding-top: 2px;
-  border-top: 1px solid rgba(94, 127, 160, 0.15);
-  width: 100%;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--chrome-border);
 }
 
 /* ── Battle story panel ─────────────────────────────────────────── */

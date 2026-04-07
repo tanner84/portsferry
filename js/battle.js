@@ -71,9 +71,6 @@ PF.battle.enter = function (battle) {
   document.getElementById('timeline-bar').classList.add('hidden');
   document.getElementById('battle-bar').classList.remove('hidden');
 
-  /* Show floating phase navigator */
-  document.getElementById('battle-phase-nav').classList.remove('hidden');
-
   /* Ensure battle layer exists */
   if (!PF.battle._layer) {
     PF.battle._layer = L.layerGroup().addTo(PF.map.instance);
@@ -116,7 +113,6 @@ PF.battle.exit = function (silent) {
   PF.battle._phaseIndex = 0;
 
   document.getElementById('battle-bar').classList.add('hidden');
-  document.getElementById('battle-phase-nav').classList.add('hidden');
   document.getElementById('timeline-bar').classList.remove('hidden');
 
   /* Restore community layers */
@@ -384,15 +380,14 @@ function _updateBar() {
     confEl.className   = 'bb-confidence bb-conf-' + conf.toLowerCase();
   }
 
-  /* Floating navigator — rebuild phase nodes */
+  /* Phase dot track — rebuild nodes */
   const track = document.getElementById('bb-phase-track');
   if (track) {
     track.innerHTML = phases.map((ph, i) => `
       <div class="bb-phase-node${i === idx ? ' active' : ''}"
            data-phase-idx="${i}" role="button" tabindex="0"
-           title="Phase ${ph.phaseIndex}: ${ph.phaseLabel}">
+           title="Phase ${ph.phaseIndex}: ${_esc(ph.phaseLabel)}">
         <div class="bb-phase-dot">${ph.phaseIndex}</div>
-        <div class="bb-phase-node-label">${_esc(ph.phaseLabel)}</div>
       </div>`).join('');
 
     track.querySelectorAll('.bb-phase-node').forEach(node => {
@@ -402,7 +397,7 @@ function _updateBar() {
     });
   }
 
-  /* Phase label below nodes */
+  /* Phase label in the right portion of row 2 */
   const labelEl = document.getElementById('bb-phase-label-float');
   if (labelEl) {
     labelEl.textContent = `Phase ${phase.phaseIndex} of ${phases.length}  ·  ${phase.phaseLabel}`;
