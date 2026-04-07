@@ -41,11 +41,6 @@ PF.battle.init = function () {
   document.getElementById('bb-step-back').addEventListener('click', () => PF.battle.stepBack());
   document.getElementById('bb-step-fwd').addEventListener('click',  () => PF.battle.stepForward());
 
-  const slider = document.getElementById('bb-phase-slider');
-  slider.addEventListener('input', () => {
-    PF.battle.setPhase(parseInt(slider.value), true);
-  });
-
   console.info('[PF.battle] Battle module initialised.');
 };
 
@@ -75,6 +70,9 @@ PF.battle.enter = function (battle) {
   PF.timeline.pause();
   document.getElementById('timeline-bar').classList.add('hidden');
   document.getElementById('battle-bar').classList.remove('hidden');
+
+  /* Show floating phase navigator */
+  document.getElementById('battle-phase-nav').classList.remove('hidden');
 
   /* Ensure battle layer exists */
   if (!PF.battle._layer) {
@@ -118,6 +116,7 @@ PF.battle.exit = function (silent) {
   PF.battle._phaseIndex = 0;
 
   document.getElementById('battle-bar').classList.add('hidden');
+  document.getElementById('battle-phase-nav').classList.add('hidden');
   document.getElementById('timeline-bar').classList.remove('hidden');
 
   /* Restore community layers */
@@ -360,7 +359,7 @@ function _confidenceLabel(conf) {
 }
 
 /* ================================================================
-   Battle bar UI update
+   Battle bar and phase navigator UI update
    ================================================================ */
 
 function _updateBar() {
@@ -370,7 +369,7 @@ function _updateBar() {
   const phase  = phases[idx];
   if (!battle || !phase) return;
 
-  /* Header row */
+  /* Slim title bar */
   const titleEl = document.getElementById('bb-battle-title');
   if (titleEl) titleEl.textContent = battle.name + ' · ' + (battle.date || '');
 
@@ -381,17 +380,28 @@ function _updateBar() {
     confEl.className   = 'bb-confidence bb-conf-' + conf.toLowerCase();
   }
 
-  /* Phase row */
-  const labelEl = document.getElementById('bb-phase-label');
-  if (labelEl) {
-    labelEl.textContent = `Phase ${phase.phaseIndex} of ${phases.length}  ·  ${phase.phaseLabel}`;
+  /* Floating navigator — rebuild phase nodes */
+  const track = document.getElementById('bb-phase-track');
+  if (track) {
+    track.innerHTML = phases.map((ph, i) => `
+      <div class="bb-phase-node${i === idx ? ' active' : ''}"
+           data-phase-idx="${i}" role="button" tabindex="0"
+           title="Phase ${ph.phaseIndex}: ${ph.phaseLabel}">
+        <div class="bb-phase-dot">${ph.phaseIndex}</div>
+        <div class="bb-phase-node-label">${_esc(ph.phaseLabel)}</div>
+      </div>`).join('');
+
+    track.querySelectorAll('.bb-phase-node').forEach(node => {
+      const go = () => PF.battle.setPhase(parseInt(node.dataset.phaseIdx), true);
+      node.addEventListener('click', go);
+      node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') go(); });
+    });
   }
 
-  const slider = document.getElementById('bb-phase-slider');
-  if (slider) {
-    slider.min   = 0;
-    slider.max   = phases.length - 1;
-    slider.value = idx;
+  /* Phase label below nodes */
+  const labelEl = document.getElementById('bb-phase-label-float');
+  if (labelEl) {
+    labelEl.textContent = `Phase ${phase.phaseIndex} of ${phases.length}  ·  ${phase.phaseLabel}`;
   }
 
   /* Step button enable/disable */

@@ -1044,26 +1044,22 @@ button { font-family: inherit; cursor: pointer; }
    BATTLE MODE
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Battle bar — replaces timeline bar in Battle Mode ─────────── */
+/* ── Battle bar — slim title strip in Battle Mode ───────────────── */
 #battle-bar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.25rem;
+  height: var(--timeline-h);
   background: var(--chrome-bg);
   border-top: 2px solid var(--accent);
   flex-shrink: 0;
   z-index: 900;
 }
 
-#bb-top-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.32rem 1.25rem;
-  border-bottom: 1px solid var(--chrome-border);
-}
-
 #bb-back-btn {
-  padding: 0.22rem 0.75rem;
+  padding: 0.28rem 0.85rem;
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.05em;
@@ -1080,7 +1076,7 @@ button { font-family: inherit; cursor: pointer; }
 
 #bb-battle-title {
   font-family: var(--font-serif);
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   color: var(--chrome-text);
   letter-spacing: 0.02em;
   flex: 1;
@@ -1094,7 +1090,7 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.12rem 0.5rem;
+  padding: 0.14rem 0.55rem;
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -1103,46 +1099,148 @@ button { font-family: inherit; cursor: pointer; }
 .bb-conf-low      { background: #2a1a1a; color: #b06060; border: 1px solid #4a2a2a; }
 .bb-conf-inferred { background: #1e2035; color: #7a8aaa; border: 1px solid #2e3a55; }
 
-#bb-phase-row {
+/* ── Floating phase navigator — centered over map ───────────────── */
+#battle-phase-nav {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 800;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+
+  background: rgba(22, 28, 42, 0.92);
+  border: 1px solid rgba(94, 127, 160, 0.35);
+  border-radius: 8px;
+  padding: 12px 18px 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  min-width: 280px;
+  max-width: 520px;
+  pointer-events: all;
+}
+
+/* row: ◄  [node]──[node]──[node]  ► */
+#battle-phase-nav > div:first-of-type {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.28rem 1.25rem;
-}
-
-#bb-step-back,
-#bb-step-fwd {
-  background: #202c40;
-  border: 1px solid var(--chrome-border);
-  color: #7a8fa8;
-  padding: 0.2rem 0.55rem;
-  font-size: 0.72rem;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: color 0.1s, background 0.1s;
-}
-#bb-step-back:hover:not(:disabled),
-#bb-step-fwd:hover:not(:disabled)  { color: #d0d8e4; background: #283a52; }
-#bb-step-back:disabled,
-#bb-step-fwd:disabled              { opacity: 0.35; cursor: default; }
-
-#bb-phase-slider-wrap {
-  flex: 1;
-}
-#bb-phase-slider {
+  gap: 0;
   width: 100%;
-  cursor: pointer;
-  accent-color: var(--accent-light);
 }
 
-#bb-phase-label {
-  font-family: var(--font-serif);
-  font-size: 0.9rem;
-  color: var(--chrome-text);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
+.bb-nav-arrow {
+  background: none;
+  border: 1px solid rgba(94, 127, 160, 0.4);
+  border-radius: 4px;
+  color: #7a9ab8;
+  width: 30px;
+  height: 30px;
+  font-size: 0.75rem;
+  cursor: pointer;
   flex-shrink: 0;
-  min-width: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.bb-nav-arrow:hover:not(:disabled) {
+  background: rgba(62, 90, 122, 0.6);
+  color: #d0dce8;
+  border-color: rgba(94, 127, 160, 0.7);
+}
+.bb-nav-arrow:disabled { opacity: 0.25; cursor: default; }
+
+#bb-phase-track {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0 10px;
+  position: relative;
+}
+
+/* Connecting line behind nodes */
+#bb-phase-track::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: rgba(94, 127, 160, 0.3);
+  pointer-events: none;
+}
+
+.bb-phase-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  gap: 4px;
+  padding: 4px 2px;
+}
+
+.bb-phase-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(94, 127, 160, 0.5);
+  background: rgba(22, 28, 42, 0.9);
+  color: #6a8aaa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s;
+  position: relative;
+  z-index: 1;
+}
+
+.bb-phase-node:hover .bb-phase-dot {
+  border-color: var(--accent-light);
+  background: rgba(62, 90, 122, 0.5);
+  color: #c8d8e8;
+}
+
+.bb-phase-node.active .bb-phase-dot {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--accent-light);
+  background: var(--accent);
+  color: #e8f0f8;
+  font-size: 0.82rem;
+  box-shadow: 0 0 0 4px rgba(94, 127, 160, 0.18);
+}
+
+.bb-phase-node-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: #5a7a98;
+  text-align: center;
+  max-width: 64px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.18s;
+}
+.bb-phase-node.active .bb-phase-node-label { color: #9ab8d0; }
+.bb-phase-node:hover .bb-phase-node-label  { color: #8aaac4; }
+
+#bb-phase-label-float {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: #c8d8e4;
+  text-align: center;
+  margin-top: 6px;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
 }
 
 /* ── Battle story panel ─────────────────────────────────────────── */
