@@ -284,17 +284,37 @@ PF.panels._renderOrderOfBattle = function (filterQuery) {
 PF.panels._renderEventList = function () {
   const list  = document.getElementById('event-list');
   const items = (PF.data.raw.EVENTS || []).slice(0, 25);
-  list.innerHTML = items.map(evt => `
-    <li role="button" tabindex="0" data-evt-id="${h(evt.evt_id)}">
-      <span class="dot" style="background:#777;border-radius:1px;width:6px;height:6px;"></span>
-      <span>${h(evt.name || evt.evt_id)}</span>
-      <span class="entity-meta">${h(evt.date || '')}</span>
-    </li>`).join('');
+
+  list.innerHTML = items.map(evt => {
+    const isBattle = evt.type === 'battle';
+    const dot = isBattle
+      ? `<span style="width:8px;height:8px;background:#8b2020;border-radius:1px;transform:rotate(45deg);display:inline-block;flex-shrink:0"></span>`
+      : `<span class="dot" style="background:#777;border-radius:1px;width:6px;height:6px;"></span>`;
+    return `
+      <li role="button" tabindex="0" data-evt-id="${h(evt.evt_id)}" data-evt-type="${h(evt.type || '')}">
+        ${dot}
+        <span>${h(evt.name || evt.evt_id)}</span>
+        <span class="entity-meta">${h(evt.date || '')}</span>
+      </li>`;
+  }).join('');
 
   list.querySelectorAll('li').forEach(li => {
     li.addEventListener('click', () => {
       const evt = (PF.data.raw.EVENTS || []).find(e => e.evt_id === li.dataset.evtId);
-      if (evt) PF.panels.showEvent(evt);
+      if (!evt) return;
+
+      /* Battle-type events: find matching BATTLES record and enter Battle Mode */
+      if (li.dataset.evtType === 'battle') {
+        const battle = (PF.data.raw.BATTLES || []).find(b =>
+          b.name === evt.name ||
+          b.date === evt.date ||
+          (Math.abs(PF.data._parseCoord(b.lat) - PF.data._parseCoord(evt.lat)) < 0.01 &&
+           Math.abs(PF.data._parseCoord(b.lng) - PF.data._parseCoord(evt.lng)) < 0.01)
+        );
+        if (battle) { PF.panels.showBattle(battle); return; }
+      }
+
+      PF.panels.showEvent(evt);
     });
   });
 };
@@ -343,6 +363,8 @@ PF.panels.setView = function (view) {
       PF.map.layers.individuals.clearLayers();
       PF.map.renderChurches(churches);
       PF.panels._renderBattleMarkers();
+      /* Fit map to show all battle sites */
+      PF.panels._fitBattles();
       break;
   }
 };
@@ -393,6 +415,26 @@ PF.panels._renderBattleMarkers = function () {
     );
     m.on('click', () => PF.panels.showBattle(b));
   });
+};
+
+PF.panels._fitBattles = function () {
+  const battles = (PF.data.raw.BATTLES || []).filter(b =>
+    PF.data._parseCoord(b.lat) !== null && PF.data._parseCoord(b.lng) !== null
+  );
+  if (battles.length === 0) return;
+
+  if (battles.length === 1) {
+    const b = battles[0];
+    PF.map.focusOn(PF.data._parseCoord(b.lat), PF.data._parseCoord(b.lng), 12);
+    return;
+  }
+
+  const lats = battles.map(b => PF.data._parseCoord(b.lat));
+  const lngs = battles.map(b => PF.data._parseCoord(b.lng));
+  PF.map.instance.fitBounds(
+    [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]],
+    { padding: [60, 60], maxZoom: 12, animate: true, duration: 0.7 }
+  );
 };
 
 /* ================================================================
