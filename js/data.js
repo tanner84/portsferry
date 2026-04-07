@@ -572,6 +572,22 @@ PF.data.getBattlePhases = function (battle_id) {
 };
 
 /**
+ * Battle participants enriched with individual records.
+ * Returns BATTLE_PARTICIPANTS rows joined to INDIVIDUALS for display
+ * in the battle phase story panel.
+ *
+ * @param {string} battle_id
+ * @param {string} [unit_id] — if provided, filter to one unit
+ * @returns {Array<{ bp, individual }>}
+ */
+PF.data.getBattleParticipants = function (battle_id, unit_id) {
+  return (PF.data.raw.BATTLE_PARTICIPANTS || [])
+    .filter(bp => bp.battle_id === battle_id && (!unit_id || bp.unit_id === unit_id))
+    .map(bp => ({ bp, individual: PF.data.getIndividualById(bp.ind_id) }))
+    .filter(({ individual }) => !!individual);
+};
+
+/**
  * Cross-reference battle participants against IND_CHURCH to surface
  * the community network argument: the men at the battle are the same
  * men from the church rolls.

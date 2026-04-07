@@ -270,13 +270,19 @@ function _placeMarker(pos) {
   });
 
   /* Tooltip */
-  const confNote = _confidenceLabel(pos.confidence);
+  const hasStrength = pos.strength_estimated && pos.strength_estimated !== '0';
+  const confNote    = _confidenceLabel(pos.confidence);
+  const coordNote   = pos.coord_confidence && pos.coord_confidence !== 'Approximate'
+    ? `Position: ${pos.coord_confidence}`
+    : pos.coord_confidence === 'Approximate' ? 'Position approximate' : '';
+
   marker.bindTooltip(
     `<strong>${_esc(unit ? unit.name : pos.unit_id)}</strong>` +
-    (pos.strength_estimated ? `<br>~${_esc(pos.strength_estimated)} men` : '') +
-    (pos.facing             ? ` · facing ${_esc(pos.facing)}`            : '') +
+    (hasStrength        ? `<br>~${_esc(pos.strength_estimated)} men`    : '') +
+    (pos.facing         ? ` · facing ${_esc(pos.facing)}`               : '') +
     `<br>${_esc(pos.action || '')}` +
-    (confNote ? `<br><em style="color:#9aafcc">${confNote}</em>` : ''),
+    (confNote  ? `<br><em style="color:#c08060">${confNote}</em>`  : '') +
+    (coordNote ? `<br><em style="color:#9aafcc">${coordNote}</em>` : ''),
     { className: 'pf-tooltip', direction: 'top', offset: [0, -10] }
   );
 

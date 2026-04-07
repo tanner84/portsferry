@@ -1,26 +1,86 @@
 [
   {
-    "bp_id": "bp_001",
+    "bp_id": "BP001",
     "battle_id": "bat_001",
-    "unit_id": "unit_002",
-    "ind_id": "ind_001",
-    "role": "Commanding officer — ill; remained with rear elements",
-    "source_ids": "src_001|src_mcb_002"
-  },
-  {
-    "bp_id": "bp_002",
-    "battle_id": "bat_001",
-    "unit_id": "unit_002",
     "ind_id": "ind_002",
-    "role": "Led charge across bridge; KIA at the bridge, 27 February 1776",
-    "source_ids": "src_mcb_001|src_003"
+    "unit_id": "unit_010",
+    "role": "Effective commanding officer at battle; led charge",
+    "position_ref": "P012",
+    "casualty": "Killed",
+    "pension_account": "N/A — British officer",
+    "tier_justification": "Command tier — effective commander at decisive action",
+    "source_ids": "src_moore_aar|src_ncpedia_mocr"
   },
   {
-    "bp_id": "bp_003",
+    "bp_id": "BP002",
     "battle_id": "bat_001",
+    "ind_id": "ind_010",
+    "unit_id": "unit_009",
+    "role": "Led advance broadsword company across bridge",
+    "position_ref": "P011",
+    "casualty": "Killed",
+    "pension_account": "N/A — British officer",
+    "tier_justification": "Command tier — company commander at Tier 2 battle directly tied to focal community",
+    "source_ids": "src_moore_aar|src_wikipedia_mocr"
+  },
+  {
+    "bp_id": "BP003",
+    "battle_id": "bat_001",
+    "ind_id": "ind_001",
     "unit_id": "unit_002",
-    "ind_id": "ind_003",
-    "role": "Led advance company of swordsmen; wounded and captured",
-    "source_ids": "src_mcb_001|src_001"
+    "role": "Nominal commanding general; too ill to command; captured next day",
+    "position_ref": "P004",
+    "casualty": "Captured",
+    "pension_account": "N/A",
+    "tier_justification": "Command tier — general officer in database",
+    "source_ids": "src_moore_aar|src_wikipedia_mocr"
+  },
+  {
+    "bp_id": "BP004",
+    "battle_id": "bat_001",
+    "ind_id": "ind_011",
+    "unit_id": "unit_003",
+    "role": "Patriot field commander — west bank deception and east bank defense",
+    "position_ref": "P005",
+    "casualty": "None",
+    "pension_account": "N/A — became Governor of NC 1776",
+    "tier_justification": "Command tier — senior Patriot commander at battle",
+    "source_ids": "src_moore_aar|src_amrevnc|src_ncpedia_mocr"
+  },
+  {
+    "bp_id": "BP005",
+    "battle_id": "bat_001",
+    "ind_id": "ind_012",
+    "unit_id": "unit_004",
+    "role": "Commanded east bank earthworks; arrived before Caswell",
+    "position_ref": "P002",
+    "casualty": "None",
+    "pension_account": "N/A",
+    "tier_justification": "Command tier — senior Patriot commander, earthworks position confirmed by NPS",
+    "source_ids": "src_moore_aar|src_amrevnc"
+  },
+  {
+    "bp_id": "BP006",
+    "battle_id": "bat_001",
+    "ind_id": "ind_013",
+    "unit_id": "unit_005",
+    "role": "Commanded New Hanover Rangers flanking position east bank",
+    "position_ref": "P003",
+    "casualty": "None",
+    "pension_account": "N/A",
+    "tier_justification": "Company tier — company commander at Tier 2 battle",
+    "source_ids": "src_wikipedia_mocr|src_fandom_wiki"
+  },
+  {
+    "bp_id": "BP007",
+    "battle_id": "bat_001",
+    "ind_id": "ind_014",
+    "unit_id": "unit_003",
+    "role": "Intelligence function — deserted Loyalist camp to warn Patriots of dawn attack",
+    "position_ref": "P007",
+    "casualty": "None",
+    "pension_account": "Unknown",
+    "tier_justification": "Exception tier — documented intelligence function; changed outcome of battle",
+    "source_ids": "src_wikipedia_mocr|src_amrevnc"
   }
 ]

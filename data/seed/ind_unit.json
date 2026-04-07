@@ -42,16 +42,16 @@
     "rank": "Brigadier General",
     "date_from": "1776",
     "date_to": "1776",
-    "source_ids": "src_001"
+    "source_ids": "src_001|src_moore_aar"
   },
   {
     "link_id": "iu_006",
     "ind_id": "ind_002",
-    "unit_id": "unit_002",
+    "unit_id": "unit_010",
     "rank": "Lieutenant Colonel",
     "date_from": "1776",
     "date_to": "1776",
-    "source_ids": "src_001"
+    "source_ids": "src_001|src_moore_aar"
   },
   {
     "link_id": "iu_007",
@@ -60,6 +60,51 @@
     "rank": "Captain",
     "date_from": "1776",
     "date_to": "1776",
-    "source_ids": "src_001"
+    "source_ids": "src_001|src_moore_aar"
+  },
+  {
+    "link_id": "iu_008",
+    "ind_id": "ind_010",
+    "unit_id": "unit_009",
+    "rank": "Captain",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_moore_aar|src_wikipedia_mocr"
+  },
+  {
+    "link_id": "iu_009",
+    "ind_id": "ind_011",
+    "unit_id": "unit_003",
+    "rank": "Colonel",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_moore_aar|src_amrevnc"
+  },
+  {
+    "link_id": "iu_010",
+    "ind_id": "ind_012",
+    "unit_id": "unit_004",
+    "rank": "Colonel",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_moore_aar|src_amrevnc"
+  },
+  {
+    "link_id": "iu_011",
+    "ind_id": "ind_013",
+    "unit_id": "unit_005",
+    "rank": "Captain",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_wikipedia_mocr"
+  },
+  {
+    "link_id": "iu_012",
+    "ind_id": "ind_014",
+    "unit_id": "unit_003",
+    "rank": "Intelligence contact",
+    "date_from": "1776",
+    "date_to": "1776",
+    "source_ids": "src_wikipedia_mocr|src_amrevnc"
   }
 ]

@@ -1035,14 +1035,17 @@ PF.panels.showBattlePhase = function (battle, phase) {
         <div class="battle-action-text">${h(pos.action || '')}</div>
 
         <div style="margin-bottom:0.35rem">
-          ${pos.strength_estimated ? _dataRow('Strength', '~' + h(pos.strength_estimated) + ' men') : ''}
-          ${pos.facing             ? _dataRow('Facing',   h(pos.facing))                            : ''}
+          ${pos.strength_estimated && pos.strength_estimated !== '0' ? _dataRow('Strength', '~' + h(pos.strength_estimated) + ' men') : ''}
+          ${pos.facing ? _dataRow('Facing', h(pos.facing)) : ''}
         </div>
 
         ${posConf && posConf !== 'high' ? `
           <span class="battle-pos-confidence confidence-${posConf}">
             Position confidence: ${h(pos.confidence)}
+            ${pos.coord_confidence ? ' · ' + h(pos.coord_confidence) : ''}
           </span>` : ''}
+
+        ${_buildBattleParticipants(battle.battle_id, pos.unit_id)}
 
         ${_buildBattleCommunityOrigin(origin)}
 
@@ -1076,8 +1079,8 @@ PF.panels.showBattlePhase = function (battle, phase) {
 
   _showEntity(`Phase ${phase.phaseIndex}: ${phase.phaseLabel}`, html);
 
-  /* Wire community member clicks → individual story panel */
-  document.querySelectorAll('#story-entity .community-member-list li[data-ind-id]').forEach(li => {
+  /* Wire participant and community member clicks → individual story panel */
+  document.querySelectorAll('#story-entity li[data-ind-id]').forEach(li => {
     li.addEventListener('click', () => {
       const ind = PF.data.getIndividualById(li.dataset.indId);
       if (ind) PF.panels.showIndividual(ind);
@@ -1092,6 +1095,36 @@ PF.panels.showBattlePhase = function (battle, phase) {
     });
   });
 };
+
+/**
+ * Build the named participants list for a unit at a battle.
+ * Shows individuals in BATTLE_PARTICIPANTS for this unit, with role and
+ * casualty status. Clicking a name opens the individual story panel.
+ */
+function _buildBattleParticipants(battle_id, unit_id) {
+  const participants = PF.data.getBattleParticipants(battle_id, unit_id);
+  if (participants.length === 0) return '';
+
+  return `
+    <div class="story-section" style="margin-top:0.5rem">
+      <div class="story-section-label">Named individuals — database record</div>
+      <ul class="conn-list">
+        ${participants.map(({ bp, individual }) => {
+          const affCls   = PF.map.affiliationClass(individual.affiliation);
+          const casualty = bp.casualty && bp.casualty !== 'None'
+            ? `<span style="color:#a04040;font-size:0.68rem;margin-left:0.3rem">${h(bp.casualty)}</span>`
+            : '';
+          return `
+            <li data-ind-id="${h(individual.ind_id)}" role="button" tabindex="0">
+              <span class="dot dot-${affCls}"></span>
+              ${h(individual.full_name || 'Unknown')}
+              ${casualty}
+              <span class="conn-rel">${h(bp.role || '')}</span>
+            </li>`;
+        }).join('')}
+      </ul>
+    </div>`;
+}
 
 /**
  * Build the community origin section for a battle unit phase.

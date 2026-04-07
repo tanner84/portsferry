@@ -108,5 +108,104 @@
     "record_system": "JSTOR",
     "zone": "2",
     "evidence_type": "Secondary"
+  },
+  {
+    "src_id": "src_moore_aar",
+    "title": "Moore, James — After-Action Report to NC Provincial Congress, 2 March 1776 (CSR 11-0146)",
+    "type": "Primary — official after-action report",
+    "repository": "NC State Archives; Calendar of State Records vol. XI",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "NCCR",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_rankin_1953",
+    "title": "Rankin, Hugh F. 'The Moore's Creek Bridge Campaign, 1776.' North Carolina Historical Review 30, no. 1 (1953): 23–60",
+    "type": "Secondary — scholarly article",
+    "repository": "NCHR; JSTOR",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "JSTOR",
+    "zone": "2",
+    "evidence_type": "Secondary"
+  },
+  {
+    "src_id": "src_ncpedia_mocr",
+    "title": "NCpedia — Battle of Moore's Creek Bridge",
+    "type": "Secondary — published encyclopedia",
+    "repository": "NCpedia.org (State Library of NC)",
+    "digitized": "Y",
+    "url": "https://www.ncpedia.org/moores-creek-bridge-battle",
+    "record_system": "NCpedia",
+    "zone": "3",
+    "evidence_type": "Secondary"
+  },
+  {
+    "src_id": "src_amrevnc",
+    "title": "American Revolution in North Carolina — Moore's Creek Bridge",
+    "type": "Secondary — scholarly web database",
+    "repository": "AmRevNC.com",
+    "digitized": "Y",
+    "url": "https://www.amrevnc.org/s/amrevnc/item/10132",
+    "record_system": "AmRevNC",
+    "zone": "3",
+    "evidence_type": "Secondary"
+  },
+  {
+    "src_id": "src_nps_mocr",
+    "title": "NPS Moore's Creek National Battlefield — Park Historians and Archaeology Reports",
+    "type": "Secondary — institutional",
+    "repository": "National Park Service, Moore's Creek NB, Currie NC",
+    "digitized": "N",
+    "url": "",
+    "record_system": "NPS",
+    "zone": "2",
+    "evidence_type": "Secondary"
+  },
+  {
+    "src_id": "src_revolutionarywar_us",
+    "title": "RevolutionaryWar.us — Battle of Moore's Creek Bridge",
+    "type": "Tertiary — web reference",
+    "repository": "revolutionarywar.us",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "Web",
+    "zone": "4",
+    "evidence_type": "Tertiary"
+  },
+  {
+    "src_id": "src_allthingsliberty",
+    "title": "All Things Liberty — Moore's Creek Bridge",
+    "type": "Tertiary — web reference",
+    "repository": "allthingsliberty.com",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "Web",
+    "zone": "4",
+    "evidence_type": "Tertiary"
+  },
+  {
+    "src_id": "src_wikipedia_mocr",
+    "title": "Wikipedia — Battle of Moore's Creek Bridge",
+    "type": "Tertiary — encyclopedia",
+    "repository": "Wikipedia.org",
+    "digitized": "Y",
+    "url": "https://en.wikipedia.org/wiki/Battle_of_Moore%27s_Creek_Bridge",
+    "record_system": "Wikipedia",
+    "zone": "4",
+    "evidence_type": "Tertiary"
+  },
+  {
+    "src_id": "src_fandom_wiki",
+    "title": "American Revolution Wiki (Fandom) — Battle of Moore's Creek Bridge",
+    "type": "Tertiary — wiki",
+    "repository": "Fandom.com",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "Web",
+    "zone": "4",
+    "evidence_type": "Tertiary"
   }
 ]

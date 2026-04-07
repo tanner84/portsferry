@@ -16,7 +16,117 @@
     "parent_unit": "",
     "active_from": "1776",
     "active_to": "1776",
-    "source_ids": "src_001|src_002",
-    "notes": "Assembled Cross Creek, January–February 1776. Approximately 1,500 at muster, reduced to 700–800 by time of battle. Commanded by BG Donald MacDonald (ill); LTC Donald MacLeod led the charge, KIA February 27, 1776. Disbanded and largely captured after Moore's Creek Bridge."
+    "source_ids": "src_001|src_002|src_moore_aar",
+    "notes": "Assembled Cross Creek, January–February 1776. Approximately 1,500 at muster, reduced to ~700–800 by time of battle. Commanded nominally by BG Donald MacDonald (ill); effective command passed to LTC Donald MacLeod before the battle. Disbanded and largely captured after Moore's Creek Bridge."
+  },
+  {
+    "unit_id": "unit_003",
+    "name": "Caswell's NC Minutemen",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_moore_aar|src_amrevnc",
+    "notes": "Colonel Richard Caswell commanding. Approximately 800 men. Occupied west bank camp, withdrew across bridge before dawn February 27, participated in defense of east bank earthworks and subsequent pursuit."
+  },
+  {
+    "unit_id": "unit_004",
+    "name": "Lillington's Wilmington Minutemen",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_moore_aar|src_amrevnc|src_ncpedia_mocr",
+    "notes": "Colonel Alexander Lillington commanding. Approximately 150 men. Constructed and held the east bank earthworks. NPS archaeology confirms earthworks exactly on original position: roughly 4ft high, 7ft wide, 2ft ditch outside."
+  },
+  {
+    "unit_id": "unit_005",
+    "name": "Ashe's New Hanover Rangers",
+    "affiliation": "Patriot Volunteer",
+    "parent_unit": "",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_wikipedia_mocr|src_fandom_wiki",
+    "notes": "Captain John Ashe commanding. Approximately 100 men. New Hanover Volunteer Company of Rangers. Caswell's report grouped Ashe's men with Lillington's force, causing undercounts in some early sources."
+  },
+  {
+    "unit_id": "unit_006",
+    "name": "Patriot Combined Artillery",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "unit_003",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_amrevnc|src_nps_mocr",
+    "notes": "Mother Covington (3-pounder) and daughter (half-pounder) positioned behind earthworks. Additional 6 or 9-pounders per NPS park historians. Several pieces loaded with swanshot — tin canisters spreading approximately 20 small bullets on impact."
+  },
+  {
+    "unit_id": "unit_007",
+    "name": "Loyalist Right Wing",
+    "affiliation": "Loyalist Militia",
+    "parent_unit": "unit_002",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_amrevnc",
+    "notes": "Approximately 400 men. Advanced toward bridge; found Caswell's camp empty with fires still burning; believed Patriots in retreat. A flag-of-truce messenger had earlier scouted Patriot position at midnight."
+  },
+  {
+    "unit_id": "unit_008",
+    "name": "Loyalist Left Wing",
+    "affiliation": "Loyalist Militia",
+    "parent_unit": "unit_002",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_amrevnc",
+    "notes": "Approximately 300 men. Saw empty Patriot camp with fires burning; fell back into woods to consult MacDonald; did NOT participate in the charge. As AmRevNC notes: literally the right hand did not know what the left hand was doing."
+  },
+  {
+    "unit_id": "unit_009",
+    "name": "Campbell's Highland Advance Company",
+    "affiliation": "Loyalist Militia",
+    "parent_unit": "unit_002",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_moore_aar|src_wikipedia_mocr|src_rankin_1953",
+    "notes": "Captain John Campbell commanding. Approximately 75 picked broadswordsmen. Led charge across dismantled, greased bridge stringers. Yelled 'King George and Broadswords.' Campbell killed at or near east bank."
+  },
+  {
+    "unit_id": "unit_010",
+    "name": "MacLeod's Command",
+    "affiliation": "Loyalist Militia",
+    "parent_unit": "unit_002",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_moore_aar|src_ncpedia_mocr",
+    "notes": "LTC Donald MacLeod commanding. Led charge with Campbell. KIA on bridge. Sources disagree on wound count: Moore AAR says 'upwards of twenty balls'; NCpedia says 9 bullets and 24 swan shot; Wikipedia says 20 musket balls."
+  },
+  {
+    "unit_id": "unit_011",
+    "name": "Patriot Combined Force — Earthworks",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_moore_aar|src_amrevnc|src_wikipedia_mocr",
+    "notes": "Combined Caswell and Lillington forces holding east bank earthworks during the action. Approximately 950 total. Held fire until Loyalists within approximately 30 paces; opened with muskets and artillery simultaneously. Battle lasted approximately 3 minutes."
+  },
+  {
+    "unit_id": "unit_012",
+    "name": "Patriot Pursuit — Main",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "unit_003",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_wikipedia_mocr|src_moore_aar",
+    "notes": "Patriots replaced bridge planks and crossed in pursuit of retreating Loyalists. Colonel Moore arrived on scene a few hours after the battle."
+  },
+  {
+    "unit_id": "unit_013",
+    "name": "Patriot Pursuit — Flanking Company",
+    "affiliation": "Patriot Militia",
+    "parent_unit": "unit_003",
+    "active_from": "1776",
+    "active_to": "1776",
+    "source_ids": "src_wikipedia_mocr",
+    "notes": "One company led by one of Caswell's lieutenants. Forded creek above bridge to flank retreating Loyalists. Officer unnamed in all sources consulted."
   }
 ]
