@@ -353,16 +353,42 @@ PF.panels._renderBattleMarkers = function () {
     const lng = PF.data._parseCoord(b.lng);
     if (lat === null || lng === null) return;
 
-    const m = L.circleMarker([lat, lng], {
-      radius:      10,
-      color:       '#8a6b3a',
-      fillColor:   '#8a6b3a',
-      fillOpacity: 0.25,
-      weight:      2,
-    }).addTo(PF.map.layers.individuals);
+    /* X-shaped battle site marker using divIcon */
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        width:18px; height:18px;
+        position:relative; display:flex;
+        align-items:center; justify-content:center;
+      ">
+        <div style="
+          position:absolute;
+          width:14px; height:3px;
+          background:#8b2020;
+          border-radius:1px;
+          transform:rotate(45deg);
+          box-shadow:0 1px 4px rgba(0,0,0,0.5);
+        "></div>
+        <div style="
+          position:absolute;
+          width:14px; height:3px;
+          background:#8b2020;
+          border-radius:1px;
+          transform:rotate(-45deg);
+          box-shadow:0 1px 4px rgba(0,0,0,0.5);
+        "></div>
+      </div>`,
+      iconSize:   [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor:[0, -12],
+    });
+
+    const m = L.marker([lat, lng], { icon, title: b.name || b.battle_id, zIndexOffset: 50 });
+    m.addTo(PF.map.layers.individuals);
 
     m.bindTooltip(
-      `<strong>${h(b.name || b.battle_id)}</strong><br>${h(b.date || '')}`,
+      `<strong>${h(b.name || b.battle_id)}</strong><br>${h(b.date || '')}` +
+      `<br><em style="color:#9aafcc">Click to enter Battle Mode</em>`,
       { className: 'pf-tooltip' }
     );
     m.on('click', () => PF.panels.showBattle(b));
@@ -889,8 +915,18 @@ function _buildCommunityOrigin(unit, origin) {
 
 /* ================================================================
    Story panel — BATTLE
+   Entry point: if UNIT_POSITIONS exist, enter Battle Mode.
+   If no positions are available (future battle not yet populated),
+   fall back to a basic info panel.
    ================================================================ */
 PF.panels.showBattle = function (battle) {
+  /* Enter Battle Mode if position data exists */
+  if (PF.battle && typeof PF.battle.enter === 'function') {
+    const entered = PF.battle.enter(battle);
+    if (entered !== false) return;
+  }
+
+  /* Fallback — no UNIT_POSITIONS for this battle yet */
   const lat = PF.data._parseCoord(battle.lat);
   const lng = PF.data._parseCoord(battle.lng);
   if (lat !== null && lng !== null) PF.map.focusOn(lat, lng, 13);
@@ -901,6 +937,12 @@ PF.panels.showBattle = function (battle) {
     <div class="story-section">
       <div class="story-name">${h(battle.name || battle.battle_id || 'Battle')}</div>
       <div class="story-role">${h(battle.date || '')}${battle.location ? ' · ' + h(battle.location) : ''}</div>
+    </div>
+
+    <div class="story-section">
+      <div class="battle-confidence-banner confidence-medium">
+        Battle reconstruction not yet available — unit position data has not been entered.
+      </div>
     </div>
 
     ${battle.description ? `
@@ -920,6 +962,133 @@ PF.panels.showBattle = function (battle) {
 
   _showEntity(battle.name || 'Battle', html);
 };
+
+/* ================================================================
+   Story panel — BATTLE PHASE (called by PF.battle while in Battle Mode)
+   Shows: confidence banner, phase label, per-unit sections with
+   action text + community origin (the men on the bridge = the men
+   from the church rolls).
+   ================================================================ */
+PF.panels.showBattlePhase = function (battle, phase) {
+  const conf      = battle.reconstruction_confidence || 'Medium';
+  const confClass = conf.toLowerCase();
+  const nPhases   = PF.battle._phases.length;
+
+  /* Build a section for each unit position in this phase */
+  const unitSectionsHtml = phase.positions.map(pos => {
+    const unit    = PF.data.getUnitById(pos.unit_id);
+    const affCls  = unit ? PF.map.affiliationClass(unit.affiliation) : 'unknown';
+    const sources = PF.data.getSourcesForEntity(pos);
+    const origin  = PF.data.getBattleCommunityOrigin(battle.battle_id, pos.unit_id);
+
+    const posConf = (pos.confidence || '').toLowerCase();
+
+    return `
+      <div class="battle-unit-section">
+        <div class="battle-unit-header">
+          <span class="affil-badge badge-${affCls}">${h(unit ? unit.affiliation : 'Unknown')}</span>
+          <span class="battle-unit-name">${h(unit ? unit.name : pos.unit_id)}</span>
+        </div>
+
+        <div class="battle-action-text">${h(pos.action || '')}</div>
+
+        <div style="margin-bottom:0.35rem">
+          ${pos.strength_estimated ? _dataRow('Strength', '~' + h(pos.strength_estimated) + ' men') : ''}
+          ${pos.facing             ? _dataRow('Facing',   h(pos.facing))                            : ''}
+        </div>
+
+        ${posConf && posConf !== 'high' ? `
+          <span class="battle-pos-confidence confidence-${posConf}">
+            Position confidence: ${h(pos.confidence)}
+          </span>` : ''}
+
+        ${_buildBattleCommunityOrigin(origin)}
+
+        ${sources.length > 0 ? `
+          <div class="story-section" style="margin-top:0.5rem">
+            <div class="story-section-label">Sources — this position</div>
+            ${sources.map(src => `
+              <div class="data-row">
+                <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
+              </div>`).join('')}
+          </div>` : ''}
+      </div>`;
+  }).join('');
+
+  const html = `
+    <div class="story-section">
+      <div class="battle-confidence-banner confidence-${confClass}">
+        <strong>${h(conf)} confidence reconstruction</strong> —
+        sourced from Moore's after-action letter (2 March 1776) and Rankin (1953 NCHR).
+        Unit positions are approximations; exact timing uncertain.
+      </div>
+    </div>
+
+    <div class="story-section">
+      <div class="story-section-label">
+        Phase ${phase.phaseIndex} of ${nPhases} — ${h(phase.phaseLabel)}
+      </div>
+      ${unitSectionsHtml}
+    </div>
+  `;
+
+  _showEntity(`Phase ${phase.phaseIndex}: ${phase.phaseLabel}`, html);
+
+  /* Wire community member clicks → individual story panel */
+  document.querySelectorAll('#story-entity .community-member-list li[data-ind-id]').forEach(li => {
+    li.addEventListener('click', () => {
+      const ind = PF.data.getIndividualById(li.dataset.indId);
+      if (ind) PF.panels.showIndividual(ind);
+    });
+  });
+
+  /* Wire community church clicks */
+  document.querySelectorAll('#story-entity .community-church-header[data-ch-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const ch = PF.data.getChurchById(el.dataset.chId);
+      if (ch) PF.panels.showChurch(ch);
+    });
+  });
+};
+
+/**
+ * Build the community origin section for a battle unit phase.
+ * Shows which documented participants appear in congregation records.
+ */
+function _buildBattleCommunityOrigin(origin) {
+  if (!origin || origin.churches.length === 0) return '';
+
+  const { churches, participants } = origin;
+  const linkedCount = churches.reduce((n, { members }) => n + members.length, 0);
+
+  return `
+    <div class="battle-community-origin">
+      <div class="story-section-label" style="margin-bottom:0.4rem;border-bottom:none">
+        Community network
+      </div>
+      <p class="community-origin-lede">
+        <strong>${linkedCount} officer${linkedCount !== 1 ? 's' : ''}</strong>
+        in this unit appear in pre-war congregation records.
+        The men on the bridge are the same men from the church rolls.
+      </p>
+      ${churches.map(({ church, members }) => `
+        <div class="community-church-entry">
+          <div class="community-church-header" data-ch-id="${h(church.ch_id)}"
+               role="button" tabindex="0" title="Open church record">
+            <span class="dot dot-church"></span>
+            <span class="community-church-name">${h(church.name || church.ch_id)}</span>
+            <span class="community-church-count">${members.length}</span>
+          </div>
+          <ul class="community-member-list">
+            ${members.map(m => `
+              <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
+                <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
+                ${h(m.full_name || 'Unknown')}
+              </li>`).join('')}
+          </ul>
+        </div>`).join('')}
+    </div>`;
+}
 
 /* ================================================================
    Source tray
@@ -963,6 +1132,11 @@ PF.panels.onDateChange = function (/* date */) {
    Reset
    ================================================================ */
 PF.panels.resetStory = function () {
+  /* If in battle mode, exit cleanly first (but silently to avoid recursion) */
+  if (PF.battle && PF.battle._active) {
+    PF.battle.exit(true);
+  }
+
   document.getElementById('story-title').textContent = 'Cross Creek, 1758–1783';
   document.getElementById('story-close').classList.add('hidden');
   document.getElementById('story-default').classList.remove('hidden');

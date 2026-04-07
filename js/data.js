@@ -539,6 +539,74 @@ PF.data.getLateralCoordination = function (ind_id) {
   );
 };
 
+/* ================================================================
+   Battle query API
+   ================================================================ */
+
+/**
+ * Phase objects for a battle, sorted by phase_index.
+ * Groups UNIT_POSITIONS rows by phase_index so the battle module
+ * can step through phases without knowing the data layout.
+ *
+ * @param {string} battle_id
+ * @returns {Array<{ phaseIndex: number, phaseLabel: string, positions: Array }>}
+ */
+PF.data.getBattlePhases = function (battle_id) {
+  const positions = (PF.data.raw.UNIT_POSITIONS || [])
+    .filter(p => p.battle_id === battle_id);
+
+  const phaseMap = {};
+  positions.forEach(pos => {
+    const idx = parseInt(pos.phase_index) || 1;
+    if (!phaseMap[idx]) {
+      phaseMap[idx] = {
+        phaseIndex: idx,
+        phaseLabel: pos.phase_label || `Phase ${idx}`,
+        positions:  [],
+      };
+    }
+    phaseMap[idx].positions.push(pos);
+  });
+
+  return Object.values(phaseMap).sort((a, b) => a.phaseIndex - b.phaseIndex);
+};
+
+/**
+ * Cross-reference battle participants against IND_CHURCH to surface
+ * the community network argument: the men at the battle are the same
+ * men from the church rolls.
+ *
+ * @param {string} battle_id
+ * @param {string} [unit_id] — if provided, filter to one unit's participants
+ * @returns {{ churches: Array<{ church, members }>, participants: Array }}
+ */
+PF.data.getBattleCommunityOrigin = function (battle_id, unit_id) {
+  const participants = (PF.data.raw.BATTLE_PARTICIPANTS || [])
+    .filter(bp => bp.battle_id === battle_id && (!unit_id || bp.unit_id === unit_id));
+  const indIds = new Set(participants.map(bp => bp.ind_id));
+
+  if (indIds.size === 0) return { churches: [], participants: [] };
+
+  /* Church overlap */
+  const churchMap = {};
+  (PF.data.raw.IND_CHURCH || []).forEach(link => {
+    if (!indIds.has(link.ind_id)) return;
+    const ind = PF.data.getIndividualById(link.ind_id);
+    if (!ind) return;
+    if (!churchMap[link.ch_id]) churchMap[link.ch_id] = [];
+    if (!churchMap[link.ch_id].some(m => m.ind_id === ind.ind_id)) {
+      churchMap[link.ch_id].push(ind);
+    }
+  });
+
+  const churches = Object.entries(churchMap)
+    .map(([ch_id, members]) => ({ church: PF.data.getChurchById(ch_id), members }))
+    .filter(({ church }) => !!church)
+    .sort((a, b) => b.members.length - a.members.length);
+
+  return { churches, participants };
+};
+
 /* Expose parse helpers for use in other modules */
 PF.data._parseCoord = _parseCoord;
 PF.data._parseList  = _parseList;

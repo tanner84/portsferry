@@ -119,6 +119,26 @@
   </main>
 
   <!-- ═══════════════════════════════════════════════════
+       BATTLE BAR — shown only in Battle Mode
+  ════════════════════════════════════════════════════ -->
+  <div id="battle-bar" class="hidden" role="region" aria-label="Battle mode controls">
+    <div id="bb-top-row">
+      <button id="bb-back-btn" title="Return to community timeline">&#8592; Back to Community</button>
+      <span id="bb-battle-title"></span>
+      <span id="bb-confidence" class="bb-confidence"></span>
+    </div>
+    <div id="bb-phase-row">
+      <button id="bb-step-back" title="Previous phase" aria-label="Previous phase" disabled>&#9664;</button>
+      <div id="bb-phase-slider-wrap">
+        <input type="range" id="bb-phase-slider" min="0" max="4" value="0"
+               aria-label="Battle phase" />
+      </div>
+      <span id="bb-phase-label">Phase 1</span>
+      <button id="bb-step-fwd" title="Next phase" aria-label="Next phase">&#9654;</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
        TIMELINE BAR
   ════════════════════════════════════════════════════ -->
   <footer id="timeline-bar" aria-label="Timeline controls">
@@ -160,12 +180,13 @@
      <script src="https://cdn.jsdelivr.net/npm/leaflet.motion/dist/leaflet.motion.min.js"></script> -->
 
 <!-- Application modules — ?v= bust browser cache when files change -->
-<script src="js/data.js?v=20260406"></script>
-<script src="js/map.js?v=20260406"></script>
-<script src="js/network.js?v=20260406"></script>
-<script src="js/timeline.js?v=20260406"></script>
-<script src="js/panels.js?v=20260406"></script>
-<script src="js/app.js?v=20260406"></script>
+<script src="js/data.js?v=20260407"></script>
+<script src="js/map.js?v=20260407"></script>
+<script src="js/network.js?v=20260407"></script>
+<script src="js/timeline.js?v=20260407"></script>
+<script src="js/panels.js?v=20260407"></script>
+<script src="js/battle.js?v=20260407"></script>
+<script src="js/app.js?v=20260407"></script>
 
 </body>
 </html>

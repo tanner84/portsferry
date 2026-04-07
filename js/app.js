@@ -32,10 +32,13 @@
     /* ── 3. Timeline ────────────────────────────────────────── */
     PF.timeline.init();
 
-    /* ── 4. Panels ──────────────────────────────────────────── */
+    /* ── 4. Battle module ───────────────────────────────────── */
+    PF.battle.init();
+
+    /* ── 5. Panels ──────────────────────────────────────────── */
     PF.panels.init();
 
-    /* ── 5. Initial render ──────────────────────────────────── */
+    /* ── 6. Initial render ──────────────────────────────────── */
     const initialDate = PF.timeline.currentDate;
     PF.map.renderChurches(PF.data.getMappableChurches());
     PF.map.renderIndividuals(PF.data.getIndividualsByDate(initialDate));
@@ -53,10 +56,12 @@
     }
 
     console.info('[PF] Startup complete.',
-      { individuals: (PF.data.raw.INDIVIDUALS || []).length,
-        churches:    (PF.data.raw.CHURCHES    || []).length,
-        events:      (PF.data.raw.EVENTS      || []).length,
-        sources:     (PF.data.raw.SOURCES     || []).length,
+      { individuals:    (PF.data.raw.INDIVIDUALS    || []).length,
+        churches:       (PF.data.raw.CHURCHES       || []).length,
+        events:         (PF.data.raw.EVENTS         || []).length,
+        sources:        (PF.data.raw.SOURCES        || []).length,
+        battles:        (PF.data.raw.BATTLES        || []).length,
+        unit_positions: (PF.data.raw.UNIT_POSITIONS || []).length,
       }
     );
 

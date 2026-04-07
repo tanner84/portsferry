@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "bp_id": "bp_001",
+    "battle_id": "bat_001",
+    "unit_id": "unit_002",
+    "ind_id": "ind_001",
+    "role": "Commanding officer — ill; remained with rear elements",
+    "source_ids": "src_001|src_mcb_002"
+  },
+  {
+    "bp_id": "bp_002",
+    "battle_id": "bat_001",
+    "unit_id": "unit_002",
+    "ind_id": "ind_002",
+    "role": "Led charge across bridge; KIA at the bridge, 27 February 1776",
+    "source_ids": "src_mcb_001|src_003"
+  },
+  {
+    "bp_id": "bp_003",
+    "battle_id": "bat_001",
+    "unit_id": "unit_002",
+    "ind_id": "ind_003",
+    "role": "Led advance company of swordsmen; wounded and captured",
+    "source_ids": "src_mcb_001|src_001"
+  }
+]

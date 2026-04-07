@@ -86,5 +86,27 @@
     "record_system": "HathiTrust",
     "zone": "3",
     "evidence_type": "Secondary"
+  },
+  {
+    "src_id": "src_mcb_001",
+    "title": "Moore, James — Letter to the NC Provincial Congress, 2 March 1776",
+    "type": "Primary — official correspondence",
+    "repository": "NC State Archives; published in NCCR vol. X",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "NCCR",
+    "zone": "1",
+    "evidence_type": "Primary"
+  },
+  {
+    "src_id": "src_mcb_002",
+    "title": "Rankin, Hugh F. 'The Moore's Creek Bridge Campaign, 1776.' North Carolina Historical Review 30, no. 1 (1953): 23–60",
+    "type": "Secondary — scholarly article",
+    "repository": "NCHR; JSTOR",
+    "digitized": "Y",
+    "url": "",
+    "record_system": "JSTOR",
+    "zone": "2",
+    "evidence_type": "Secondary"
   }
 ]

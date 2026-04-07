@@ -3,10 +3,15 @@
     "battle_id": "bat_001",
     "name": "Moore's Creek Bridge",
     "date": "1776-02-27",
+    "duration_mins": "180",
     "lat": "34.4600",
-    "lng": "-78.1092",
+    "lng": "-78.1089",
     "location": "Pender County, NC",
-    "description": "Decisive Patriot victory over the Loyalist Highland Scots column. Ended Loyalist military capacity in the Cape Fear region.",
-    "source_ids": "src_001|src_003"
+    "reconstruction_confidence": "Medium",
+    "reconstruction_tier": "2",
+    "imported_from": "",
+    "kmz_file": "",
+    "description": "Decisive Patriot victory over the Loyalist Highland Scots column. Patriots under Caswell and Lillington fortified the east bank of Moore's Creek and removed the bridge planks. MacLeod led approximately 80 Highland swordsmen across the bare girders; Patriot fire killed MacLeod and Campbell at the bridge. The Loyalist column collapsed; 850 prisoners and the Highland Scots' military capacity in the Cape Fear region were lost. Reconstruction confidence is Medium: unit positions are inferred from Moore's after-action letter (2 March 1776) and Rankin's 1953 NCHR reconstruction. Exact troop dispositions and timing are approximations.",
+    "source_ids": "src_mcb_001|src_mcb_002|src_001|src_003"
   }
 ]

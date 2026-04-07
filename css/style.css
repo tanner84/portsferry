@@ -1040,6 +1040,187 @@ button { font-family: inherit; cursor: pointer; }
   margin-top: 0.1rem;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   BATTLE MODE
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Battle bar — replaces timeline bar in Battle Mode ─────────── */
+#battle-bar {
+  display: flex;
+  flex-direction: column;
+  background: var(--chrome-bg);
+  border-top: 2px solid var(--accent);
+  flex-shrink: 0;
+  z-index: 900;
+}
+
+#bb-top-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.32rem 1.25rem;
+  border-bottom: 1px solid var(--chrome-border);
+}
+
+#bb-back-btn {
+  padding: 0.22rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #202c40;
+  color: var(--accent-light);
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+#bb-back-btn:hover { background: var(--accent-dim); color: #d0d8e8; }
+
+#bb-battle-title {
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  color: var(--chrome-text);
+  letter-spacing: 0.02em;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bb-confidence {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.5rem;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.bb-conf-high     { background: #1a3a2a; color: #6ab88a; border: 1px solid #2a5a3a; }
+.bb-conf-medium   { background: #2a2a18; color: #b8a860; border: 1px solid #4a4828; }
+.bb-conf-low      { background: #2a1a1a; color: #b06060; border: 1px solid #4a2a2a; }
+.bb-conf-inferred { background: #1e2035; color: #7a8aaa; border: 1px solid #2e3a55; }
+
+#bb-phase-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.28rem 1.25rem;
+}
+
+#bb-step-back,
+#bb-step-fwd {
+  background: #202c40;
+  border: 1px solid var(--chrome-border);
+  color: #7a8fa8;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.1s, background 0.1s;
+}
+#bb-step-back:hover:not(:disabled),
+#bb-step-fwd:hover:not(:disabled)  { color: #d0d8e4; background: #283a52; }
+#bb-step-back:disabled,
+#bb-step-fwd:disabled              { opacity: 0.35; cursor: default; }
+
+#bb-phase-slider-wrap {
+  flex: 1;
+}
+#bb-phase-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--accent-light);
+}
+
+#bb-phase-label {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--chrome-text);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 260px;
+}
+
+/* ── Battle story panel ─────────────────────────────────────────── */
+
+.battle-confidence-banner {
+  font-size: 0.76rem;
+  padding: 0.45rem 0.65rem;
+  margin-bottom: 0.25rem;
+  border-left: 3px solid;
+  line-height: 1.5;
+}
+.battle-confidence-banner.confidence-high {
+  background: #f0f7f2; border-color: #5a9a70; color: #2a5a3a;
+}
+.battle-confidence-banner.confidence-medium {
+  background: #f8f5e8; border-color: #a89050; color: #5a4a18;
+}
+.battle-confidence-banner.confidence-low {
+  background: #f8f0f0; border-color: #a05050; color: #5a2020;
+}
+
+.battle-unit-section {
+  margin-bottom: 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--panel-border-soft);
+}
+.battle-unit-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+.battle-unit-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.battle-unit-name {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.battle-action-text {
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.battle-pos-confidence {
+  font-size: 0.7rem;
+  padding: 0.18rem 0.45rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  display: inline-block;
+}
+.battle-pos-confidence.confidence-medium {
+  background: #fdf9ee; color: #7a6020; border: 1px solid #e0cc80;
+}
+.battle-pos-confidence.confidence-low {
+  background: #fdf0f0; color: #803030; border: 1px solid #d09090;
+}
+.battle-pos-confidence.confidence-inferred {
+  background: #f2f2f8; color: #506080; border: 1px solid #b0bcd0;
+}
+
+.battle-community-origin {
+  margin-top: 0.75rem;
+  border-left: 3px solid var(--church);
+  padding-left: 0.75rem;
+}
+
+/* ── Battle marker on community map (before entering Battle Mode) ── */
+.battle-site-marker {
+  /* Styled inline in _renderBattleMarkers — no additional overrides needed */
+}
+
 /* ── Utility ───────────────────────────────────────────────────── */
 .hidden { display: none !important; }
 
