@@ -1044,113 +1044,112 @@ button { font-family: inherit; cursor: pointer; }
    BATTLE MODE
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Battle bar — two-row footer replacing the timeline in Battle Mode ── */
+/* ── Battle bar — single-row footer, exactly matches timeline bar height ── */
 #battle-bar {
   display: flex;
-  flex-direction: column;
-  background: var(--chrome-bg);
+  align-items: center;
+  gap: 0.6rem;
+  background: #131c2d;             /* slightly darker than chrome-bg */
   border-top: 2px solid var(--accent);
+  height: var(--timeline-h);
+  padding: 0 1rem;
   flex-shrink: 0;
   z-index: 900;
 }
 
-/* Row 1: ← Back · battle title · confidence badge */
-#bb-top-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.3rem 1.25rem;
-  border-bottom: 1px solid var(--chrome-border);
-  height: 36px;
+/* Vertical separator between logical groups */
+.bb-sep {
+  width: 1px;
+  height: 22px;
+  background: #2e3f58;
+  flex-shrink: 0;
 }
 
 #bb-back-btn {
-  padding: 0.2rem 0.75rem;
-  font-size: 0.7rem;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  background: #202c40;
-  color: var(--accent-light);
-  border: 1px solid var(--accent);
+  background: #243448;
+  color: #8ab8d4;
+  border: 1px solid #3a5878;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
   flex-shrink: 0;
   white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  border-radius: 2px;
 }
-#bb-back-btn:hover { background: var(--accent-dim); color: #d0d8e8; }
+#bb-back-btn:hover { background: #304a6a; color: #c8e0f0; }
 
 #bb-battle-title {
   font-family: var(--font-serif);
   font-size: 0.88rem;
-  color: var(--chrome-text);
-  letter-spacing: 0.02em;
-  flex: 1;
+  color: #c8d4e0;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 300px;
 }
 
 .bb-confidence {
-  font-size: 0.65rem;
-  font-weight: 500;
+  font-size: 0.62rem;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.12rem 0.5rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 2px;
   flex-shrink: 0;
 }
-.bb-conf-high     { background: #1a3a2a; color: #6ab88a; border: 1px solid #2a5a3a; }
-.bb-conf-medium   { background: #2a2a18; color: #b8a860; border: 1px solid #4a4828; }
-.bb-conf-low      { background: #2a1a1a; color: #b06060; border: 1px solid #4a2a2a; }
-.bb-conf-inferred { background: #1e2035; color: #7a8aaa; border: 1px solid #2e3a55; }
+.bb-conf-high     { background: #1a3a2a; color: #7acc98; border: 1px solid #3a6a4a; }
+.bb-conf-medium   { background: #352e14; color: #c8b870; border: 1px solid #5a4e28; }
+.bb-conf-low      { background: #361818; color: #c07070; border: 1px solid #5a2828; }
+.bb-conf-inferred { background: #1e2238; color: #8a9abb; border: 1px solid #303858; }
 
-/* Row 2: ◄ · [phase dots on track] · ► · current phase label */
-#bb-phase-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0 1.25rem;
-  height: var(--timeline-h);   /* matches main timeline bar height */
-  flex-shrink: 0;
-}
-
+/* ◄ / ► phase step buttons */
 .bb-nav-arrow {
-  background: #202c40;
-  border: 1px solid var(--chrome-border);
-  color: #7a8fa8;
-  width: 28px;
-  height: 28px;
-  font-size: 0.65rem;
+  background: #243448;
+  border: 1px solid #3a5878;
+  color: #8ab8d4;
+  width: 26px;
+  height: 26px;
+  font-size: 0.6rem;
   cursor: pointer;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.1s, color 0.1s;
+  border-radius: 2px;
 }
-.bb-nav-arrow:hover:not(:disabled) { background: #283a52; color: #d0d8e4; }
-.bb-nav-arrow:disabled { opacity: 0.3; cursor: default; }
+.bb-nav-arrow:hover:not(:disabled) { background: #304a6a; color: #d0e8f4; }
+.bb-nav-arrow:disabled { opacity: 0.25; cursor: default; }
 
 /* Phase dot track */
 #bb-phase-track {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
-  position: relative;   /* required for ::before connecting line */
+  position: relative;
   gap: 0;
 }
 
-/* Horizontal connecting line behind dots */
+/* Connecting line threaded behind the dots */
 #bb-phase-track::before {
   content: '';
   position: absolute;
-  left: 20px;
-  right: 20px;
+  left: 15px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: #2e3f58;
+  background: #3a5878;
   pointer-events: none;
   z-index: 0;
 }
@@ -1162,17 +1161,17 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   z-index: 1;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 6px;
 }
 
 .bb-phase-dot {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 2px solid #3a5272;        /* visible against #1a2030 background */
-  background: #253448;              /* clearly distinct from chrome-bg */
-  color: #6a8eae;
-  font-size: 0.74rem;
+  border: 2px solid #5080a8;       /* clearly visible on #131c2d bar */
+  background: #304060;             /* distinct dark blue — not invisible */
+  color: #a0c4dc;
+  font-size: 0.72rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -1182,30 +1181,27 @@ button { font-family: inherit; cursor: pointer; }
   line-height: 1;
 }
 .bb-phase-node:hover .bb-phase-dot {
-  border-color: var(--accent-light);
-  background: #2e4460;
-  color: #b0c8dc;
+  border-color: #80b0d0;
+  background: #3a5878;
+  color: #d0e8f4;
 }
 .bb-phase-node.active .bb-phase-dot {
-  border-color: var(--accent-light);
-  background: var(--accent);
-  color: #dceaf4;
-  transform: scale(1.18);
-  box-shadow: 0 0 0 4px rgba(62, 90, 122, 0.30);
+  border-color: #90c0e0;
+  background: #4a80b0;             /* bright steel blue — unmistakable active state */
+  color: #ffffff;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(74, 128, 176, 0.38);
 }
 
-/* Phase label — takes remaining space to the right of the track */
+/* Phase label — takes remaining space */
 #bb-phase-label-float {
   flex: 1;
   font-family: var(--font-serif);
-  font-size: 0.95rem;
-  color: var(--chrome-text);
-  letter-spacing: 0.01em;
+  font-size: 0.9rem;
+  color: #b8ccd8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 0.85rem;
-  border-left: 1px solid var(--chrome-border);
   min-width: 0;
 }
 

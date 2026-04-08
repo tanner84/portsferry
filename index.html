@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=20260408" />
 </head>
 <body>
 <div id="app">
@@ -119,26 +119,19 @@
   </main>
 
   <!-- ═══════════════════════════════════════════════════
-       BATTLE BAR — shown only in Battle Mode
-       Two rows: title strip + phase navigator
+       BATTLE BAR — shown only in Battle Mode (single row, matches timeline height)
   ════════════════════════════════════════════════════ -->
   <div id="battle-bar" class="hidden" role="region" aria-label="Battle mode controls">
-
-    <!-- Row 1: back button · battle title · confidence badge -->
-    <div id="bb-top-row">
-      <button id="bb-back-btn" title="Return to community timeline">&#8592; Back to Community</button>
-      <span id="bb-battle-title"></span>
-      <span id="bb-confidence" class="bb-confidence"></span>
-    </div>
-
-    <!-- Row 2: ◄ · numbered phase dots · ► · current phase label -->
-    <div id="bb-phase-row">
-      <button id="bb-step-back" class="bb-nav-arrow" title="Previous phase" aria-label="Previous phase" disabled>&#9664;</button>
-      <div id="bb-phase-track"><!-- phase nodes injected by battle.js --></div>
-      <button id="bb-step-fwd" class="bb-nav-arrow" title="Next phase" aria-label="Next phase">&#9654;</button>
-      <span id="bb-phase-label-float"></span>
-    </div>
-
+    <button id="bb-back-btn" title="Return to community timeline">&#8592; Back</button>
+    <span class="bb-sep"></span>
+    <span id="bb-battle-title"></span>
+    <span id="bb-confidence" class="bb-confidence"></span>
+    <span class="bb-sep"></span>
+    <button id="bb-step-back" class="bb-nav-arrow" title="Previous phase" aria-label="Previous phase" disabled>&#9664;</button>
+    <div id="bb-phase-track"><!-- phase nodes injected by battle.js --></div>
+    <button id="bb-step-fwd" class="bb-nav-arrow" title="Next phase" aria-label="Next phase">&#9654;</button>
+    <span class="bb-sep"></span>
+    <span id="bb-phase-label-float"></span>
   </div>
 
   <!-- ═══════════════════════════════════════════════════
@@ -181,12 +174,12 @@
 <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
 
 <!-- Application modules -->
-<script src="js/data.js?v=20260411"></script>
-<script src="js/map.js?v=20260411"></script>
-<script src="js/network.js?v=20260411"></script>
-<script src="js/timeline.js?v=20260411"></script>
-<script src="js/panels.js?v=20260411"></script>
-<script src="js/battle.js?v=20260411"></script>
-<script src="js/app.js?v=20260411"></script>
+<script src="js/data.js?v=20260408"></script>
+<script src="js/map.js?v=20260408"></script>
+<script src="js/network.js?v=20260408"></script>
+<script src="js/timeline.js?v=20260408"></script>
+<script src="js/panels.js?v=20260408"></script>
+<script src="js/battle.js?v=20260408"></script>
+<script src="js/app.js?v=20260408"></script>
 </body>
 </html>
