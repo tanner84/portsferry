@@ -51,6 +51,16 @@ const PRIMARY_ID = {
   EVT_LINKS:           ['evt_id', 'linked_id'],
 };
 
+// Sheets that use a composite duplicate key but also have a separate
+// record-ID field that should be auto-generated when not supplied.
+const AUTO_ID = {
+  IND_CHURCH:   { field: 'link_id',  prefix: 'ich_'  },
+  IND_UNIT:     { field: 'link_id',  prefix: 'iu_'   },
+  IND_PROPERTY: { field: 'link_id',  prefix: 'ip_'   },
+  IND_IND:      { field: 'edge_id',  prefix: 'iind_' },
+  EVT_LINKS:    { field: 'link_id',  prefix: 'el_'   },
+};
+
 /* ── Key helpers ────────────────────────────────────────────────── */
 // Null byte as separator — safe for any realistic field value
 const SEP = '\x00';
@@ -161,6 +171,10 @@ exports.handler = async (event) => {
         existingRows.map(row => keyFromRow(idField, headers, row))
       );
 
+      // 3. Auto-ID setup for junction tables
+      const autoId = AUTO_ID[sheetName];
+      let nextAutoNum = existingRows.length + 1; // base on total row count so IDs never collide
+
       // 3. Separate new from duplicate
       const toAppend = [];
       for (const rowData of rows) {
@@ -168,12 +182,22 @@ exports.handler = async (event) => {
         if (key && existingKeys.has(key)) {
           results.skipped.push({ sheet: sheetName, id: key, reason: 'duplicate' });
         } else {
+          // Auto-generate record ID if the sheet requires one and it's missing
+          let finalData = rowData;
+          if (autoId && !rowData[autoId.field]) {
+            finalData = {
+              ...rowData,
+              [autoId.field]: `${autoId.prefix}${String(nextAutoNum).padStart(3, '0')}`,
+            };
+            nextAutoNum++;
+          }
+
           // Map to header column order — unknown columns are silently dropped
           const rowArr = headers.map(h => {
-            const v = rowData[h];
+            const v = finalData[h];
             return v === undefined || v === null ? '' : String(v);
           });
-          toAppend.push({ key, rowArr });
+          toAppend.push({ key, rowArr, autoId: finalData[autoId?.field] });
         }
       }
 
