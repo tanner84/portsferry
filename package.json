@@ -1,0 +1,9 @@
+{
+  "name": "portsferry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ports Ferry Narrative GIS — Netlify Function dependencies",
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}

@@ -3,8 +3,9 @@
 # Push repository root to Netlify; publish directory is "."
 
 [build]
-  publish = "."
-  # No build command — pure static HTML/CSS/JS
+  command   = "npm install"   # installs googleapis for Netlify Functions
+  publish   = "."             # public site root unchanged
+  functions = "netlify/functions"
 
 # ── Security headers ──────────────────────────────────────────────
 [[headers]]
