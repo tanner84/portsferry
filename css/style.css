@@ -1111,7 +1111,8 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 0.75rem;
   padding: 0 1.25rem;
-  height: 48px;
+  height: var(--timeline-h);   /* matches main timeline bar height */
+  flex-shrink: 0;
 }
 
 .bb-nav-arrow {
@@ -1135,8 +1136,8 @@ button { font-family: inherit; cursor: pointer; }
 #bb-phase-track {
   display: flex;
   align-items: center;
-  flex: 0 0 auto;       /* don't grow — let label take the space */
-  position: relative;
+  flex: 0 0 auto;
+  position: relative;   /* required for ::before connecting line */
   gap: 0;
 }
 
@@ -1144,12 +1145,12 @@ button { font-family: inherit; cursor: pointer; }
 #bb-phase-track::before {
   content: '';
   position: absolute;
-  left: 14px;
-  right: 14px;
+  left: 20px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: #28354a;
+  background: #2e3f58;
   pointer-events: none;
   z-index: 0;
 }
@@ -1161,48 +1162,51 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   z-index: 1;
   cursor: pointer;
-  padding: 0 6px;
+  padding: 0 8px;
 }
 
 .bb-phase-dot {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 2px solid #28354a;
-  background: #1a2030;
-  color: #4a6880;
-  font-size: 0.72rem;
+  border: 2px solid #3a5272;        /* visible against #1a2030 background */
+  background: #253448;              /* clearly distinct from chrome-bg */
+  color: #6a8eae;
+  font-size: 0.74rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.15s;
   font-family: var(--font-sans);
+  line-height: 1;
 }
 .bb-phase-node:hover .bb-phase-dot {
   border-color: var(--accent-light);
-  color: #a8c0d4;
+  background: #2e4460;
+  color: #b0c8dc;
 }
 .bb-phase-node.active .bb-phase-dot {
   border-color: var(--accent-light);
   background: var(--accent);
-  color: #e0ecf4;
-  transform: scale(1.15);
-  box-shadow: 0 0 0 3px rgba(62, 90, 122, 0.35);
+  color: #dceaf4;
+  transform: scale(1.18);
+  box-shadow: 0 0 0 4px rgba(62, 90, 122, 0.30);
 }
 
-/* Phase label — takes remaining space */
+/* Phase label — takes remaining space to the right of the track */
 #bb-phase-label-float {
   flex: 1;
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--chrome-text);
   letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 0.5rem;
+  padding-left: 0.85rem;
   border-left: 1px solid var(--chrome-border);
+  min-width: 0;
 }
 
 /* ── Battle story panel ─────────────────────────────────────────── */
