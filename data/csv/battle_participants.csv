@@ -1,0 +1,8 @@
+bp_id,battle_id,ind_id,unit_id,role,position_ref,casualty,pension_account,tier_justification,source_ids
+BP001,bat_001,ind_002,unit_010,Effective commanding officer at battle; led charge,P012,Killed,N/A — British officer,Command tier — effective commander at decisive action,src_moore_aar|src_ncpedia_mocr
+BP002,bat_001,ind_010,unit_009,Led advance broadsword company across bridge,P011,Killed,N/A — British officer,Command tier — company commander at Tier 2 battle directly tied to focal community,src_moore_aar|src_wikipedia_mocr
+BP003,bat_001,ind_001,unit_002,Nominal commanding general; too ill to command; captured next day,P004,Captured,N/A,Command tier — general officer in database,src_moore_aar|src_wikipedia_mocr
+BP004,bat_001,ind_011,unit_003,Patriot field commander — west bank deception and east bank defense,P005,None,N/A — became Governor of NC 1776,Command tier — senior Patriot commander at battle,src_moore_aar|src_amrevnc|src_ncpedia_mocr
+BP005,bat_001,ind_012,unit_004,Commanded east bank earthworks; arrived before Caswell,P002,None,N/A,"Command tier — senior Patriot commander, earthworks position confirmed by NPS",src_moore_aar|src_amrevnc
+BP006,bat_001,ind_013,unit_005,Commanded New Hanover Rangers flanking position east bank,P003,None,N/A,Company tier — company commander at Tier 2 battle,src_wikipedia_mocr|src_fandom_wiki
+BP007,bat_001,ind_014,unit_003,Intelligence function — deserted Loyalist camp to warn Patriots of dawn attack,P007,None,Unknown,Exception tier — documented intelligence function; changed outcome of battle,src_wikipedia_mocr|src_amrevnc

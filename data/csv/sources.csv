@@ -1,0 +1,20 @@
+src_id,title,type,repository,digitized,url,record_system,zone,evidence_type
+src_001,A Narrative of the Proceedings of a Body of Loyalists in North Carolina (1776),Primary — manuscript,"The National Archives (UK), CO 5/93",Y,,TNA,1,Primary
+src_002,"MacDonald, Donald — Papers and Correspondence, 1775–1776",Primary — correspondence,National Records of Scotland,N,,NRS,1,Primary
+src_003,"Eyewitness account of the Battle of Moore's Creek Bridge, 1776",Primary — deposition,"NC State Archives, Revolutionary War Collection",Y,,NCSA,1,Primary
+src_004,"Allan MacDonald — Examination before the NC Council of Safety, 1776",Primary — official examination,NC State Archives,N,,NCSA,1,Primary
+src_005,"Flora MacDonald — Examination, 1776; Memoir (later)",Primary — memoir and examination,"Various; published in MacLean, J.P. (1909) Flora MacDonald in America",Y,,Published,1,Primary
+src_006,"NC Provincial Congress Minutes, September 9, 1775",Primary — official record,NC State Archives; published in NCCR vol. X,Y,,NCCR,1,Primary
+src_007,Old Bluff Presbyterian Church Session Records,Primary — church records,"Presbyterian Historical Society, Montreat, NC",N,,PHS,1,Primary
+src_008,"Foote, William Henry. Sketches of North Carolina (1846)",Secondary — published history,Multiple libraries; digitized via HathiTrust,Y,,HathiTrust,3,Secondary
+src_mcb_001,"Moore, James — Letter to the NC Provincial Congress, 2 March 1776",Primary — official correspondence,NC State Archives; published in NCCR vol. X,Y,,NCCR,1,Primary
+src_mcb_002,"Rankin, Hugh F. 'The Moore's Creek Bridge Campaign, 1776.' North Carolina Historical Review 30, no. 1 (1953): 23–60",Secondary — scholarly article,NCHR; JSTOR,Y,,JSTOR,2,Secondary
+src_moore_aar,"Moore, James — After-Action Report to NC Provincial Congress, 2 March 1776 (CSR 11-0146)",Primary — official after-action report,NC State Archives; Calendar of State Records vol. XI,Y,,NCCR,1,Primary
+src_rankin_1953,"Rankin, Hugh F. 'The Moore's Creek Bridge Campaign, 1776.' North Carolina Historical Review 30, no. 1 (1953): 23–60",Secondary — scholarly article,NCHR; JSTOR,Y,,JSTOR,2,Secondary
+src_ncpedia_mocr,NCpedia — Battle of Moore's Creek Bridge,Secondary — published encyclopedia,NCpedia.org (State Library of NC),Y,https://www.ncpedia.org/moores-creek-bridge-battle,NCpedia,3,Secondary
+src_amrevnc,American Revolution in North Carolina — Moore's Creek Bridge,Secondary — scholarly web database,AmRevNC.com,Y,https://www.amrevnc.org/s/amrevnc/item/10132,AmRevNC,3,Secondary
+src_nps_mocr,NPS Moore's Creek National Battlefield — Park Historians and Archaeology Reports,Secondary — institutional,"National Park Service, Moore's Creek NB, Currie NC",N,,NPS,2,Secondary
+src_revolutionarywar_us,RevolutionaryWar.us — Battle of Moore's Creek Bridge,Tertiary — web reference,revolutionarywar.us,Y,,Web,4,Tertiary
+src_allthingsliberty,All Things Liberty — Moore's Creek Bridge,Tertiary — web reference,allthingsliberty.com,Y,,Web,4,Tertiary
+src_wikipedia_mocr,Wikipedia — Battle of Moore's Creek Bridge,Tertiary — encyclopedia,Wikipedia.org,Y,https://en.wikipedia.org/wiki/Battle_of_Moore%27s_Creek_Bridge,Wikipedia,4,Tertiary
+src_fandom_wiki,American Revolution Wiki (Fandom) — Battle of Moore's Creek Bridge,Tertiary — wiki,Fandom.com,Y,,Web,4,Tertiary

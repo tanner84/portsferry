@@ -1,0 +1,2 @@
+ch_id,name,denomination,lat,lng,founded_yr,status,record_repository,source_ids,note
+ch_001,Old Bluff / Bluff Presbyterian Church,Presbyterian,35.1833,-78.7167,1758,Active historic congregation,"Presbyterian Historical Society, Montreat, NC",src_007|src_008,"COORDINATES ARE APPROXIMATE — verify against session records or cadastral survey before publication. Current value is approximate centroid near Wade, Cumberland County, NC."

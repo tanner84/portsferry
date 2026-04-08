@@ -1,0 +1,13 @@
+link_id,ind_id,unit_id,rank,date_from,date_to,source_ids
+iu_001,ind_005,unit_001,Colonel,1775,,src_006
+iu_002,ind_006,unit_001,Lieutenant Colonel,1775,,src_006
+iu_003,ind_007,unit_001,First Major,1775,,src_006
+iu_004,ind_008,unit_001,Second Major,1775,,src_006
+iu_005,ind_001,unit_002,Brigadier General,1776,1776,src_001|src_moore_aar
+iu_006,ind_002,unit_010,Lieutenant Colonel,1776,1776,src_001|src_moore_aar
+iu_007,ind_003,unit_002,Captain,1776,1776,src_001|src_moore_aar
+iu_008,ind_010,unit_009,Captain,1776,1776,src_moore_aar|src_wikipedia_mocr
+iu_009,ind_011,unit_003,Colonel,1776,1776,src_moore_aar|src_amrevnc
+iu_010,ind_012,unit_004,Colonel,1776,1776,src_moore_aar|src_amrevnc
+iu_011,ind_013,unit_005,Captain,1776,1776,src_wikipedia_mocr
+iu_012,ind_014,unit_003,Intelligence contact,1776,1776,src_wikipedia_mocr|src_amrevnc
