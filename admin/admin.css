@@ -232,7 +232,8 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   padding: 1.25rem;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -347,6 +348,13 @@ body {
   overflow: hidden;
   min-height: 0;
 }
+
+/* Ingest input card fills full column height */
+.ingest-input-col > .panel-card { flex: 1; min-height: 0; }
+
+/* Right column: preview + results stack vertically; preview dominates */
+.ingest-preview-col > #preview-panel  { flex: 2; min-height: 0; }
+.ingest-preview-col > #results-panel  { flex: 1; min-height: 0; }
 
 #ingest-textarea {
   flex: 1;
@@ -487,7 +495,8 @@ body {
    VERIFY TAB
 ══════════════════════════════════════════════════════════ */
 .verify-card {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .verify-controls {
