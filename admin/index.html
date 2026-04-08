@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Port's Ferry — Research Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div id="auth-box">
+    <div id="auth-logo">Port's Ferry</div>
+    <div id="auth-subtitle">Research Admin</div>
+    <form id="auth-form">
+      <label for="auth-password">Password</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Enter admin password" />
+      <div id="auth-error"></div>
+      <button type="submit" id="auth-submit">Enter</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ADMIN PANEL
+══════════════════════════════════════════════ -->
+<div id="admin-panel" class="hidden">
+
+  <header id="admin-header">
+    <div id="admin-wordmark">
+      <span id="admin-site-name">Port's Ferry</span>
+      <span id="admin-panel-label">Research Admin</span>
+    </div>
+    <nav id="admin-tabs">
+      <button class="tab-btn active" data-tab="ingest">Ingest</button>
+      <button class="tab-btn" data-tab="verify">Verify</button>
+      <button class="tab-btn" data-tab="audit">Audit Log</button>
+    </nav>
+    <button id="admin-logout">Sign out</button>
+  </header>
+
+  <!-- ── INGEST TAB ───────────────────────────── -->
+  <div id="tab-ingest" class="tab-panel active">
+    <div class="tab-inner">
+
+      <div class="ingest-input-col">
+        <div class="panel-card">
+          <div class="card-header">
+            <h2>Paste JSON from research session</h2>
+            <p class="card-hint">Array of entry objects, each with an <code>entry_type</code> field matching a sheet name.</p>
+          </div>
+          <textarea id="ingest-textarea" spellcheck="false" placeholder='[
+  {
+    "entry_type": "INDIVIDUALS",
+    "ind_id": "ind_015",
+    "full_name": "...",
+    ...
+  }
+]'></textarea>
+          <div class="card-actions">
+            <button id="validate-btn" class="btn-primary">Validate</button>
+            <button id="clear-btn" class="btn-ghost">Clear</button>
+            <span id="validate-status"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ingest-preview-col">
+        <div id="preview-panel" class="panel-card hidden">
+          <div class="card-header">
+            <h2>Preview</h2>
+            <div id="preview-summary"></div>
+          </div>
+          <div id="preview-tables"></div>
+          <div class="card-actions">
+            <button id="push-btn" class="btn-push" disabled>Confirm and Push</button>
+            <span id="push-status"></span>
+          </div>
+        </div>
+
+        <div id="results-panel" class="panel-card hidden">
+          <div class="card-header">
+            <h2>Results</h2>
+          </div>
+          <div id="results-body"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── VERIFY TAB ───────────────────────────── -->
+  <div id="tab-verify" class="tab-panel hidden">
+    <div class="tab-inner tab-inner-verify">
+      <div class="panel-card verify-card">
+        <div class="card-header verify-controls">
+          <div class="verify-selects">
+            <select id="verify-sheet-select">
+              <option value="">— select a sheet —</option>
+              <option>INDIVIDUALS</option>
+              <option>CHURCHES</option>
+              <option>PROPERTIES</option>
+              <option>UNITS</option>
+              <option>EVENTS</option>
+              <option>SOURCES</option>
+              <option>BATTLES</option>
+              <option>UNIT_POSITIONS</option>
+              <option>BATTLE_PARTICIPANTS</option>
+              <option>IND_CHURCH</option>
+              <option>IND_UNIT</option>
+              <option>IND_PROPERTY</option>
+              <option>IND_IND</option>
+              <option>EVT_LINKS</option>
+              <option>AUDIT_LOG</option>
+            </select>
+            <button id="verify-load-btn" class="btn-primary">Load</button>
+          </div>
+          <input type="search" id="verify-search" placeholder="Filter rows…" class="hidden" />
+          <span id="verify-count"></span>
+        </div>
+        <div id="verify-table-wrap">
+          <p class="verify-placeholder">Select a sheet and click Load to view its contents.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AUDIT LOG TAB ────────────────────────── -->
+  <div id="tab-audit" class="tab-panel hidden">
+    <div class="tab-inner tab-inner-verify">
+      <div class="panel-card verify-card">
+        <div class="card-header">
+          <h2>Audit Log</h2>
+          <p class="card-hint">Every write operation — newest first. Scholarly provenance trail for the database.</p>
+          <button id="audit-refresh-btn" class="btn-primary" style="margin-top:0.5rem">Refresh</button>
+        </div>
+        <div id="audit-table-wrap">
+          <p class="verify-placeholder">Click Refresh to load the audit log.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #admin-panel -->
+
+<script src="admin.js"></script>
+</body>
+</html>
