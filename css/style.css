@@ -1306,3 +1306,12 @@ button { font-family: inherit; cursor: pointer; }
   #panel-right { display: none; }
   #view-controls { display: none; }
 }
+
+/* ── Admin link in header ─────────────────────────────────────── */
+#admin-link {
+  font-size: 0.7rem; font-weight: 500; letter-spacing: 0.05em;
+  text-transform: uppercase; text-decoration: none;
+  color: #6a8090; border: 1px solid var(--chrome-border);
+  padding: 0.22rem 0.65rem; transition: color 0.12s, border-color 0.12s;
+}
+#admin-link:hover { color: var(--chrome-text); border-color: var(--accent-light); }
