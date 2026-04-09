@@ -21,7 +21,7 @@
    Both values must be set before live data will load.
    ================================================================ */
 const SHEETS_CONFIG = {
-  SHEETS_ID: 'YOUR_SHEETS_ID_HERE',
+  SHEETS_ID: 'via-netlify-function',  // actual ID lives in GOOGLE_SHEETS_ID env var; function reads it server-side
   API_KEY:   'YOUR_API_KEY_HERE',
 
   /* Sheet tab names — must match Google Sheets exactly (case-sensitive) */
@@ -113,12 +113,13 @@ PF.data.load = async function () {
   if (PF.data.loading || PF.data.loaded) return;
   PF.data.loading = true;
 
-  const unconfigured =
-    !SHEETS_CONFIG.SHEETS_ID ||
-    SHEETS_CONFIG.SHEETS_ID === 'YOUR_SHEETS_ID_HERE';
+  /* On localhost, the Netlify Function is unavailable — use seed data.
+     On Netlify (any hostname), route through the function proxy. */
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const unconfigured = isLocal || !SHEETS_CONFIG.SHEETS_ID || SHEETS_CONFIG.SHEETS_ID === 'YOUR_SHEETS_ID_HERE';
 
   if (unconfigured) {
-    console.info('[PF.data] SHEETS_ID not configured — loading seed data from data/seed/.');
+    console.info('[PF.data] Running locally — loading seed data from data/seed/.');
     await PF.data._loadSeedData();
   } else {
     await PF.data._loadSheets();
@@ -132,12 +133,15 @@ PF.data.load = async function () {
   });
 };
 
-/** Fetch all sheets from Google Sheets in parallel. */
+/** Fetch all sheets via the Netlify Function proxy. */
 PF.data._loadSheets = async function () {
   await Promise.all(
     SHEETS_CONFIG.SHEET_NAMES.map(async name => {
       try {
-        PF.data.raw[name] = await _fetchSheet(name);
+        const resp = await fetch(`/.netlify/functions/sheets-public?sheet=${encodeURIComponent(name)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching sheet "${name}"`);
+        const data = await resp.json();
+        PF.data.raw[name] = data.rows || [];
         console.info(`[PF.data] ${name}: ${PF.data.raw[name].length} rows`);
       } catch (err) {
         console.error(`[PF.data] ${err.message}`);
