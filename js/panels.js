@@ -61,7 +61,9 @@ PF.panels.init = function () {
 PF.panels._buildBrowser = function () {
   PF.panels._renderChurchList();
   PF.panels._renderOrderOfBattle();
+  PF.panels._renderBattleList();
   PF.panels._renderEventList();
+  PF.panels._filterBrowser(PF.panels._currentView || 'church');
 };
 
 PF.panels._renderChurchList = function (subset) {
@@ -319,6 +321,37 @@ PF.panels._renderEventList = function () {
   });
 };
 
+PF.panels._renderBattleList = function () {
+  const list = document.getElementById('battle-list');
+  if (!list) return;
+  const battles = PF.data.raw.BATTLES || [];
+  list.innerHTML = battles.map(b => `
+    <li role="button" tabindex="0" data-battle-id="${h(b.battle_id)}">
+      <span style="width:8px;height:8px;background:#8b2020;border-radius:1px;transform:rotate(45deg);display:inline-block;flex-shrink:0"></span>
+      <span>${h(b.name || b.battle_id)}</span>
+      <span class="entity-meta">${h(b.date || '')}</span>
+    </li>`).join('');
+
+  list.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', () => {
+      const b = (PF.data.raw.BATTLES || []).find(x => x.battle_id === li.dataset.battleId);
+      if (b) PF.panels.showBattle(b);
+    });
+  });
+};
+
+PF.panels._filterBrowser = function (view) {
+  const show = (id, visible) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visible ? '' : 'none';
+  };
+
+  show('panel-section-churches', view === 'church');
+  show('browser-tob',            view === 'individual' || view === 'unit');
+  show('panel-section-battles',  view === 'battle');
+  show('panel-section-events',   false);   // Option B: events not shown in any mode
+};
+
 /* ================================================================
    Search
    ================================================================ */
@@ -330,7 +363,7 @@ PF.panels._onSearch = function (query) {
   const results = PF.data.search(query);
   PF.panels._renderChurchList(results.churches);
   PF.panels._renderOrderOfBattle(query);
-  /* Events list re-renders against full set — search filtering handled inside OOB */
+  PF.panels._filterBrowser(PF.panels._currentView || 'church');
 };
 
 /* ================================================================
@@ -367,6 +400,8 @@ PF.panels.setView = function (view) {
       PF.panels._fitBattles();
       break;
   }
+
+  PF.panels._filterBrowser(view);
 };
 
 PF.panels._renderBattleMarkers = function () {
