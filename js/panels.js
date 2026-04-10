@@ -997,6 +997,10 @@ function _buildCommunityOrigin(unit, origin) {
    fall back to a basic info panel.
    ================================================================ */
 PF.panels.showBattle = function (battle) {
+  /* Surface weather card for this battle's date */
+  const battleYear = parseInt((/(\d{4})/.exec(battle.date || '') || [])[1]);
+  if (battleYear) PF.panels.onDateChange(new Date(battleYear, 0, 1));
+
   /* Enter Battle Mode if position data exists */
   if (PF.battle && typeof PF.battle.enter === 'function') {
     const entered = PF.battle.enter(battle);
