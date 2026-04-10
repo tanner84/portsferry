@@ -15,6 +15,7 @@ const VALID_SHEETS = [
   'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
   'SOURCES', 'BATTLES', 'UNIT_POSITIONS', 'BATTLE_PARTICIPANTS',
   'IND_CHURCH', 'IND_UNIT', 'IND_PROPERTY', 'IND_IND', 'EVT_LINKS',
+  'WEATHER',
 ];
 
 const PRIMARY_ID = {
@@ -32,6 +33,7 @@ const PRIMARY_ID = {
   IND_PROPERTY:        ['ind_id', 'prop_id', 'date_from'],
   IND_IND:             ['ind_id_a', 'ind_id_b', 'relationship'],
   EVT_LINKS:           ['evt_id', 'linked_id'],
+  WEATHER:             'weather_id',
 };
 
 /* ── Session auth ──────────────────────────────────────── */
