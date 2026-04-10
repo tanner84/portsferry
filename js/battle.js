@@ -32,6 +32,8 @@ PF.battle._phases       = [];      // [{ phaseIndex, phaseLabel, positions }]
 PF.battle._phaseIndex   = 0;       // 0-based index into _phases
 PF.battle._layer        = null;    // L.LayerGroup for unit position pins
 PF.battle._markers      = [];      // [{ pos, marker, lat, lng }]
+PF.battle._weatherShown = false;   // weather popup shown this session?
+PF.battle._weatherTimer = null;    // pending popup timeout
 
 /* ================================================================
    Initialization — wire battle bar controls
@@ -61,10 +63,11 @@ PF.battle.enter = function (battle) {
     return false;
   }
 
-  PF.battle._battle     = battle;
-  PF.battle._phases     = phases;
-  PF.battle._phaseIndex = 0;
-  PF.battle._active     = true;
+  PF.battle._battle       = battle;
+  PF.battle._phases       = phases;
+  PF.battle._phaseIndex   = 0;
+  PF.battle._active       = true;
+  PF.battle._weatherShown = false;
 
   /* Freeze and hide main timeline */
   PF.timeline.pause();
@@ -93,6 +96,13 @@ PF.battle.enter = function (battle) {
   _updateBar();
   PF.panels.showBattlePhase(battle, phases[0]);
 
+  /* Schedule weather popup — 2 s after entry, once per session */
+  PF.battle._weatherTimer = setTimeout(() => {
+    if (PF.battle._active && !PF.battle._weatherShown) {
+      _showWeatherPopup(battle);
+    }
+  }, 2000);
+
   console.info('[PF.battle] Entered battle mode:', battle.name,
     `— ${phases.length} phases, ${phases.reduce((n, p) => n + p.positions.length, 0)} positions`);
   return true;
@@ -111,6 +121,11 @@ PF.battle.exit = function (silent) {
   PF.battle._battle     = null;
   PF.battle._phases     = [];
   PF.battle._phaseIndex = 0;
+
+  clearTimeout(PF.battle._weatherTimer);
+  PF.battle._weatherTimer = null;
+  PF.battle._weatherShown = false;
+  _dismissWeatherPopup();
 
   document.getElementById('battle-bar').classList.add('hidden');
   document.getElementById('timeline-bar').classList.remove('hidden');
@@ -408,6 +423,86 @@ function _updateBar() {
   const fwdBtn  = document.getElementById('bb-step-fwd');
   if (backBtn) backBtn.disabled = idx === 0;
   if (fwdBtn)  fwdBtn.disabled  = idx === phases.length - 1;
+}
+
+/* ================================================================
+   Weather popup
+   ================================================================ */
+
+const _WEATHER_ICONS = {
+  fog:      '🌫️',
+  rain:     '🌧️',
+  clear:    '☀️',
+  snow:     '🌨️',
+  overcast: '☁️',
+  wind:     '💨',
+  sleet:    '🌦️',
+  storm:    '⛈️',
+};
+
+function _showWeatherPopup(battle) {
+  const row = (PF.data.raw.WEATHER || []).find(w => w.battle_id === battle.battle_id);
+  if (!row) return;   // no weather data — stay silent
+
+  PF.battle._weatherShown = true;
+
+  /* Format battle date for header — "1776-02-27" → "FEB 27 1776" */
+  const dateStr = _formatWeatherDate(battle.date || '');
+  const battleMeta = [
+    (battle.name || '').toUpperCase(),
+    dateStr,
+  ].filter(Boolean).join(' · ');
+
+  const icon      = _WEATHER_ICONS[(row.icon || '').toLowerCase()] || '🌡️';
+  const conf      = row.confidence || 'Medium';
+  const confClass = conf.toLowerCase();
+
+  const popup = document.createElement('div');
+  popup.id = 'weather-popup';
+  popup.innerHTML = `
+    <button id="weather-popup-close" aria-label="Dismiss weather">×</button>
+    <div class="wp-battle-meta">${_esc(battleMeta)}</div>
+    <div class="wp-icon">${icon}</div>
+    <div class="wp-condition">${_esc((row.condition_label || '').toUpperCase())}</div>
+    ${row.temp_estimate ? `<div class="wp-temp">${_esc(row.temp_estimate)}</div>` : ''}
+    ${row.narrative     ? `<p class="wp-narrative">${_esc(row.narrative)}</p>`    : ''}
+    ${row.seasonal_context ? `<p class="wp-seasonal">${_esc(row.seasonal_context)}</p>` : ''}
+    <div class="wp-footer">
+      <span class="battle-pos-confidence confidence-${confClass}">${_esc(conf)} confidence</span>
+      ${row.primary_ref ? `<span class="wp-source">${_esc(row.primary_ref)}</span>` : ''}
+    </div>`;
+
+  document.getElementById('map-container').appendChild(popup);
+
+  /* Dismiss handlers */
+  document.getElementById('weather-popup-close').addEventListener('click', e => {
+    e.stopPropagation();
+    _dismissWeatherPopup();
+  });
+
+  /* Click outside popup (on map overlay) */
+  popup._outsideHandler = function (e) {
+    if (!popup.contains(e.target)) _dismissWeatherPopup();
+  };
+  setTimeout(() => document.addEventListener('click', popup._outsideHandler), 50);
+}
+
+function _dismissWeatherPopup() {
+  const popup = document.getElementById('weather-popup');
+  if (!popup) return;
+  document.removeEventListener('click', popup._outsideHandler);
+  popup.remove();
+}
+
+function _formatWeatherDate(dateStr) {
+  /* Accepts "1776-02-27", "February 27, 1776", or bare year */
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
+  if (iso) {
+    const m = parseInt(iso[2]) - 1;
+    return `${MONTHS[m] || ''} ${parseInt(iso[3])} ${iso[1]}`;
+  }
+  return dateStr;
 }
 
 /* ================================================================
