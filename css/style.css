@@ -1376,7 +1376,7 @@ button { font-family: inherit; cursor: pointer; }
 #weather-popup {
   position: fixed;
   bottom: 74px;          /* clear the battle bar (62px) + gutter */
-  left: calc(var(--panel-left-w) + 16px);  /* right of left browse panel */
+  left: 300px;   /* right of left browse panel (284px) + gutter */
   z-index: 2000;
   width: 240px;
   background: #1c2333;

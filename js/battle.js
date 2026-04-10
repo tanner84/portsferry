@@ -102,7 +102,7 @@ PF.battle.enter = function (battle) {
     if (PF.battle._active && !PF.battle._weatherShown) {
       _showWeatherPopup(battle);
     }
-  }, 2000);
+  }, 500);
 
   console.info('[PF.battle] Entered battle mode:', battle.name,
     `— ${phases.length} phases, ${phases.reduce((n, p) => n + p.positions.length, 0)} positions`);
