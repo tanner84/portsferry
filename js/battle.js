@@ -446,13 +446,7 @@ function _showWeatherPopup(battle) {
 
   PF.battle._weatherShown = true;
 
-  /* Format battle date for header — "1776-02-27" → "FEB 27 1776" */
-  const dateStr = _formatWeatherDate(battle.date || '');
-  const battleMeta = [
-    (battle.name || '').toUpperCase(),
-    dateStr,
-  ].filter(Boolean).join(' · ');
-
+  const dateStr   = _formatWeatherDate(battle.date || '');
   const icon      = _WEATHER_ICONS[(row.icon || '').toLowerCase()] || '🌡️';
   const conf      = row.confidence || 'Medium';
   const confClass = conf.toLowerCase();
@@ -461,11 +455,14 @@ function _showWeatherPopup(battle) {
   popup.id = 'weather-popup';
   popup.innerHTML = `
     <button id="weather-popup-close" aria-label="Dismiss weather">×</button>
-    <div class="wp-battle-meta">${_esc(battleMeta)}</div>
-    <div class="wp-icon">${icon}</div>
-    <div class="wp-condition">${_esc((row.condition_label || '').toUpperCase())}</div>
-    ${row.temp_estimate ? `<div class="wp-temp">${_esc(row.temp_estimate)}</div>` : ''}
-    ${row.narrative     ? `<p class="wp-narrative">${_esc(row.narrative)}</p>`    : ''}
+    <div class="wp-location">${_esc(battle.name || '')}</div>
+    <div class="wp-date">${_esc(dateStr)}</div>
+    <div class="wp-main">
+      <div class="wp-icon">${icon}</div>
+      <div class="wp-temp">${_esc(row.temp_estimate || '')}</div>
+    </div>
+    <div class="wp-condition">${_esc(row.condition_label || '')}</div>
+    ${row.narrative ? `<p class="wp-narrative">${_esc(row.narrative)}</p>` : ''}
     ${row.seasonal_context ? `<p class="wp-seasonal">${_esc(row.seasonal_context)}</p>` : ''}
     <div class="wp-footer">
       <span class="battle-pos-confidence confidence-${confClass}">${_esc(conf)} confidence</span>
@@ -474,24 +471,16 @@ function _showWeatherPopup(battle) {
 
   document.getElementById('map-container').appendChild(popup);
 
-  /* Dismiss handlers */
+  /* X button is the only dismiss — no click-outside, Leaflet map events would fire it */
   document.getElementById('weather-popup-close').addEventListener('click', e => {
     e.stopPropagation();
     _dismissWeatherPopup();
   });
-
-  /* Click outside popup (on map overlay) */
-  popup._outsideHandler = function (e) {
-    if (!popup.contains(e.target)) _dismissWeatherPopup();
-  };
-  setTimeout(() => document.addEventListener('click', popup._outsideHandler), 50);
 }
 
 function _dismissWeatherPopup() {
-  const popup = document.getElementById('weather-popup');
-  if (!popup) return;
-  document.removeEventListener('click', popup._outsideHandler);
-  popup.remove();
+  const el = document.getElementById('weather-popup');
+  if (el) el.remove();
 }
 
 function _formatWeatherDate(dateStr) {
