@@ -447,7 +447,7 @@ function _showWeatherPopup(battle) {
   PF.battle._weatherShown = true;
 
   const dateStr   = _formatWeatherDate(battle.date || '');
-  const icon      = _WEATHER_ICONS[(row.icon || '').toLowerCase()] || '🌡️';
+  const icon      = _WEATHER_ICONS[(row.icon || '').toLowerCase()] || '';
   const conf      = row.confidence || 'Medium';
   const confClass = conf.toLowerCase();
 
