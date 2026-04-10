@@ -23,6 +23,7 @@ const VALID_SHEETS = [
   'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
   'SOURCES', 'BATTLES', 'UNIT_POSITIONS', 'BATTLE_PARTICIPANTS',
   'IND_CHURCH', 'IND_UNIT', 'IND_PROPERTY', 'IND_IND', 'EVT_LINKS',
+  'WEATHER',
 ];
 
 /* ── CORS ───────────────────────────────────────────────────────── */

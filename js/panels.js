@@ -1232,10 +1232,62 @@ PF.panels.showSource = function (src_id) {
 };
 
 /* ================================================================
-   Timeline hook
+   Timeline hook — weather card
    ================================================================ */
-PF.panels.onDateChange = function (/* date */) {
-  /* Phase 2+: update browser counts and active entity context */
+PF.panels.onDateChange = function (date) {
+  const cardEl = document.getElementById('weather-card');
+  if (!cardEl) return;
+
+  const year = date.getFullYear();
+
+  /* Find battles whose date falls in this year */
+  const battles = (PF.data.raw.BATTLES || []).filter(b => {
+    const m = /(\d{4})/.exec(b.date || '');
+    return m && parseInt(m[1]) === year;
+  });
+
+  /* For each matching battle, collect WEATHER rows */
+  let html = '';
+  battles.forEach(battle => {
+    const rows = (PF.data.raw.WEATHER || []).filter(w => w.battle_id === battle.battle_id);
+    if (rows.length === 0) return;
+
+    const conf      = rows[0].confidence || 'Medium';
+    const confClass = conf.toLowerCase();
+
+    html += `
+      <div class="story-section">
+        <div class="story-section-label">Weather conditions</div>
+        <div class="weather-battle-meta">${h(battle.name || battle.battle_id)} &nbsp;·&nbsp; ${h(battle.date || '')}</div>
+
+        ${rows.map(w => `
+          <div class="weather-phase-block">
+            <div class="weather-phase-header">
+              ${w.icon ? `<span class="weather-icon">${h(w.icon)}</span>` : ''}
+              <span class="weather-condition">${h(w.condition_label || '')}</span>
+              ${w.phase ? `<span class="weather-phase-label">${h(w.phase)}</span>` : ''}
+              ${w.temp_estimate ? `<span class="weather-temp">${h(w.temp_estimate)}</span>` : ''}
+            </div>
+            ${w.narrative ? `<p class="weather-narrative">${h(w.narrative)}</p>` : ''}
+          </div>`).join('')}
+
+        ${rows[0].seasonal_context ? `<p class="weather-seasonal">${h(rows[0].seasonal_context)}</p>` : ''}
+
+        <div class="weather-footer">
+          ${rows[0].primary_ref ? `<span class="weather-ref">${h(rows[0].primary_ref)}</span>` : ''}
+          <span class="battle-pos-confidence confidence-${confClass}">${h(conf)} confidence</span>
+        </div>
+      </div>`;
+  });
+
+  if (!html) {
+    cardEl.classList.add('hidden');
+    cardEl.innerHTML = '';
+    return;
+  }
+
+  cardEl.innerHTML = html;
+  cardEl.classList.remove('hidden');
 };
 
 /* ================================================================

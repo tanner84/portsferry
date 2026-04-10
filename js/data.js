@@ -40,6 +40,7 @@ const SHEETS_CONFIG = {
     'IND_PROPERTY',
     'IND_IND',
     'EVT_LINKS',
+    'WEATHER',
   ],
 };
 
@@ -169,6 +170,7 @@ PF.data._loadSeedData = async function () {
     IND_PROPERTY:       'data/seed/ind_property.json',
     IND_IND:            'data/seed/ind_ind.json',
     EVT_LINKS:          'data/seed/evt_links.json',
+    WEATHER:            'data/seed/weather.json',
   };
 
   await Promise.all(
