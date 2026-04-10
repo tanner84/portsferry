@@ -1137,6 +1137,8 @@ PF.panels.showBattlePhase = function (battle, phase) {
  * Build the weather conditions section for a battle story panel.
  * Returns empty string if no WEATHER rows exist for this battle.
  */
+const _WEATHER_EMOJI = { fog:'🌫️', rain:'🌧️', clear:'☀️', snow:'🌨️', overcast:'☁️', wind:'💨', sleet:'🌦️', storm:'⛈️' };
+
 function _buildWeatherSection(battle) {
   const rows = (PF.data.raw.WEATHER || []).filter(w => w.battle_id === battle.battle_id);
   if (rows.length === 0) return '';
@@ -1148,16 +1150,19 @@ function _buildWeatherSection(battle) {
     <div class="story-section">
       <div class="story-section-label">Weather conditions</div>
 
-      ${rows.map(w => `
+      ${rows.map(w => {
+        const emoji = _WEATHER_EMOJI[(w.icon || '').toLowerCase()] || '';
+        return `
         <div class="weather-phase-block">
           <div class="weather-phase-header">
-            ${w.icon ? `<span class="weather-icon">${h(w.icon)}</span>` : ''}
+            ${emoji ? `<span class="weather-icon">${emoji}</span>` : ''}
             <span class="weather-condition">${h(w.condition_label || '')}</span>
             ${w.phase ? `<span class="weather-phase-label">${h(w.phase)}</span>` : ''}
             ${w.temp_estimate ? `<span class="weather-temp">${h(w.temp_estimate)}</span>` : ''}
           </div>
           ${w.narrative ? `<p class="weather-narrative">${h(w.narrative)}</p>` : ''}
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
 
       ${rows[0].seasonal_context ? `<p class="weather-seasonal">${h(rows[0].seasonal_context)}</p>` : ''}
 
