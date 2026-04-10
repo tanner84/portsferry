@@ -98,6 +98,7 @@ PF.battle.enter = function (battle) {
 
   /* Schedule weather popup — 2 s after entry, once per session */
   PF.battle._weatherTimer = setTimeout(() => {
+    console.info('[PF.weather] Timer fired. active:', PF.battle._active, 'shown:', PF.battle._weatherShown);
     if (PF.battle._active && !PF.battle._weatherShown) {
       _showWeatherPopup(battle);
     }
@@ -441,8 +442,14 @@ const _WEATHER_ICONS = {
 };
 
 function _showWeatherPopup(battle) {
+  console.info('[PF.weather] _showWeatherPopup called for:', battle.battle_id);
+  console.info('[PF.weather] WEATHER rows:', PF.data.raw.WEATHER);
   const row = (PF.data.raw.WEATHER || []).find(w => w.battle_id === battle.battle_id);
-  if (!row) return;   // no weather data — stay silent
+  console.info('[PF.weather] Matching row:', row);
+  if (!row) {
+    console.warn('[PF.weather] No WEATHER row found for battle_id:', battle.battle_id);
+    return;
+  }
 
   PF.battle._weatherShown = true;
 
