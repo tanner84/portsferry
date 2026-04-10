@@ -997,10 +997,6 @@ function _buildCommunityOrigin(unit, origin) {
    fall back to a basic info panel.
    ================================================================ */
 PF.panels.showBattle = function (battle) {
-  /* Surface weather card for this battle's date */
-  const battleYear = parseInt((/(\d{4})/.exec(battle.date || '') || [])[1]);
-  if (battleYear) PF.panels.onDateChange(new Date(battleYear, 0, 1));
-
   /* Enter Battle Mode if position data exists */
   if (PF.battle && typeof PF.battle.enter === 'function') {
     const entered = PF.battle.enter(battle);
@@ -1108,6 +1104,8 @@ PF.panels.showBattlePhase = function (battle, phase) {
       </div>
     </div>
 
+    ${_buildWeatherSection(battle)}
+
     <div class="story-section">
       <div class="story-section-label">
         Phase ${phase.phaseIndex} of ${nPhases} — ${h(phase.phaseLabel)}
@@ -1134,6 +1132,41 @@ PF.panels.showBattlePhase = function (battle, phase) {
     });
   });
 };
+
+/**
+ * Build the weather conditions section for a battle story panel.
+ * Returns empty string if no WEATHER rows exist for this battle.
+ */
+function _buildWeatherSection(battle) {
+  const rows = (PF.data.raw.WEATHER || []).filter(w => w.battle_id === battle.battle_id);
+  if (rows.length === 0) return '';
+
+  const conf      = rows[0].confidence || 'Medium';
+  const confClass = conf.toLowerCase();
+
+  return `
+    <div class="story-section">
+      <div class="story-section-label">Weather conditions</div>
+
+      ${rows.map(w => `
+        <div class="weather-phase-block">
+          <div class="weather-phase-header">
+            ${w.icon ? `<span class="weather-icon">${h(w.icon)}</span>` : ''}
+            <span class="weather-condition">${h(w.condition_label || '')}</span>
+            ${w.phase ? `<span class="weather-phase-label">${h(w.phase)}</span>` : ''}
+            ${w.temp_estimate ? `<span class="weather-temp">${h(w.temp_estimate)}</span>` : ''}
+          </div>
+          ${w.narrative ? `<p class="weather-narrative">${h(w.narrative)}</p>` : ''}
+        </div>`).join('')}
+
+      ${rows[0].seasonal_context ? `<p class="weather-seasonal">${h(rows[0].seasonal_context)}</p>` : ''}
+
+      <div class="weather-footer">
+        ${rows[0].primary_ref ? `<span class="weather-ref">${h(rows[0].primary_ref)}</span>` : ''}
+        <span class="battle-pos-confidence confidence-${confClass}">${h(conf)} confidence</span>
+      </div>
+    </div>`;
+}
 
 /**
  * Build the named participants list for a unit at a battle.
