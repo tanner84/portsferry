@@ -469,7 +469,7 @@ function _showWeatherPopup(battle) {
       ${row.primary_ref ? `<span class="wp-source">${_esc(row.primary_ref)}</span>` : ''}
     </div>`;
 
-  document.getElementById('map-container').appendChild(popup);
+  document.body.appendChild(popup);
 
   /* X button is the only dismiss — no click-outside, Leaflet map events would fire it */
   document.getElementById('weather-popup-close').addEventListener('click', e => {

@@ -1374,10 +1374,10 @@ button { font-family: inherit; cursor: pointer; }
    Weather-channel card aesthetic: location bold, temp dominant
    ================================================================ */
 #weather-popup {
-  position: absolute;
+  position: fixed;
   bottom: 74px;          /* clear the battle bar (62px) + gutter */
-  left: 16px;
-  z-index: 950;
+  left: calc(var(--panel-left-w) + 16px);  /* right of left browse panel */
+  z-index: 2000;
   width: 240px;
   background: #1c2333;
   border-radius: 10px;
@@ -1475,3 +1475,4 @@ button { font-family: inherit; cursor: pointer; }
     max-width: 300px;
   }
 }
+
