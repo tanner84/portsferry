@@ -62,5 +62,13 @@
     "relationship": "military",
     "source_ids": "src_006",
     "notes": "Rutherford — McDonald, same regiment"
+  },
+  {
+    "edge_id": "iind_009",
+    "ind_id_a": "ind_015",
+    "ind_id_b": "ind_017",
+    "relationship": "property transfer",
+    "source_ids": "src_1761_deed_mcneill",
+    "notes": "Neill McNeill conveyed Old Bluff meeting house acre to Hector McNeill (Bluff), February 18 1761"
   }
 ]

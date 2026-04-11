@@ -18,5 +18,15 @@
     "date_to": "1776",
     "source_ids": "src_007",
     "notes": "Flora MacDonald — congregation member, Old Bluff"
+  },
+  {
+    "link_id": "ich_003",
+    "ind_id": "ind_017",
+    "ch_id": "ch_001",
+    "role": "Ruling Elder",
+    "date_from": "1758",
+    "date_to": "",
+    "source_ids": "src_old_bluff_founding_contract",
+    "notes": "Hector McNeill (Bluff) — Ruling Elder at Old Bluff founding, 1758"
   }
 ]
