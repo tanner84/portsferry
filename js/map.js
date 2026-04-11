@@ -409,6 +409,7 @@ const PROPERTY_COLOR = '#c8a86b';
  */
 PF.map.renderProperties = function (propLinks) {
   PF.map.layers.routes.clearLayers();
+  PF.map._propertyMarkers = new Map();   // prop_id → marker
 
   propLinks.forEach(({ property, relationship, date_from, date_to }) => {
     const lat = _parseCoord(property.lat);
@@ -424,6 +425,7 @@ PF.map.renderProperties = function (propLinks) {
         border: 2px solid rgba(255,255,255,0.55);
         transform: rotate(45deg);
         box-shadow: 0 1px 5px rgba(0,0,0,0.55);
+        transition: filter 0.15s;
       "></div>`,
       iconSize:    [size, size],
       iconAnchor:  [size / 2, size / 2],
@@ -451,7 +453,25 @@ PF.map.renderProperties = function (propLinks) {
 
     marker.on('click', () => PF.panels.showProperty(property, relationship));
     PF.map.layers.routes.addLayer(marker);
+    PF.map._propertyMarkers.set(property.prop_id, marker);
   });
+};
+
+/**
+ * Briefly pulse a property marker to help the user locate it after
+ * clicking its row in the story panel.
+ * @param {string} prop_id
+ */
+PF.map.pulseProperty = function (prop_id) {
+  if (!PF.map._propertyMarkers) return;
+  const marker = PF.map._propertyMarkers.get(prop_id);
+  if (!marker) return;
+  const el = marker.getElement();
+  if (!el) return;
+  const inner = el.querySelector('div');
+  if (!inner) return;
+  inner.style.filter = 'brightness(2.2) drop-shadow(0 0 5px #c8a86b)';
+  setTimeout(() => { inner.style.filter = ''; }, 700);
 };
 
 /**

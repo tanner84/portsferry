@@ -492,6 +492,8 @@ PF.panels.showIndividual = function (ind) {
     LATERAL_TYPES.has((relationship || '').toLowerCase())
   );
 
+  const propLinks = PF.data.getIndividualProperties(ind.ind_id);
+
   const html = `
     <div class="story-section">
       <div class="story-name">
@@ -540,6 +542,8 @@ PF.panels.showIndividual = function (ind) {
       </ul>
     </div>` : ''}
 
+    ${_buildPropertyHoldings(propLinks)}
+
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
@@ -580,9 +584,18 @@ PF.panels.showIndividual = function (ind) {
     });
   });
 
+  /* Wire property row clicks — pan to marker and pulse it */
+  document.querySelectorAll('#story-entity .prop-holdings-list li[data-prop-id]').forEach(li => {
+    li.addEventListener('click', () => {
+      const lat = PF.data._parseCoord(li.dataset.propLat);
+      const lng = PF.data._parseCoord(li.dataset.propLng);
+      if (lat !== null && lng !== null) PF.map.focusOn(lat, lng, 14);
+      PF.map.pulseProperty(li.dataset.propId);
+    });
+  });
+
   /* Render property markers for this individual */
   PF.map.clearProperties();
-  const propLinks = PF.data.getIndividualProperties(ind.ind_id);
   if (propLinks.length > 0) PF.map.renderProperties(propLinks);
 };
 
@@ -686,6 +699,52 @@ function _buildOrgContext(ind, lateralNeighbors) {
       ${chainHtml}
       ${timelineHtml}
       ${lateralHtml}
+    </div>`;
+}
+
+/**
+ * Build the Property Holdings section HTML for an individual story panel.
+ * Returns empty string when the individual has no linked properties.
+ *
+ * Uses only existing CSS classes (story-section, story-section-label,
+ * conn-list, conn-rel) — no new styles introduced.
+ *
+ * @param {Array} propLinks — result of PF.data.getIndividualProperties()
+ * @returns {string} HTML
+ */
+function _buildPropertyHoldings(propLinks) {
+  if (!propLinks || propLinks.length === 0) return '';
+
+  const rows = propLinks.map(({ property, relationship, date_from, date_to }) => {
+    const subParts = [];
+    if (property.type)    subParts.push(h(property.type));
+    if (property.acreage) subParts.push(h(property.acreage) + '\u00a0ac.');
+    const dateStr = date_from
+      ? (date_to ? `${h(date_from)}–${h(date_to)}` : `from ${h(date_from)}`)
+      : '';
+    if (dateStr) subParts.push(dateStr);
+    const subtext = subParts.join(' · ');
+
+    return `
+      <li data-prop-id="${h(property.prop_id)}"
+          data-prop-lat="${h(property.lat || '')}"
+          data-prop-lng="${h(property.lng || '')}"
+          role="button" tabindex="0">
+        <span style="width:8px;height:8px;background:#c8a86b;border:1px solid rgba(255,255,255,0.4);transform:rotate(45deg);flex-shrink:0;display:inline-block"></span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block">${h(property.name || property.prop_id)}</span>
+          ${subtext ? `<span style="display:block;font-size:0.68rem;color:var(--text-muted);font-style:italic">${subtext}</span>` : ''}
+        </span>
+        <span class="conn-rel">${h(relationship)}</span>
+      </li>`;
+  }).join('');
+
+  return `
+    <div class="story-section">
+      <div class="story-section-label">Property holdings — ${propLinks.length}</div>
+      <ul class="conn-list prop-holdings-list">
+        ${rows}
+      </ul>
     </div>`;
 }
 
