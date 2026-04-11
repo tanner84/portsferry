@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "prop_id":   "PROP_NEIL_MCNEILL_1754",
+    "name":      "Neill McNeill 1754 Land Grant",
+    "type":      "Land Grant",
+    "lat":       "35.0832",
+    "lng":       "-78.9241",
+    "acreage":   "640",
+    "plat_ref":  "Cumberland Co. Deed Book 1, p. 42",
+    "date_from": "1754",
+    "date_to":   "",
+    "notes":     "Original Crown grant to Neill McNeill, part of the early Highland Scots settlement cluster west of Cross Creek. Typical headright acreage for a family-sized settlement.",
+    "source_ids": ""
+  },
+  {
+    "prop_id":   "prop_old_bluff_acre",
+    "name":      "Old Bluff Meeting House Glebe Acre",
+    "type":      "Church Glebe",
+    "lat":       "35.1835",
+    "lng":       "-78.7170",
+    "acreage":   "1",
+    "plat_ref":  "Old Bluff Presbyterian Church Records, 1758",
+    "date_from": "1758",
+    "date_to":   "",
+    "notes":     "The single acre set aside at founding for the meeting house and burying ground at Old Bluff (Bluff Presbyterian Church), the oldest Presbyterian congregation in Cumberland County.",
+    "source_ids": ""
+  }
+]

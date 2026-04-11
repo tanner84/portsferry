@@ -579,6 +579,11 @@ PF.panels.showIndividual = function (ind) {
       if (unit) PF.panels.showUnit(unit);
     });
   });
+
+  /* Render property markers for this individual */
+  PF.map.clearProperties();
+  const propLinks = PF.data.getIndividualProperties(ind.ind_id);
+  if (propLinks.length > 0) PF.map.renderProperties(propLinks);
 };
 
 /**
@@ -997,6 +1002,60 @@ function _buildCommunityOrigin(unit, origin) {
 }
 
 /* ================================================================
+   Story panel — PROPERTY
+   ================================================================ */
+
+/**
+ * Show a brief property record in the story panel.
+ * Called when the user clicks a property marker on the map.
+ *
+ * @param {Object} property    — PROPERTIES row
+ * @param {string} relationship — relationship type from IND_PROPERTY link
+ */
+PF.panels.showProperty = function (property, relationship) {
+  const sources = PF.data.getSourcesForEntity(property);
+
+  const dateStr = property.date_from
+    ? (property.date_to
+        ? `${h(property.date_from)}–${h(property.date_to)}`
+        : `from ${h(property.date_from)}`)
+    : '';
+
+  const html = `
+    <div class="story-section">
+      <div class="story-name">${h(property.name || property.prop_id)}</div>
+      <div class="story-role">
+        ${h(property.type || 'Property')}
+        ${relationship ? ` &nbsp;·&nbsp; <em>${h(relationship)}</em>` : ''}
+      </div>
+    </div>
+
+    <div class="story-section">
+      <div class="story-section-label">Details</div>
+      ${property.acreage  ? _dataRow('Acreage',    h(property.acreage))   : ''}
+      ${property.plat_ref ? _dataRow('Plat ref',   h(property.plat_ref))  : ''}
+      ${dateStr           ? _dataRow('Date range', dateStr)               : ''}
+    </div>
+
+    ${property.notes ? `
+    <div class="story-section">
+      <p class="story-prose">${h(property.notes)}</p>
+    </div>` : ''}
+
+    ${sources.length > 0 ? `
+    <div class="story-section">
+      <div class="story-section-label">Sources</div>
+      ${sources.map(src => `
+        <div class="data-row">
+          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
+        </div>`).join('')}
+    </div>` : ''}
+  `;
+
+  _showEntity(property.name || 'Property', html);
+};
+
+/* ================================================================
    Story panel — BATTLE
    Entry point: if UNIT_POSITIONS exist, enter Battle Mode.
    If no positions are available (future battle not yet populated),
@@ -1355,6 +1414,7 @@ PF.panels.resetStory = function () {
 
   PF.network.clear();
   PF.map.clearAssembly();
+  PF.map.clearProperties();
 
   /* Restore congregation members that showChurch hid — but only in views
      that show the individuals layer (church view intentionally keeps it empty). */

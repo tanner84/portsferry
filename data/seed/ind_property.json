@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "link_id":      "ip_001",
+    "ind_id":       "ind_015",
+    "prop_id":      "PROP_NEIL_MCNEILL_1754",
+    "relationship": "Owner",
+    "date_from":    "1754",
+    "date_to":      "",
+    "source_ids":   ""
+  },
+  {
+    "link_id":      "ip_002",
+    "ind_id":       "ind_015",
+    "prop_id":      "prop_old_bluff_acre",
+    "relationship": "Adjacent",
+    "date_from":    "1758",
+    "date_to":      "",
+    "source_ids":   ""
+  },
+  {
+    "link_id":      "ip_003",
+    "ind_id":       "ind_017",
+    "prop_id":      "prop_old_bluff_acre",
+    "relationship": "Trustee",
+    "date_from":    "1758",
+    "date_to":      "",
+    "source_ids":   ""
+  }
+]

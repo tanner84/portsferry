@@ -394,6 +394,74 @@ PF.map.clearAssembly = function () {
 };
 
 /* ================================================================
+   Property markers — layers.routes
+   Square div icons in amber/tan, rendered per selected individual.
+   ================================================================ */
+
+const PROPERTY_COLOR = '#c8a86b';
+
+/**
+ * Render property markers for the currently-selected individual.
+ * Each marker is a small rotated square (distinct from circle pins
+ * and church diamonds). All go into layers.routes.
+ *
+ * @param {Array} propLinks — result of PF.data.getIndividualProperties()
+ */
+PF.map.renderProperties = function (propLinks) {
+  PF.map.layers.routes.clearLayers();
+
+  propLinks.forEach(({ property, relationship, date_from, date_to }) => {
+    const lat = _parseCoord(property.lat);
+    const lng = _parseCoord(property.lng);
+    if (lat === null || lng === null) return;
+
+    const size = 10;
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        width:${size}px; height:${size}px;
+        background:${PROPERTY_COLOR};
+        border: 2px solid rgba(255,255,255,0.55);
+        transform: rotate(45deg);
+        box-shadow: 0 1px 5px rgba(0,0,0,0.55);
+      "></div>`,
+      iconSize:    [size, size],
+      iconAnchor:  [size / 2, size / 2],
+      popupAnchor: [0, -size / 2 - 2],
+    });
+
+    const acreageLine = property.acreage
+      ? `<br>${_mapEsc(property.acreage)} acres` : '';
+    const relLine = relationship
+      ? `<br><em>${_mapEsc(relationship)}</em>` : '';
+
+    const marker = L.marker([lat, lng], {
+      icon,
+      title: property.name || property.prop_id,
+      zIndexOffset: 200,
+    });
+
+    marker.bindTooltip(
+      `<strong>${_mapEsc(property.name || property.prop_id)}</strong>` +
+      (property.type ? `<br>${_mapEsc(property.type)}` : '') +
+      acreageLine +
+      relLine,
+      { direction: 'top', offset: [0, -10], className: 'pf-tooltip' }
+    );
+
+    marker.on('click', () => PF.panels.showProperty(property, relationship));
+    PF.map.layers.routes.addLayer(marker);
+  });
+};
+
+/**
+ * Remove all property markers from the map.
+ */
+PF.map.clearProperties = function () {
+  PF.map.layers.routes.clearLayers();
+};
+
+/* ================================================================
    affiliationClass(str)
    Converts a stored affiliation value to its CSS class slug.
    "Patriot Militia" → "patriot-militia"

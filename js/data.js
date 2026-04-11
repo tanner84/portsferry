@@ -545,6 +545,31 @@ PF.data.getLateralCoordination = function (ind_id) {
   );
 };
 
+/**
+ * Properties linked to an individual via IND_PROPERTY.
+ * Returns resolved property records with junction metadata.
+ *
+ * @param {string} ind_id
+ * @returns {Array<{ property: Object, relationship: string, date_from: string, date_to: string, source_ids: Array }>}
+ */
+PF.data.getIndividualProperties = function (ind_id) {
+  return (PF.data.raw.IND_PROPERTY || [])
+    .filter(link => link.ind_id === ind_id)
+    .reduce((acc, link) => {
+      const property = (PF.data.raw.PROPERTIES || []).find(p => p.prop_id === link.prop_id);
+      if (property) {
+        acc.push({
+          property,
+          relationship: link.relationship || '',
+          date_from:    link.date_from   || '',
+          date_to:      link.date_to     || '',
+          source_ids:   _parseList(link.source_ids),
+        });
+      }
+      return acc;
+    }, []);
+};
+
 /* ================================================================
    Battle query API
    ================================================================ */
