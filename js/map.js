@@ -256,6 +256,7 @@ PF.map.renderChurches = function (churches) {
  */
 PF.map.renderIndividuals = function (individuals) {
   PF.map.layers.individuals.clearLayers();
+  PF.map._individualMarkers = new Map();   // ind_id → marker
 
   const renderTiers = new Set(['Command', 'Company', 'Exception']);
 
@@ -284,6 +285,20 @@ PF.map.renderIndividuals = function (individuals) {
     });
 
     PF.map.layers.individuals.addLayer(marker);
+    PF.map._individualMarkers.set(ind.ind_id, marker);
+  });
+};
+
+/**
+ * Remove specific individual markers from the individuals layer.
+ * Used by showChurch to hide congregation members before animation.
+ * @param {Set<string>} indIds — set of ind_id values to hide
+ */
+PF.map.hideIndividuals = function (indIds) {
+  if (!PF.map._individualMarkers) return;
+  indIds.forEach(id => {
+    const marker = PF.map._individualMarkers.get(id);
+    if (marker) PF.map.layers.individuals.removeLayer(marker);
   });
 };
 

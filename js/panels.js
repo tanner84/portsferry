@@ -695,6 +695,12 @@ PF.panels.showChurch = function (ch) {
   const members = PF.data.getChurchMembers(ch.ch_id);
   const sources = PF.data.getSourcesForEntity(ch);
 
+  /* Clear any prior church's assembly animation, then hide congregation
+     members from the individuals layer so the animate button reveals them. */
+  PF.map.clearAssembly();
+  const memberIds = new Set(members.map(m => m.ind_id));
+  PF.map.hideIndividuals(memberIds);
+
   if (lat !== null && lng !== null) {
     PF.map.focusOn(lat, lng, 12);
     PF.map.highlightChurch(lat, lng);
@@ -1349,6 +1355,14 @@ PF.panels.resetStory = function () {
 
   PF.network.clear();
   PF.map.clearAssembly();
+
+  /* Restore congregation members that showChurch hid — but only in views
+     that show the individuals layer (church view intentionally keeps it empty). */
+  const view = PF.panels._currentView;
+  if (view === 'individual' || view === 'unit') {
+    PF.map.renderIndividuals(PF.data.getIndividualsByDate(PF.timeline.currentDate));
+  }
+
   if (PF.map._churchHighlight) {
     PF.map.instance.removeLayer(PF.map._churchHighlight);
     PF.map._churchHighlight = null;
