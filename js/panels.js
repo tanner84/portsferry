@@ -512,6 +512,11 @@ PF.panels.showIndividual = function (ind) {
       ${ind.pension_filed === 'Y' ? _dataRow('Pension', 'Filed pension application') : ''}
     </div>
 
+    ${ind.ind_id === 'ind_006' ? `
+    <div class="story-section" style="border-left:3px solid #c8a86b;padding-left:0.75rem">
+      <p class="story-prose">Co-trustee of Old Bluff Presbyterian Church (1761–) and co-executor of Bluff Hector McNeill&#8217;s estate &#8212; while simultaneously representing Cumberland County at the Hillsboro Convention as a Patriot in 1776.</p>
+    </div>` : ''}
+
     ${_buildOrgContext(ind, lateralNeighbors)}
 
     ${ind.battles_present ? `
