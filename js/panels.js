@@ -1501,6 +1501,7 @@ PF.panels.resetStory = function () {
    ================================================================ */
 
 function _showEntity(title, html) {
+  if (PF.mob) PF.mob.switchTab('story');   // auto-switch on mobile; no-op on desktop
   document.getElementById('story-title').textContent = title;
   document.getElementById('story-close').classList.remove('hidden');
   document.getElementById('story-default').classList.add('hidden');

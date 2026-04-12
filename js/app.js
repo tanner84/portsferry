@@ -10,6 +10,38 @@
  *   5. Initial render
  */
 
+/* ================================================================
+   Mobile tab navigation
+   No-op on desktop (guard: window.innerWidth > 767).
+   Exposes PF.mob.switchTab(tab) for panels.js to call when an
+   entity is selected — switches to STORY tab automatically.
+   ================================================================ */
+window.PF = window.PF || {};
+PF.mob = {
+  active: 'map',
+  switchTab: function (tab) {
+    if (window.innerWidth > 767) return;
+    const app = document.getElementById('app');
+    app.classList.remove('mob-browse', 'mob-story');
+    if (tab === 'browse') app.classList.add('mob-browse');
+    if (tab === 'story')  app.classList.add('mob-story');
+    PF.mob.active = tab;
+    document.querySelectorAll('.mob-tab').forEach(btn => {
+      btn.classList.toggle('mob-tab-active', btn.dataset.tab === tab);
+    });
+    /* When switching away from a drawer, invalidate map size */
+    if (tab === 'map') setTimeout(() => PF.map.instance.invalidateSize(), 50);
+  },
+};
+
+function _initMobileNav() {
+  if (window.innerWidth > 767) return;
+  document.querySelectorAll('.mob-tab').forEach(btn => {
+    btn.addEventListener('click', () => PF.mob.switchTab(btn.dataset.tab));
+  });
+  PF.mob.switchTab('map');   // default state
+}
+
 (async function portsFerryInit() {
   'use strict';
 
@@ -37,6 +69,9 @@
 
     /* ── 5. Panels ──────────────────────────────────────────── */
     PF.panels.init();
+
+    /* ── 5a. Mobile tab nav (no-op above 767px) ─────────────── */
+    _initMobileNav();
 
     /* ── 6. Initial render ──────────────────────────────────── */
     const initialDate = PF.timeline.currentDate;
