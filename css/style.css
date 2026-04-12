@@ -1336,8 +1336,9 @@ button { font-family: inherit; cursor: pointer; }
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 2px;
-    flex-shrink: 1;
+    flex: 1 1 0;
     min-width: 0;
+    margin-left: 0;
   }
   #view-controls::-webkit-scrollbar { display: none; }
 
@@ -1354,11 +1355,12 @@ button { font-family: inherit; cursor: pointer; }
   }
 
   /* ── Main layout: stack — map fills space between header and timeline */
+  /* bottom = --timeline-h(62px) + --mob-nav-h(52px) = 114px            */
   #main-layout {
     display: block;
     position: fixed;
-    top: var(--header-h);
-    bottom: calc(var(--timeline-h) + var(--mob-nav-h));
+    top: 50px;
+    bottom: 114px;
     left: 0;
     right: 0;
   }
@@ -1374,7 +1376,7 @@ button { font-family: inherit; cursor: pointer; }
   #panel-right {
     position: fixed;
     left: 0; right: 0;
-    bottom: calc(var(--timeline-h) + var(--mob-nav-h));
+    bottom: 114px;
     height: var(--mob-drawer-h);
     width: 100%;
     transform: translateY(100%);
@@ -1395,11 +1397,12 @@ button { font-family: inherit; cursor: pointer; }
   #panel-right #story-content { max-height: calc(var(--mob-drawer-h) - 52px); }
 
   /* ── Timeline: fixed above mobile nav ───────────────────────── */
+  /* bottom = --mob-nav-h(52px), height = --timeline-h(62px)      */
   #timeline-bar {
     position: fixed;
-    bottom: var(--mob-nav-h);
+    bottom: 52px;
     left: 0; right: 0;
-    height: var(--timeline-h);
+    height: 62px;
     z-index: 1100;
     padding: 0 0.75rem;
     gap: 0.5rem;
@@ -1411,7 +1414,7 @@ button { font-family: inherit; cursor: pointer; }
   /* ── Battle bar: sits above timeline which sits above mobile nav */
   #battle-bar {
     position: fixed;
-    bottom: calc(var(--timeline-h) + var(--mob-nav-h));
+    bottom: 114px;
     left: 0; right: 0;
     z-index: 1050;
     padding: 0 0.75rem;
@@ -1427,7 +1430,7 @@ button { font-family: inherit; cursor: pointer; }
     left: 0.75rem;
     right: 0.75rem;
     width: auto;
-    bottom: calc(var(--timeline-h) + var(--mob-nav-h) + 8px);
+    bottom: 122px;  /* 114px + 8px */
   }
 
   /* ── Mobile bottom nav ───────────────────────────────────────── */
