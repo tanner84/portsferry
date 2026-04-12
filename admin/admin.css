@@ -29,6 +29,12 @@
   --red:    #5a1818;
   --red-bg: #fdf0f0;
   --red-border: #c07070;
+  --orange:        #7a4008;
+  --orange-bg:     #fdf6ee;
+  --orange-border: #c88840;
+  --overwrite:        #7a1010;
+  --overwrite-bg:     #ffeaea;
+  --overwrite-border: #cc3333;
 }
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -337,6 +343,23 @@ body {
 .btn-push:hover:not(:disabled) { background: #3a7a50; }
 .btn-push:disabled { opacity: 0.35; cursor: default; }
 
+.btn-push-overwrite {
+  background: #5a1818;
+  color: #f0c8c8;
+  border: none;
+  padding: 0.45rem 1.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, opacity 0.12s;
+  border-radius: 2px;
+}
+.btn-push-overwrite:hover:not(:disabled) { background: #7a2020; }
+.btn-push-overwrite:disabled { opacity: 0.35; cursor: default; }
+
 /* ══════════════════════════════════════════════════════════
    INGEST TAB
 ══════════════════════════════════════════════════════════ */
@@ -432,9 +455,11 @@ body {
   white-space: nowrap;
 }
 
-.row-new     { background: var(--green-bg); }
-.row-dup     { background: var(--yellow-bg); }
-.row-invalid { background: var(--red-bg); }
+.row-new       { background: var(--green-bg); }
+.row-dup       { background: var(--yellow-bg); }
+.row-invalid   { background: var(--red-bg); }
+.row-overwrite { background: var(--overwrite-bg); }
+.row-warn      { background: var(--orange-bg); }
 
 .row-badge {
   display: inline-block;
@@ -446,9 +471,11 @@ body {
   border-radius: 2px;
   white-space: nowrap;
 }
-.badge-new     { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-.badge-dup     { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
-.badge-invalid { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.badge-new       { background: var(--green-bg);      color: var(--green);      border: 1px solid var(--green-border); }
+.badge-dup       { background: var(--yellow-bg);     color: var(--yellow);     border: 1px solid var(--yellow-border); }
+.badge-invalid   { background: var(--red-bg);        color: var(--red);        border: 1px solid var(--red-border); }
+.badge-overwrite { background: var(--overwrite-bg);  color: var(--overwrite);  border: 1px solid var(--overwrite-border); }
+.badge-warn      { background: var(--orange-bg);     color: var(--orange);     border: 1px solid var(--orange-border); }
 
 /* ── Results ────────────────────────────────────────────── */
 #results-body {
@@ -471,9 +498,10 @@ body {
   text-transform: uppercase;
   margin-bottom: 0.35rem;
 }
-.result-title-written { color: var(--green); }
-.result-title-skipped { color: var(--yellow); }
-.result-title-error   { color: var(--red); }
+.result-title-written    { color: var(--green); }
+.result-title-skipped    { color: var(--yellow); }
+.result-title-error      { color: var(--red); }
+.result-title-overwritten{ color: var(--overwrite); }
 
 .result-item {
   padding: 0.2rem 0;

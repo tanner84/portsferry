@@ -54,9 +54,22 @@ async function checkAuth(pw) {
   } catch { return false; }
 }
 
+/* ── ID-pattern rules ──────────────────────────────────── */
+const ID_PATTERNS = [
+  { field: 'ind_id',  re: /^ind_\d{3}$/,              hint: 'ind_### (three zero-padded digits)' },
+  { field: 'edge_id', re: /^iind_\d{3}$/,             hint: 'iind_### (three zero-padded digits)' },
+  { field: 'ch_id',   re: /^(ch_\d{3}|ch_old_bluff)$/,hint: 'ch_### or ch_old_bluff' },
+];
+
 /* ── Validate entry structure ──────────────────────────── */
-function validateEntry(entry, index) {
-  const errors = [];
+/* Returns { errors, warnings }
+ *   errors   → structural problems → 'invalid' status, push blocked
+ *   warnings → ID pattern violations → 'warn' status, push blocked until fixed
+ */
+function validateEntry(entry) {
+  const errors   = [];
+  const warnings = [];
+
   if (!entry.entry_type) {
     errors.push('Missing entry_type');
   } else if (!VALID_SHEETS.includes(entry.entry_type)) {
@@ -69,8 +82,18 @@ function validateEntry(entry, index) {
     } else {
       if (!entry[idField]) errors.push(`Missing primary ID field: ${idField}`);
     }
+
+    // ID convention checks (apply to any entry that has the field)
+    if (errors.length === 0) {
+      for (const { field, re, hint } of ID_PATTERNS) {
+        if (entry[field] !== undefined && !re.test(entry[field])) {
+          warnings.push(`${field} "${entry[field]}" must match ${hint}`);
+        }
+      }
+    }
   }
-  return errors;
+
+  return { errors, warnings };
 }
 
 function getPrimaryKeyValue(entry) {
@@ -156,6 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('validate-btn').addEventListener('click', runValidation);
   $('clear-btn').addEventListener('click', clearIngest);
   $('push-btn').addEventListener('click', runPush);
+  $('push-overwrite-btn').addEventListener('click', runPushWithOverwrites);
 
   /* Verify tab */
   $('verify-load-btn').addEventListener('click', loadVerifySheet);
@@ -187,7 +211,7 @@ function switchTab(name) {
    INGEST — VALIDATE
 ════════════════════════════════════════════════════════ */
 let _parsedEntries  = [];
-let _validatedRows  = [];  // { entry, status:'new'|'dup'|'invalid', errors }
+let _validatedRows  = [];  // { entry, status:'new'|'dup'|'overwrite'|'warn'|'invalid', errors }
 
 async function runValidation() {
   const raw = $('ingest-textarea').value.trim();
@@ -196,6 +220,7 @@ async function runValidation() {
   $('validate-status').innerHTML = '<span class="spinner"></span>Validating…';
   $('preview-panel').classList.add('hidden');
   $('push-btn').disabled = true;
+  $('push-overwrite-btn').disabled = true;
   _validatedRows = [];
 
   let entries;
@@ -208,15 +233,17 @@ async function runValidation() {
   }
   _parsedEntries = entries;
 
-  // Validate structure
-  const withValidation = entries.map((entry, i) => ({
-    entry,
-    structErrors: validateEntry(entry, i),
-  }));
+  // Validate structure and ID patterns
+  const withValidation = entries.map(entry => {
+    const { errors, warnings } = validateEntry(entry);
+    return { entry, structErrors: errors, warnErrors: warnings };
+  });
 
-  // For structurally valid entries, check duplicates against live sheet data
+  // For clean entries (no errors, no warnings), check duplicates against live sheet data
   const sheetsToCheck = [...new Set(
-    withValidation.filter(r => r.structErrors.length === 0).map(r => r.entry.entry_type)
+    withValidation
+      .filter(r => r.structErrors.length === 0 && r.warnErrors.length === 0)
+      .map(r => r.entry.entry_type)
   )];
 
   const keyCache = {};
@@ -224,27 +251,42 @@ async function runValidation() {
     keyCache[sheet] = await fetchSheetKeys(sheet);
   }));
 
-  _validatedRows = withValidation.map(({ entry, structErrors }) => {
-    if (structErrors.length > 0) return { entry, status: 'invalid', errors: structErrors };
+  _validatedRows = withValidation.map(({ entry, structErrors, warnErrors }) => {
+    if (structErrors.length > 0) return { entry, status: 'invalid',  errors: structErrors };
+    if (warnErrors.length   > 0) return { entry, status: 'warn',     errors: warnErrors   };
 
     const idField = PRIMARY_ID[entry.entry_type];
     const key = Array.isArray(idField)
       ? idField.map(f => entry[f] || '').join('\x00')
       : (entry[idField] || '');
-    const isDup = key && (keyCache[entry.entry_type] || new Set()).has(key);
+    const exists = key && (keyCache[entry.entry_type] || new Set()).has(key);
 
-    return { entry, status: isDup ? 'dup' : 'new', errors: [] };
+    if (exists && entry.overwrite === true) return { entry, status: 'overwrite', errors: [] };
+    if (exists)                             return { entry, status: 'dup',       errors: [] };
+    return                                         { entry, status: 'new',       errors: [] };
   });
 
   renderPreview(_validatedRows);
 
-  const nNew     = _validatedRows.filter(r => r.status === 'new').length;
-  const nDup     = _validatedRows.filter(r => r.status === 'dup').length;
-  const nInvalid = _validatedRows.filter(r => r.status === 'invalid').length;
+  const nNew       = _validatedRows.filter(r => r.status === 'new').length;
+  const nOverwrite = _validatedRows.filter(r => r.status === 'overwrite').length;
+  const nInvalid   = _validatedRows.filter(r => r.status === 'invalid').length;
+  const nWarn      = _validatedRows.filter(r => r.status === 'warn').length;
+  const clean      = nInvalid === 0 && nWarn === 0;
 
   $('validate-status').textContent = '';
-  $('push-btn').disabled = nNew === 0 || nInvalid > 0;
+  $('push-btn').disabled           = !clean || nNew === 0;
+  $('push-overwrite-btn').disabled = !clean || (nNew === 0 && nOverwrite === 0);
 }
+
+/* ── Badge label map ───────────────────────────────────── */
+const BADGE_LABEL = {
+  new:       'New',
+  dup:       'Duplicate',
+  overwrite: 'Overwrite',
+  warn:      'Warning',
+  invalid:   'Invalid',
+};
 
 /* ── Render preview tables ─────────────────────────────── */
 function renderPreview(rows) {
@@ -254,26 +296,35 @@ function renderPreview(rows) {
     (bySheet[sheet] = bySheet[sheet] || []).push(r);
   });
 
-  const nNew     = rows.filter(r => r.status === 'new').length;
-  const nDup     = rows.filter(r => r.status === 'dup').length;
-  const nInvalid = rows.filter(r => r.status === 'invalid').length;
+  const nNew       = rows.filter(r => r.status === 'new').length;
+  const nDup       = rows.filter(r => r.status === 'dup').length;
+  const nOverwrite = rows.filter(r => r.status === 'overwrite').length;
+  const nWarn      = rows.filter(r => r.status === 'warn').length;
+  const nInvalid   = rows.filter(r => r.status === 'invalid').length;
 
   $('preview-summary').innerHTML =
     `<span class="row-badge badge-new">${nNew} new</span> ` +
-    (nDup     ? `<span class="row-badge badge-dup">${nDup} duplicate</span> ` : '') +
-    (nInvalid ? `<span class="row-badge badge-invalid">${nInvalid} invalid</span>` : '');
+    (nDup       ? `<span class="row-badge badge-dup">${nDup} duplicate</span> `         : '') +
+    (nOverwrite ? `<span class="row-badge badge-overwrite">${nOverwrite} overwrite</span> ` : '') +
+    (nWarn      ? `<span class="row-badge badge-warn">${nWarn} warning</span> `          : '') +
+    (nInvalid   ? `<span class="row-badge badge-invalid">${nInvalid} invalid</span>`    : '');
 
   const container = $('preview-tables');
   container.innerHTML = '';
+
+  // Meta-fields that are not data columns
+  const META_KEYS = new Set(['entry_type', 'overwrite']);
 
   for (const [sheet, sheetRows] of Object.entries(bySheet)) {
     const group = el('div', 'preview-sheet-group');
     const label = el('div', 'preview-sheet-label', sheet);
     group.appendChild(label);
 
-    // Collect all keys across this sheet's entries
+    // Collect data columns across this sheet's entries (exclude meta-keys)
     const allKeys = new Set();
-    sheetRows.forEach(r => Object.keys(r.entry).forEach(k => { if (k !== 'entry_type') allKeys.add(k); }));
+    sheetRows.forEach(r => {
+      Object.keys(r.entry).forEach(k => { if (!META_KEYS.has(k)) allKeys.add(k); });
+    });
     const cols = ['status', ...allKeys];
 
     const table = el('table', 'preview-table');
@@ -292,8 +343,8 @@ function renderPreview(rows) {
       cols.forEach(c => {
         const td = el('td');
         if (c === 'status') {
-          const badge = el('span', `row-badge badge-${status}`, status === 'new' ? 'New' : status === 'dup' ? 'Duplicate' : 'Invalid');
-          if (status === 'invalid') badge.title = errors.join('\n');
+          const badge = el('span', `row-badge badge-${status}`, BADGE_LABEL[status] || status);
+          if (errors.length > 0) badge.title = errors.join('\n');
           td.appendChild(badge);
         } else {
           td.textContent = entry[c] ?? '';
@@ -318,6 +369,7 @@ function clearIngest() {
   $('preview-panel').classList.add('hidden');
   $('results-panel').classList.add('hidden');
   $('push-btn').disabled = true;
+  $('push-overwrite-btn').disabled = true;
   _parsedEntries = [];
   _validatedRows = [];
 }
@@ -325,14 +377,13 @@ function clearIngest() {
 /* ════════════════════════════════════════════════════════
    INGEST — PUSH
 ════════════════════════════════════════════════════════ */
-async function runPush() {
-  const toWrite = _validatedRows
-    .filter(r => r.status === 'new')
-    .map(r => r.entry);
 
+/* Shared push executor — called by both push buttons */
+async function _executePush(toWrite, buttonId) {
   if (toWrite.length === 0) return;
 
   $('push-btn').disabled = true;
+  $('push-overwrite-btn').disabled = true;
   $('push-status').innerHTML = '<span class="spinner"></span>Writing to Google Sheets…';
 
   try {
@@ -345,6 +396,7 @@ async function runPush() {
 
     if (!r.ok) {
       $('push-status').textContent = `Error: ${result.error || r.status}`;
+      $(buttonId).disabled = false;
       return;
     }
 
@@ -356,8 +408,24 @@ async function runPush() {
     $('push-status').textContent = '';
   } catch (err) {
     $('push-status').textContent = `Network error: ${err.message}`;
-    $('push-btn').disabled = false;
+    $(buttonId).disabled = false;
   }
+}
+
+/* NEW entries only — same as original behavior */
+async function runPush() {
+  const toWrite = _validatedRows
+    .filter(r => r.status === 'new')
+    .map(r => r.entry);
+  await _executePush(toWrite, 'push-btn');
+}
+
+/* NEW entries + OVERWRITE entries */
+async function runPushWithOverwrites() {
+  const toWrite = _validatedRows
+    .filter(r => r.status === 'new' || r.status === 'overwrite')
+    .map(r => r.entry);
+  await _executePush(toWrite, 'push-overwrite-btn');
 }
 
 /* ── Render push results ───────────────────────────────── */
@@ -373,9 +441,10 @@ function renderResults(result) {
   }
 
   const sections = [
-    { key: 'written', title: 'Written', cls: 'result-title-written' },
-    { key: 'skipped', title: 'Skipped (duplicates)', cls: 'result-title-skipped' },
-    { key: 'errors',  title: 'Errors', cls: 'result-title-error' },
+    { key: 'written',    title: 'Written',            cls: 'result-title-written'    },
+    { key: 'overwritten',title: 'Updated (overwrites)',cls: 'result-title-overwritten'},
+    { key: 'skipped',    title: 'Skipped (duplicates)',cls: 'result-title-skipped'    },
+    { key: 'errors',     title: 'Errors',             cls: 'result-title-error'      },
   ];
 
   sections.forEach(({ key, title, cls }) => {
