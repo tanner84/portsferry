@@ -48,7 +48,7 @@ const PRIMARY_ID = {
   IND_CHURCH:          ['ind_id', 'ch_id', 'date_from'],
   IND_UNIT:            ['ind_id', 'unit_id', 'date_from'],
   IND_PROPERTY:        ['ind_id', 'prop_id', 'date_from'],
-  IND_IND:             ['ind_id_a', 'ind_id_b', 'relationship'],
+  IND_IND:             'edge_id',   // record-level key; enables targeted overwrite by edge_id
   EVT_LINKS:           ['evt_id', 'linked_id'],
   WEATHER:             'weather_id',
 };
