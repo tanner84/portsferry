@@ -142,6 +142,23 @@ PF.map.init = function () {
   /* ── Layer toggle button ────────────────────────────────────── */
   document.getElementById('layer-toggle').addEventListener('click', PF.map.toggleBaseLayer);
 
+  /* ── Church burned-state sync on timeline tick ──────────────────
+     timeline.js documents: "Other modules subscribe by replacing or
+     wrapping this function." We wrap _onDateChange here so church
+     markers update in real time as the slider moves, without touching
+     any other module.
+     Churches are re-rendered only when the church layer is actively
+     shown (i.e. not in individual-only view and not in battle mode). */
+  const _origOnDateChange = PF.timeline._onDateChange;
+  PF.timeline._onDateChange = function (date) {
+    _origOnDateChange.call(this, date);
+    const inBattle = PF.battle && PF.battle._active;
+    const view     = PF.panels && PF.panels._currentView;
+    if (!inBattle && view !== 'individual') {
+      PF.map.renderChurches(PF.data.getMappableChurches(), date);
+    }
+  };
+
   console.info('[PF.map] Map initialized. Center:', MAP_CONFIG.center, 'Zoom:', MAP_CONFIG.zoom);
 };
 
@@ -198,8 +215,26 @@ PF.map.makeIndividualIcon = function (individual) {
 
 /**
  * Diamond icon for churches.
+ * @param {boolean} [burned=false] — if true, render in destroyed/burned state
  */
-PF.map.makeChurchIcon = function () {
+PF.map.makeChurchIcon = function (burned) {
+  if (burned) {
+    /* Charcoal diamond with orange-red border and glow — burned/destroyed */
+    return L.divIcon({
+      className: '',
+      html: `<div style="
+        width:11px; height:11px;
+        background:#1a0800;
+        border: 2px solid #cc4400;
+        transform: rotate(45deg);
+        box-shadow: 0 0 6px rgba(200,60,0,0.65), 0 1px 3px rgba(0,0,0,0.7);
+      "></div>`,
+      iconSize:   [11, 11],
+      iconAnchor: [5, 5],
+      popupAnchor:[0, -8],
+    });
+  }
+  /* Normal standing church */
   return L.divIcon({
     className: '',
     html: `<div style="
@@ -222,9 +257,11 @@ PF.map.makeChurchIcon = function () {
 /**
  * Render church pins.
  * Clears and rebuilds PF.map.layers.churches.
- * @param {Array} churches — CHURCHES rows
+ * @param {Array}  churches — CHURCHES rows
+ * @param {Date}   [date]   — current timeline date; defaults to PF.timeline.currentDate
  */
-PF.map.renderChurches = function (churches) {
+PF.map.renderChurches = function (churches, date) {
+  const currentDate = date || (PF.timeline && PF.timeline.currentDate) || new Date();
   PF.map.layers.churches.clearLayers();
 
   churches.forEach(ch => {
@@ -232,15 +269,24 @@ PF.map.renderChurches = function (churches) {
     const lng = PF.data._parseCoord(ch.lng);
     if (lat === null || lng === null) return;
 
+    /* Determine burned state */
+    const burnedAt = _parseBurnedDate(ch.burned_date);
+    const burned   = burnedAt !== null && currentDate >= burnedAt;
+
     const marker = L.marker([lat, lng], {
-      icon:  PF.map.makeChurchIcon(),
+      icon:  PF.map.makeChurchIcon(burned),
       title: ch.name || '',
       zIndexOffset: 100,
     });
 
+    const burnedNote = burned
+      ? `<br><em style="color:#e07040">Burned ${_mapEsc(ch.burned_date)}</em>`
+      : '';
+
     marker.bindTooltip(
       `<strong>${_mapEsc(ch.name || 'Church')}</strong>` +
-      `<br>${_mapEsc(ch.denomination || '')} · est. ${ch.founded_yr || '?'}`,
+      `<br>${_mapEsc(ch.denomination || '')} · est. ${ch.founded_yr || '?'}` +
+      burnedNote,
       { direction: 'top', offset: [0, -10], className: 'pf-tooltip' }
     );
 
@@ -527,6 +573,32 @@ function _mapEsc(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/**
+ * Parse a burned_date string to a Date object.
+ * Accepts: "1779", "1780", "5/1/1779", "April 1781", ISO strings, etc.
+ * Always extracts at minimum the year; returns null if unparseable.
+ */
+function _parseBurnedDate(str) {
+  if (!str || !String(str).trim()) return null;
+  const s = String(str).trim();
+
+  /* Pure 4-digit year — most common case */
+  if (/^\d{4}$/.test(s)) return new Date(parseInt(s, 10), 0, 1);
+
+  /* Try native Date parse (handles "5/1/1779", "April 1, 1781", ISO) */
+  const native = new Date(s);
+  if (!isNaN(native.getTime()) &&
+      native.getFullYear() >= 1600 && native.getFullYear() <= 1900) {
+    return native;
+  }
+
+  /* Fallback: pull first 4-digit year out of any string ("April 1781") */
+  const m = /\b(1[6-9]\d{2})\b/.exec(s);
+  if (m) return new Date(parseInt(m[1], 10), 0, 1);
+
+  return null;
 }
 
 /* ================================================================
