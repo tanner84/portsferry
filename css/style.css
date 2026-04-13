@@ -322,6 +322,49 @@ button { font-family: inherit; cursor: pointer; }
   font-style: italic;
 }
 
+/* ── Battle Mode phase roster ──────────────────────────────── */
+#battle-panel-meta {
+  padding: 0.4rem 1rem 0.5rem;
+}
+.broster-battle-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.broster-battle-date {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+.broster-group { border-bottom: 1px solid var(--panel-border-soft); }
+.broster-group-label {
+  padding: 0.28rem 1rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.broster-label-patriot { background: #1a3a6b; color: #a8c8e8; }
+.broster-label-british { background: #6b1a1a; color: #d89090; }
+.broster-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 1rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--panel-border-soft);
+  cursor: pointer;
+  transition: background 0.1s, opacity 0.15s;
+  opacity: 1;
+}
+.broster-row:last-child { border-bottom: none; }
+.broster-row:hover  { background: #e8e4db; color: var(--text-primary); }
+.broster-row.active { background: #dedad0; color: var(--text-primary); font-weight: 500; }
+.broster-unit-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.broster-facing  { font-size: 0.9rem; color: var(--text-muted); flex-shrink: 0; }
+.broster-strength { font-size: 0.68rem; color: var(--text-muted); flex-shrink: 0; }
+
 /* Entity dots */
 .dot {
   width: 8px; height: 8px;

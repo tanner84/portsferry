@@ -287,6 +287,158 @@ function _renderBrowser() {
 
 PF.panels._onSearch = function () { _renderBrowser(); };
 
+/* ================================================================
+   Left panel — Battle Mode phase-locked roster
+   ================================================================ */
+
+const _PATRIOT_AFFILS_SET = new Set([
+  'Continental Army', 'State Line', 'Patriot Militia', 'Patriot Volunteer',
+]);
+const _ROSTER_FACING = { N:'↑', S:'↓', E:'→', W:'←', NE:'↗', NW:'↖', SE:'↘', SW:'↙' };
+
+PF.panels._inBattleRoster = false;
+
+function _enterBattlePanel(battle) {
+  if (!PF.panels._inBattleRoster) {
+    PF.panels._inBattleRoster = true;
+
+    /* Hide normal search elements */
+    const search = document.getElementById('entity-search');
+    const chips  = document.getElementById('filter-chips');
+    const h2     = document.querySelector('#panel-left .panel-header h2');
+    if (search) search.style.display = 'none';
+    if (chips)  chips.style.display  = 'none';
+    if (h2)     h2.style.display     = 'none';
+
+    /* Inject battle meta header into the panel-header */
+    if (!document.getElementById('battle-panel-meta')) {
+      const meta = document.createElement('div');
+      meta.id    = 'battle-panel-meta';
+      const hdr  = document.querySelector('#panel-left .panel-header');
+      if (hdr) hdr.appendChild(meta);
+    }
+  }
+
+  /* Update battle name every time (handles battle-to-battle switch) */
+  const meta = document.getElementById('battle-panel-meta');
+  if (meta) {
+    meta.innerHTML =
+      `<div class="broster-battle-name">${h(battle.name || 'Battle')}</div>` +
+      (battle.date ? `<div class="broster-battle-date">${h(battle.date)}</div>` : '');
+  }
+}
+
+function _exitBattlePanel() {
+  if (!PF.panels._inBattleRoster) return;
+  PF.panels._inBattleRoster = false;
+
+  /* Restore normal search elements */
+  const search = document.getElementById('entity-search');
+  const chips  = document.getElementById('filter-chips');
+  const h2     = document.querySelector('#panel-left .panel-header h2');
+  if (search) search.style.display = '';
+  if (chips)  chips.style.display  = '';
+  if (h2)     h2.style.display     = '';
+
+  const meta = document.getElementById('battle-panel-meta');
+  if (meta) meta.remove();
+
+  _renderBrowser();
+}
+
+function _renderBattleRoster(phase) {
+  const container = document.getElementById('browser-results');
+  if (!container) return;
+
+  /* Group positions by side */
+  const patriot = [];
+  const british = [];
+  phase.positions.forEach(pos => {
+    const unit = PF.data.getUnitById(pos.unit_id);
+    const aff  = unit ? (unit.affiliation || 'Unknown') : 'Unknown';
+    if (_PATRIOT_AFFILS_SET.has(aff)) {
+      patriot.push({ pos, unit });
+    } else {
+      british.push({ pos, unit });
+    }
+  });
+
+  /* Fade out existing rows, then swap content */
+  container.querySelectorAll('.broster-row').forEach(el => { el.style.opacity = '0'; });
+
+  setTimeout(() => {
+    container.innerHTML = '';
+    if (patriot.length > 0) container.appendChild(_buildRosterGroup('PATRIOT', patriot, 'patriot'));
+    if (british.length > 0) container.appendChild(_buildRosterGroup('BRITISH / LOYALIST', british, 'british'));
+    if (patriot.length === 0 && british.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'sr-empty';
+      empty.textContent = 'No units recorded for this phase.';
+      container.appendChild(empty);
+    }
+    /* Fade in */
+    requestAnimationFrame(() => {
+      container.querySelectorAll('.broster-row').forEach(el => { el.style.opacity = '1'; });
+    });
+  }, 80);
+}
+
+function _buildRosterGroup(label, items, side) {
+  const group = document.createElement('div');
+  group.className = `broster-group broster-group-${side}`;
+
+  const header = document.createElement('div');
+  header.className = `broster-group-label broster-label-${side}`;
+  header.textContent = label;
+  group.appendChild(header);
+
+  items.forEach(({ pos, unit }) => {
+    const row = document.createElement('div');
+    row.className   = 'broster-row';
+    row.role        = 'button';
+    row.tabIndex    = 0;
+    row.dataset.unitId = pos.unit_id;
+
+    const affCls   = unit ? PF.map.affiliationClass(unit.affiliation) : 'unknown';
+    const facing   = _ROSTER_FACING[(pos.facing || '').toUpperCase()] || '';
+    const strength = pos.strength_estimated && pos.strength_estimated !== '0'
+      ? `~${h(pos.strength_estimated)}`
+      : '';
+
+    row.innerHTML =
+      `<span class="dot dot-${affCls}" style="flex-shrink:0"></span>` +
+      `<span class="broster-unit-name">${h(unit ? unit.name : pos.unit_id)}</span>` +
+      (facing   ? `<span class="broster-facing" title="Facing ${h(pos.facing)}">${facing}</span>` : '') +
+      (strength ? `<span class="broster-strength">${strength}</span>` : '');
+
+    const go = () => _rosterRowClick(pos, unit, row);
+    row.addEventListener('click', go);
+    row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') go(); });
+
+    group.appendChild(row);
+  });
+
+  return group;
+}
+
+function _rosterRowClick(pos, unit, rowEl) {
+  /* Highlight row */
+  document.querySelectorAll('#browser-results .broster-row').forEach(r => r.classList.remove('active'));
+  rowEl.classList.add('active');
+
+  /* Pan to unit position on map */
+  const lat = PF.data._parseCoord(pos.lat);
+  const lng = PF.data._parseCoord(pos.lng);
+  if (lat !== null && lng !== null) PF.map.focusOn(lat, lng, 15);
+
+  /* Open tooltip on the corresponding battle marker */
+  (PF.battle._markers || []).forEach(({ pos: mpos, marker }) => {
+    if (mpos.unit_id === pos.unit_id) marker.openTooltip();
+  });
+
+  /* Load unit record in right panel */
+  if (unit) PF.panels.showUnit(unit);
+}
 
 /* (old _renderOrderOfBattle removed — replaced by smart search) */
 PF.panels._renderOrderOfBattle = function (filterQuery) {
@@ -1372,6 +1524,10 @@ PF.panels.showBattle = function (battle) {
    from the church rolls).
    ================================================================ */
 PF.panels.showBattlePhase = function (battle, phase) {
+  /* Sync left panel roster — idempotent, safe to call on every phase change */
+  _enterBattlePanel(battle);
+  _renderBattleRoster(phase);
+
   const conf      = battle.reconstruction_confidence || 'Medium';
   const confClass = conf.toLowerCase();
   const nPhases   = PF.battle._phases.length;
@@ -1661,6 +1817,9 @@ PF.panels.onDateChange = function (date) {
    Reset
    ================================================================ */
 PF.panels.resetStory = function () {
+  /* Restore left panel to search mode if we were showing the battle roster */
+  _exitBattlePanel();
+
   /* If in battle mode, exit cleanly first (but silently to avoid recursion) */
   if (PF.battle && PF.battle._active) {
     PF.battle.exit(true);
