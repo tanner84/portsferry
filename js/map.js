@@ -528,3 +528,61 @@ function _mapEsc(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+/* ================================================================
+   County Origin Lines — Table 2 Cowpens Network
+   Weighted polylines from NC county centroids → Cowpens battlefield.
+   Data: data/static/table2_county_coords.json
+   Called from app.js after PF.map.init().
+   ================================================================ */
+PF.map.initCountyOriginLayer = function () {
+  const DATA_URL = 'data/static/table2_county_coords.json';
+
+  /* Layer group starts off the map — user toggles it on via the control */
+  const countyLayer = L.layerGroup();
+
+  /* Leaflet overlay control — overlays only, no base-layer options.
+     Sits bottomright, collapsed:false so the checkbox is always visible. */
+  L.control.layers(null, { 'NC Cowpens Origins (Table 2)': countyLayer }, {
+    position:  'bottomright',
+    collapsed: false,
+  }).addTo(PF.map.instance);
+
+  fetch(DATA_URL)
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    })
+    .then(data => {
+      const battleLat = data.battle_lat;
+      const battleLng = data.battle_lng;
+
+      (data.counties || []).forEach(county => {
+        const isZone3 = county.zone === 3;
+        const isZone4 = county.zone === 4;
+
+        const color     = isZone3 ? '#c0392b' : isZone4 ? '#e67e22' : '#95a5a6';
+        const weight    = Math.max(1, county.pensioners / 4);
+        const opts      = { color, weight, opacity: 0.85 };
+        if (!isZone3 && !isZone4) opts.dashArray = '4,6';
+
+        const line = L.polyline(
+          [[county.lat, county.lng], [battleLat, battleLng]],
+          opts
+        );
+
+        line.bindTooltip(
+          `${_mapEsc(county.county)} County — ${county.pensioners} pensioners`,
+          { sticky: true, className: 'pf-tooltip' }
+        );
+
+        countyLayer.addLayer(line);
+      });
+
+      console.info('[PF.map] County origin layer ready.',
+        (data.counties || []).length, 'counties.');
+    })
+    .catch(err => {
+      console.warn('[PF.map] County origin layer: failed to load data:', err.message);
+    });
+};

@@ -53,6 +53,7 @@ function _initMobileNav() {
   try {
     /* ── 1. Map ─────────────────────────────────────────────── */
     PF.map.init();
+    PF.map.initCountyOriginLayer();   // county origin lines — Table 2, off by default
 
     /* ── 2. Data ────────────────────────────────────────────── */
     await PF.data.load();
