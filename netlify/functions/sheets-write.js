@@ -31,7 +31,7 @@ const VALID_SHEET_NAMES = [
   'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
   'SOURCES', 'BATTLES', 'UNIT_POSITIONS', 'BATTLE_PARTICIPANTS',
   'IND_CHURCH', 'IND_UNIT', 'IND_PROPERTY', 'IND_IND', 'EVT_LINKS',
-  'WEATHER',
+  'WEATHER', 'COUNTIES',
 ];
 
 // Primary ID field(s) per sheet — array means composite key
@@ -51,6 +51,7 @@ const PRIMARY_ID = {
   IND_IND:             'edge_id',   // record-level key; enables targeted overwrite by edge_id
   EVT_LINKS:           ['evt_id', 'linked_id'],
   WEATHER:             'weather_id',
+  COUNTIES:            'county_id',
 };
 
 // Sheets that use a composite duplicate key but also have a separate
