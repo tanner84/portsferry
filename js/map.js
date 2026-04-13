@@ -541,13 +541,6 @@ PF.map.initCountyOriginLayer = function () {
   /* Layer group starts off the map — user toggles it on via the control */
   const countyLayer = L.layerGroup();
 
-  /* Leaflet overlay control — overlays only, no base-layer options.
-     Sits bottomright, collapsed:false so the checkbox is always visible. */
-  L.control.layers(null, { 'NC Cowpens Origins (Table 2)': countyLayer }, {
-    position:  'bottomright',
-    collapsed: false,
-  }).addTo(PF.map.instance);
-
   fetch(DATA_URL)
     .then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -578,6 +571,12 @@ PF.map.initCountyOriginLayer = function () {
 
         countyLayer.addLayer(line);
       });
+
+      /* Control added only after data loads — no widget appears if fetch fails */
+      L.control.layers(null, { 'NC Cowpens Origins (Table 2)': countyLayer }, {
+        position:  'bottomright',
+        collapsed: false,
+      }).addTo(PF.map.instance);
 
       console.info('[PF.map] County origin layer ready.',
         (data.counties || []).length, 'counties.');
