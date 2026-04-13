@@ -431,9 +431,18 @@ function _rosterRowClick(pos, unit, rowEl) {
   const lng = PF.data._parseCoord(pos.lng);
   if (lat !== null && lng !== null) PF.map.focusOn(lat, lng, 15);
 
-  /* Open tooltip on the corresponding battle marker */
+  /* Open a dismissible popup on the corresponding battle marker */
+  const hasStrength = pos.strength_estimated && pos.strength_estimated !== '0';
+  const popupHtml =
+    `<strong>${h(unit ? unit.name : pos.unit_id)}</strong>` +
+    (hasStrength ? `<br>~${h(pos.strength_estimated)} men` : '') +
+    (pos.facing  ? ` · facing ${h(pos.facing)}` : '') +
+    (pos.action  ? `<br><span style="font-size:0.78rem;color:#504940">${h(pos.action)}</span>` : '');
+
   (PF.battle._markers || []).forEach(({ pos: mpos, marker }) => {
-    if (mpos.unit_id === pos.unit_id) marker.openTooltip();
+    if (mpos.unit_id === pos.unit_id) {
+      marker.unbindPopup().bindPopup(popupHtml, { maxWidth: 260 }).openPopup();
+    }
   });
 
   /* Load unit record in right panel */
