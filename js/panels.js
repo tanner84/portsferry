@@ -29,13 +29,16 @@ function h(str) {
    Initialization
    ================================================================ */
 PF.panels.init = function () {
-  /* Populate browser lists */
-  PF.panels._buildBrowser();
-
   /* Search */
   document.getElementById('entity-search').addEventListener('input', function () {
-    PF.panels._onSearch(this.value.trim());
+    _renderBrowser();
   });
+
+  /* Filter chips */
+  _initFilterChips();
+
+  /* Initial render */
+  _renderBrowser();
 
   /* View switcher */
   document.querySelectorAll('.view-btn').forEach(btn => {
@@ -56,43 +59,236 @@ PF.panels.init = function () {
 };
 
 /* ================================================================
-   Entity browser — left panel
+   Entity browser — smart search + filter chips
    ================================================================ */
-PF.panels._buildBrowser = function () {
-  PF.panels._renderChurchList();
-  PF.panels._renderOrderOfBattle();
-  PF.panels._renderBattleList();
-  PF.panels._renderEventList();
-  PF.panels._filterBrowser(PF.panels._currentView || 'church');
+
+/* Affiliation chip → matching affiliation strings */
+const _CHIP_AFFILS = {
+  patriot:  ['Continental Army', 'State Line', 'Patriot Militia', 'Patriot Volunteer'],
+  loyalist: ['Provincial Corps', 'Loyalist Militia', 'Associated Loyalist'],
+  british:  ['British Regular'],
+  unknown:  ['Unknown', 'Neutral'],
 };
 
-PF.panels._renderChurchList = function (subset) {
-  const list  = document.getElementById('church-list');
-  const items = subset || PF.data.getMappableChurches();
-  list.innerHTML = items.map(ch => `
-    <li role="button" tabindex="0" data-ch-id="${h(ch.ch_id)}">
-      <span class="dot dot-church"></span>
-      <span>${h(ch.name || 'Unnamed')}</span>
-      <span class="entity-meta">${h(ch.founded_yr || '')}</span>
-    </li>`).join('');
+PF.panels._activeChips = new Set();
 
-  list.querySelectorAll('li').forEach(li => {
-    const activate = () => {
-      const ch = PF.data.getChurchById(li.dataset.chId);
-      if (ch) PF.panels.showChurch(ch);
-    };
-    li.addEventListener('click', activate);
-    li.addEventListener('keydown', e => { if (e.key === 'Enter') activate(); });
+function _initFilterChips() {
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const key = this.dataset.chip;
+      if (PF.panels._activeChips.has(key)) {
+        PF.panels._activeChips.delete(key);
+        this.classList.remove('chip-active');
+      } else {
+        PF.panels._activeChips.add(key);
+        this.classList.add('chip-active');
+      }
+      _renderBrowser();
+      _applyChipFiltersToMap();
+    });
   });
-};
+}
 
-/**
- * Render the hierarchical Order of Battle in the left panel.
- * Structure: Affiliation group → Unit → Individual members
- * Exception-tier individuals appear below all groups.
- *
- * @param {string} [filterQuery] — optional search filter
- */
+function _chipMatchesAffil(aff) {
+  if (PF.panels._activeChips.size === 0) return true;
+  const normAff = (aff || 'Unknown');
+  for (const key of PF.panels._activeChips) {
+    if ((_CHIP_AFFILS[key] || []).includes(normAff)) return true;
+  }
+  return false;
+}
+
+function _applyChipFiltersToMap() {
+  /* Re-render map markers filtered to active chips, or restore all */
+  const view = PF.panels._currentView || 'church';
+  if (view === 'individual' || view === 'unit') {
+    const allInds = PF.data.getIndividualsByDate(PF.timeline.currentDate);
+    const filtered = PF.panels._activeChips.size === 0
+      ? allInds
+      : allInds.filter(ind => _chipMatchesAffil(ind.affiliation));
+    PF.map.renderIndividuals(filtered);
+  }
+}
+
+function _searchAllEntities(q) {
+  const lower = q.toLowerCase();
+  const results = { churches: [], individuals: [], units: [], battles: [], events: [] };
+
+  (PF.data.raw.CHURCHES || []).forEach(ch => {
+    if ((ch.name || '').toLowerCase().includes(lower) ||
+        (ch.ch_id || '').toLowerCase().includes(lower)) {
+      results.churches.push(ch);
+    }
+  });
+
+  (PF.data.raw.INDIVIDUALS || []).forEach(ind => {
+    if (!_chipMatchesAffil(ind.affiliation)) return;
+    if ((ind.full_name || '').toLowerCase().includes(lower) ||
+        (ind.rank      || '').toLowerCase().includes(lower) ||
+        (ind.ind_id    || '').toLowerCase().includes(lower)) {
+      results.individuals.push(ind);
+    }
+  });
+
+  (PF.data.raw.UNITS || []).forEach(unit => {
+    if (!_chipMatchesAffil(unit.affiliation)) return;
+    if ((unit.name    || '').toLowerCase().includes(lower) ||
+        (unit.unit_id || '').toLowerCase().includes(lower)) {
+      results.units.push(unit);
+    }
+  });
+
+  (PF.data.raw.BATTLES || []).forEach(b => {
+    if ((b.name      || '').toLowerCase().includes(lower) ||
+        (b.battle_id || '').toLowerCase().includes(lower)) {
+      results.battles.push(b);
+    }
+  });
+
+  (PF.data.raw.EVENTS || []).forEach(evt => {
+    if ((evt.name   || '').toLowerCase().includes(lower) ||
+        (evt.evt_id || '').toLowerCase().includes(lower)) {
+      results.events.push(evt);
+    }
+  });
+
+  return results;
+}
+
+function _getFocalEntities() {
+  const view = PF.panels._currentView || 'church';
+  const res  = { churches: [], individuals: [], units: [], battles: [], events: [] };
+  const chips = PF.panels._activeChips;
+
+  if (view === 'church') {
+    res.churches = PF.data.getMappableChurches();
+  } else if (view === 'individual') {
+    res.individuals = (PF.data.raw.INDIVIDUALS || [])
+      .filter(ind => _chipMatchesAffil(ind.affiliation));
+  } else if (view === 'unit') {
+    res.units = (PF.data.raw.UNITS || [])
+      .filter(u => _chipMatchesAffil(u.affiliation));
+    res.individuals = (PF.data.raw.INDIVIDUALS || [])
+      .filter(ind => _chipMatchesAffil(ind.affiliation) && !ind.tier);
+  } else if (view === 'battle') {
+    res.battles = PF.data.raw.BATTLES || [];
+  }
+  return res;
+}
+
+function _buildResultRow(entity, type) {
+  const li = document.createElement('div');
+  li.className = 'sr-item';
+  li.setAttribute('role', 'button');
+  li.setAttribute('tabindex', '0');
+
+  let dot = '';
+  let name = '';
+  let meta = '';
+
+  if (type === 'church') {
+    dot  = `<span class="dot dot-church"></span>`;
+    name = h(entity.name || entity.ch_id);
+    meta = h(entity.founded_yr || '');
+  } else if (type === 'individual') {
+    const affCls = PF.map.affiliationClass(entity.affiliation);
+    dot  = `<span class="dot dot-${affCls}"></span>`;
+    name = h(entity.full_name || entity.ind_id);
+    meta = h(entity.rank || entity.affiliation || '');
+  } else if (type === 'unit') {
+    const affCls = PF.map.affiliationClass(entity.affiliation);
+    dot  = `<span class="dot dot-${affCls}"></span>`;
+    name = h(entity.name || entity.unit_id);
+    meta = h(entity.affiliation || '');
+  } else if (type === 'battle') {
+    dot  = `<span style="width:8px;height:8px;background:#8b2020;border-radius:1px;transform:rotate(45deg);display:inline-block;flex-shrink:0"></span>`;
+    name = h(entity.name || entity.battle_id);
+    meta = h(entity.date || '');
+  } else if (type === 'event') {
+    dot  = `<span class="dot" style="background:#777;border-radius:1px;width:6px;height:6px;flex-shrink:0"></span>`;
+    name = h(entity.name || entity.evt_id);
+    meta = h(entity.date || '');
+  }
+
+  li.innerHTML = `${dot}<span style="flex:1;min-width:0">${name}</span>${meta ? `<span class="sr-item-meta">${meta}</span>` : ''}`;
+  li.addEventListener('click', () => _openEntity(entity, type));
+  li.addEventListener('keydown', e => { if (e.key === 'Enter') _openEntity(entity, type); });
+  return li;
+}
+
+function _openEntity(entity, type) {
+  /* Mark active */
+  document.querySelectorAll('#browser-results .sr-item').forEach(el => el.classList.remove('active'));
+
+  if (type === 'church') {
+    PF.panels.showChurch(entity);
+  } else if (type === 'individual') {
+    PF.panels.showIndividual(entity);
+    PF.network.renderForIndividual(entity.ind_id);
+    const lat = PF.data._parseCoord(entity.lat);
+    const lng = PF.data._parseCoord(entity.lng);
+    if (lat !== null && lng !== null) PF.map.focusOn(lat, lng, 12);
+  } else if (type === 'unit') {
+    PF.panels.showUnit(entity);
+  } else if (type === 'battle') {
+    PF.panels.showBattle(entity);
+  } else if (type === 'event') {
+    PF.panels.showEvent(entity);
+  }
+}
+
+function _renderBrowser() {
+  const container = document.getElementById('browser-results');
+  if (!container) return;
+
+  const q = (document.getElementById('entity-search').value || '').trim();
+  const entities = q.length >= 2 ? _searchAllEntities(q) : _getFocalEntities();
+
+  const GROUPS = [
+    { key: 'churches',    label: 'Churches',     type: 'church'     },
+    { key: 'individuals', label: 'Individuals',  type: 'individual' },
+    { key: 'units',       label: 'Units',        type: 'unit'       },
+    { key: 'battles',     label: 'Battles',      type: 'battle'     },
+    { key: 'events',      label: 'Events',       type: 'event'      },
+  ];
+
+  container.innerHTML = '';
+  let totalCount = 0;
+
+  GROUPS.forEach(({ key, label, type }) => {
+    const items = entities[key] || [];
+    if (items.length === 0) return;
+    totalCount += items.length;
+
+    const group = document.createElement('div');
+    group.className = 'sr-group';
+
+    const groupLabel = document.createElement('div');
+    groupLabel.className = 'sr-group-label';
+    groupLabel.textContent = `${label} (${items.length})`;
+    group.appendChild(groupLabel);
+
+    items.forEach(entity => {
+      group.appendChild(_buildResultRow(entity, type));
+    });
+
+    container.appendChild(group);
+  });
+
+  if (totalCount === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'sr-empty';
+    empty.textContent = q.length >= 2
+      ? `No results for "${q}"`
+      : 'No entities to display for current view and filters.';
+    container.appendChild(empty);
+  }
+}
+
+PF.panels._onSearch = function () { _renderBrowser(); };
+
+
+/* (old _renderOrderOfBattle removed — replaced by smart search) */
 PF.panels._renderOrderOfBattle = function (filterQuery) {
   const container = document.getElementById('browser-tob');
   if (!container) return;
@@ -401,7 +597,7 @@ PF.panels.setView = function (view) {
       break;
   }
 
-  PF.panels._filterBrowser(view);
+  _renderBrowser();
 };
 
 PF.panels._renderBattleMarkers = function () {
@@ -1493,7 +1689,7 @@ PF.panels.resetStory = function () {
   }
 
   /* Clear active states in browser */
-  document.querySelectorAll('.entity-list li.active').forEach(li => li.classList.remove('active'));
+  document.querySelectorAll('#browser-results .sr-item.active').forEach(el => el.classList.remove('active'));
 };
 
 /* ================================================================
