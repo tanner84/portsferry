@@ -909,10 +909,7 @@ PF.panels.showIndividual = function (ind) {
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
-      ${sources.map(src => `
-        <div class="data-row">
-          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-        </div>`).join('')}
+      ${sources.map(src => _srcCitation(src)).join('')}
     </div>` : ''}
   `;
 
@@ -1184,10 +1181,7 @@ PF.panels.showChurch = function (ch) {
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
-      ${sources.map(src => `
-        <div class="data-row">
-          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-        </div>`).join('')}
+      ${sources.map(src => _srcCitation(src)).join('')}
     </div>` : ''}
   `;
 
@@ -1236,10 +1230,7 @@ PF.panels.showEvent = function (evt) {
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
-      ${sources.map(src => `
-        <div class="data-row">
-          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-        </div>`).join('')}
+      ${sources.map(src => _srcCitation(src)).join('')}
     </div>` : ''}
   `;
 
@@ -1296,10 +1287,7 @@ PF.panels.showUnit = function (unit) {
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
-      ${sources.map(src => `
-        <div class="data-row">
-          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-        </div>`).join('')}
+      ${sources.map(src => _srcCitation(src)).join('')}
     </div>` : ''}
   `;
 
@@ -1466,10 +1454,7 @@ PF.panels.showProperty = function (property, relationship) {
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
-      ${sources.map(src => `
-        <div class="data-row">
-          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-        </div>`).join('')}
+      ${sources.map(src => _srcCitation(src)).join('')}
     </div>` : ''}
   `;
 
@@ -1516,10 +1501,7 @@ PF.panels.showBattle = function (battle) {
     ${sources.length > 0 ? `
     <div class="story-section">
       <div class="story-section-label">Sources</div>
-      ${sources.map(src => `
-        <div class="data-row">
-          <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-        </div>`).join('')}
+      ${sources.map(src => _srcCitation(src)).join('')}
     </div>` : ''}
   `;
 
@@ -1577,10 +1559,7 @@ PF.panels.showBattlePhase = function (battle, phase) {
         ${sources.length > 0 ? `
           <div class="story-section" style="margin-top:0.5rem">
             <div class="story-section-label">Sources — this position</div>
-            ${sources.map(src => `
-              <div class="data-row">
-                <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>
-              </div>`).join('')}
+            ${sources.map(src => _srcCitation(src)).join('')}
           </div>` : ''}
       </div>`;
   }).join('');
@@ -1887,6 +1866,15 @@ function _dataRow(label, value) {
   return `<div class="data-row">
     <span class="data-label">${label}</span>
     <span>${value}</span>
+  </div>`;
+}
+
+function _srcCitation(src) {
+  const viewLink = src.url && src.url.trim()
+    ? `<a href="${h(src.url.trim())}" target="_blank" rel="noopener noreferrer" class="src-view-link">View Source →</a>`
+    : '';
+  return `<div class="data-row">
+    <span class="src-ref" data-src-id="${h(src.src_id)}">[${h(src.src_id)}] ${h(src.title || '')}</span>${viewLink ? `<br>${viewLink}` : ''}
   </div>`;
 }
 
