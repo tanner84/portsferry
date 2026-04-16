@@ -460,11 +460,12 @@ button { font-family: inherit; cursor: pointer; }
 }
 .pf-tooltip::before { display: none; }
 
-.pf-battle-tooltip {
+.leaflet-tooltip.pf-battle-tooltip {
   max-width: 160px !important;
   white-space: normal !important;
   text-align: center !important;
   line-height: 1.3 !important;
+  overflow-wrap: break-word !important;
 }
 
 /* ── Right panel — story panel ─────────────────────────────────── */
