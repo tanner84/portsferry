@@ -293,7 +293,7 @@ function _placeMarker(pos) {
     `<br>${_esc(pos.action || '')}` +
     (confNote  ? `<br><em style="color:#c08060">${confNote}</em>`  : '') +
     (coordNote ? `<br><em style="color:#9aafcc">${coordNote}</em>` : ''),
-    { className: 'pf-tooltip', direction: 'top', offset: [0, -10] }
+    { className: 'pf-tooltip pf-battle-tooltip', direction: 'top', offset: [0, -10] }
   );
 
   marker.on('click', () => {
@@ -325,7 +325,7 @@ function _makeIcon(pos, unit) {
   const color  = PF.map.affiliationColor(unit ? unit.affiliation : 'Unknown');
   const conf   = (pos.confidence || 'Medium').toLowerCase();
   const arrow  = _facingGlyph(pos.facing);
-  const W = 30, H = 16;
+  const W = 34, H = 18;
 
   let opacity, badge;
   switch (conf) {
