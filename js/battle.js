@@ -279,20 +279,17 @@ function _placeMarker(pos) {
     title: unit ? unit.name : pos.unit_id,
   });
 
-  /* Tooltip */
+  /* Tooltip — unit name + quick facts only; full detail is in the story panel */
   const hasStrength = pos.strength_estimated && pos.strength_estimated !== '0';
-  const confNote    = _confidenceLabel(pos.confidence);
-  const coordNote   = pos.coord_confidence && pos.coord_confidence !== 'Approximate'
-    ? `Position: ${pos.coord_confidence}`
-    : pos.coord_confidence === 'Approximate' ? 'Position approximate' : '';
+  const facingGlyph = _facingGlyph(pos.facing);
+  const quickFacts  = [
+    hasStrength ? `~${_esc(pos.strength_estimated)} men` : '',
+    facingGlyph || '',
+  ].filter(Boolean).join(' ');
 
   marker.bindTooltip(
     `<strong>${_esc(unit ? unit.name : pos.unit_id)}</strong>` +
-    (hasStrength        ? `<br>~${_esc(pos.strength_estimated)} men`    : '') +
-    (pos.facing         ? ` · facing ${_esc(pos.facing)}`               : '') +
-    `<br>${_esc(pos.action || '')}` +
-    (confNote  ? `<br><em style="color:#c08060">${confNote}</em>`  : '') +
-    (coordNote ? `<br><em style="color:#9aafcc">${coordNote}</em>` : ''),
+    (quickFacts ? `<br>${quickFacts}` : ''),
     { className: 'pf-tooltip pf-battle-tooltip', direction: 'top', offset: [0, -10] }
   );
 
