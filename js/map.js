@@ -154,6 +154,11 @@ PF.map.init = function () {
     _origOnDateChange.call(this, date);
     const inBattle = PF.battle && PF.battle._active;
     const view     = PF.panels && PF.panels._currentView;
+    /* Suppress individual markers outside individual view —
+       _origOnDateChange always calls renderIndividuals; undo it here. */
+    if (view !== 'individual') {
+      PF.map.layers.individuals.clearLayers();
+    }
     if (!inBattle && view !== 'individual') {
       PF.map.renderChurches(PF.data.getMappableChurches(), date);
     }

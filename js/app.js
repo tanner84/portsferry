@@ -77,7 +77,6 @@ function _initMobileNav() {
     /* ── 6. Initial render ──────────────────────────────────── */
     const initialDate = PF.timeline.currentDate;
     PF.map.renderChurches(PF.data.getMappableChurches());
-    PF.map.renderIndividuals(PF.data.getIndividualsByDate(initialDate));
 
     /* Auto-highlight Old Bluff Church if present in seed data */
     const oldBluff = (PF.data.raw.CHURCHES || []).find(ch =>
