@@ -221,6 +221,13 @@ exports.handler = async (event) => {
             const v = finalData[h];
             return v === undefined || v === null ? '' : String(v);
           });
+
+          // Visibility log for SOURCES — shows exact column order in Netlify logs
+          if (sheetName === 'SOURCES') {
+            console.log('[sheets-write] SOURCES headers:', JSON.stringify(headers));
+            console.log('[sheets-write] SOURCES row:    ', JSON.stringify(rowArr));
+          }
+
           toAppend.push({ key, rowArr });
         }
       }
