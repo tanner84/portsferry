@@ -16,18 +16,12 @@ const MAP_CONFIG = {
   minZoom: 6,
   maxZoom: 18,
 
-  /* ── David Rumsey tile endpoint ─────────────────────────────────
-     TODO: Replace RUMSEY_TILE_URL_PLACEHOLDER with the actual tile URL.
-     The Rumsey WMTS / tile endpoint format is typically one of:
-       a) Via GeoReferencer (map-specific):
-          https://maps.georeferencer.com/georeferences/{ID}/YYYY-MM-DDTHHMMSSZ/map/{z}/{x}/{y}.png?key={KEY}
-       b) Via Rumsey's own WMTS service:
-          https://rumsey.geogarage.com/maps/{mapID}/map/{z}/{x}/{y}.png
-     Supply the correct URL for the period map you have selected
-     (e.g., the Price & Strother 1808 NC map or the Mouzon 1775 map).
+  /* ── Historic map tile layer (MapWarper georectification) ──────
+     Romans 1776 "A General Map of the Southern British Colonies"
+     Georectified via MapWarper: https://mapwarper.net/maps/105527
      ─────────────────────────────────────────────────────────────── */
-  rumseyTileURL:       'RUMSEY_TILE_URL_PLACEHOLDER',
-  rumseyAttribution:   'Historical map tiles: <a href="https://www.davidrumsey.com" target="_blank" rel="noopener">David Rumsey Map Collection</a>',
+  rumseyTileURL:       'https://mapwarper.net/maps/tile/105527/{z}/{x}/{y}.png',
+  rumseyAttribution:   'Historical map: <a href="https://mapwarper.net/maps/105527" target="_blank" rel="noopener">Romans 1776, via MapWarper</a>',
   rumseyOpacity:       0.85,
 
   /* OSM fallback */
