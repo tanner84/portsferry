@@ -114,7 +114,7 @@ PF.map.init = function () {
     zoom:       MAP_CONFIG.zoom,
     minZoom:    MAP_CONFIG.minZoom,
     maxZoom:    MAP_CONFIG.maxZoom,
-    layers:     [rumseyLayer],
+    layers:     [osmLayer],
     zoomControl: false,          // repositioned below to avoid panel overlap
   });
 
@@ -131,7 +131,7 @@ PF.map.init = function () {
     routes:      L.layerGroup().addTo(PF.map.instance),
   };
 
-  PF.map._activeBase = 'rumsey';
+  PF.map._activeBase = 'osm';
 
   /* ── Layer toggle button ────────────────────────────────────── */
   document.getElementById('layer-toggle').addEventListener('click', PF.map.toggleBaseLayer);
