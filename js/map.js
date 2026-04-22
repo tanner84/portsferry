@@ -20,8 +20,8 @@ const MAP_CONFIG = {
      Romans 1776 "A General Map of the Southern British Colonies"
      Georectified via MapWarper: https://mapwarper.net/maps/105527
      ─────────────────────────────────────────────────────────────── */
-  rumseyTileURL:       'https://mapwarper.net/maps/tile/84681/{z}/{x}/{y}.png',
-  rumseyAttribution:   'Historical map: <a href="https://mapwarper.net/maps/84681" target="_blank" rel="noopener">Historic map, via MapWarper</a>',
+  rumseyTileURL:       'https://mapwarper.net/maps/tile/105549/{z}/{x}/{y}.png',
+  rumseyAttribution:   'Historical map: <a href="https://mapwarper.net/maps/105549" target="_blank" rel="noopener">Historic map, via MapWarper</a>',
   rumseyOpacity:       0.85,
 
   /* OSM fallback */
