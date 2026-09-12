@@ -216,7 +216,9 @@ async function applyCorrections() {
     status.textContent = `Applied ${data.applied.length} correction${data.applied.length === 1 ? '' : 's'}. Preview again before any further changes.`;
     _correctionPreview = null;
     _correctionOps = [];
-    delete window._sheetCache;
+    if (typeof _sheetCache !== 'undefined') {
+      Object.keys(_sheetCache).forEach(key => { delete _sheetCache[key]; });
+    }
   } catch (err) {
     status.textContent = `Apply error: ${err.message}`;
   }
