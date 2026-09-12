@@ -636,3 +636,17 @@ body {
   margin-right: 0.4rem;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* Correction review: wrap source notes instead of truncating historical evidence. */
+.correction-preview { padding: 1rem; border-bottom: 1px solid var(--border, #444); }
+.correction-preview summary { cursor: pointer; font-weight: 500; overflow-wrap: anywhere; }
+.correction-preview p, .migration-controls p { line-height: 1.5; font-size: .85rem; }
+.correction-diff { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .8rem; }
+.correction-diff th, .correction-diff td { padding: .65rem; text-align: left; vertical-align: top; border: 1px solid var(--border, #444); white-space: pre-wrap; overflow-wrap: anywhere; }
+.correction-diff th:first-child { width: 19%; }
+.delete-warning { color: #ffb3a9; font-weight: 500; }
+.ingest-input-col > .migration-controls { display: block; flex: 0 0 auto; padding: 1rem; overflow: auto; max-height: 40%; }
+.migration-controls label { display: block; margin-bottom: .5rem; }
+.migration-controls select { max-width: 100%; padding: .5rem; }
+@media (max-width: 700px) { .correction-diff th, .correction-diff td { padding: .3rem; } }
