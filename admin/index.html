@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="corrections.css" />
 </head>
 <body>
 
@@ -39,6 +40,7 @@
     </div>
     <nav id="admin-tabs">
       <button class="tab-btn active" data-tab="ingest">Ingest</button>
+      <button class="tab-btn" data-tab="correct">Correct</button>
       <button class="tab-btn" data-tab="verify">Verify</button>
       <button class="tab-btn" data-tab="audit">Audit Log</button>
     </nav>
@@ -96,6 +98,66 @@
     </div>
   </div>
 
+  <!-- ── CORRECT TAB ──────────────────────────── -->
+  <div id="tab-correct" class="tab-panel hidden">
+    <div class="tab-inner correction-grid">
+      <div class="correction-col">
+        <div id="correction-input-card" class="panel-card">
+          <div class="card-header">
+            <h2>Corrections, reassignments, and deletions</h2>
+            <p class="card-hint">Target the permanent row ID. Preview reads the live row and shows the exact <strong>before → after</strong> change. Apply is rejected if that row changes after preview.</p>
+          </div>
+          <textarea id="correction-textarea" spellcheck="false" placeholder='[
+  {
+    "operation": "reassign",
+    "entry_type": "IND_CHURCH",
+    "record_id": "ich_040",
+    "changes": {
+      "ind_id": "ind_112",
+      "date_from": "1760"
+    },
+    "reason": "Correct misassigned relationship",
+    "source_ids": "SRC_SMITH_2021"
+  },
+  {
+    "operation": "delete",
+    "entry_type": "IND_IND",
+    "record_id": "iind_243",
+    "reason": "Unsupported relationship"
+  }
+]'></textarea>
+          <div class="card-actions">
+            <button id="correction-preview-btn" class="btn-primary">Preview Live Rows</button>
+            <button id="correction-clear-btn" class="btn-ghost">Clear</button>
+            <span id="correction-status"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="correction-col">
+        <div id="correction-preview-card" class="panel-card hidden">
+          <div class="card-header">
+            <h2>Before → After</h2>
+            <div id="correction-summary"></div>
+          </div>
+          <div id="correction-preview-body" class="correction-preview-body"></div>
+          <div class="card-actions">
+            <button id="correction-apply-btn" class="btn-danger" disabled>Apply Reviewed Corrections</button>
+            <span id="correction-apply-status"></span>
+          </div>
+        </div>
+
+        <div id="correction-results-card" class="panel-card hidden">
+          <div class="card-header">
+            <h2>Correction Results</h2>
+            <p class="card-hint">Each successful operation preserves its original row and resulting row in the audit trail.</p>
+          </div>
+          <div id="correction-results-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── VERIFY TAB ───────────────────────────── -->
   <div id="tab-verify" class="tab-panel hidden">
     <div class="tab-inner tab-inner-verify">
@@ -119,6 +181,7 @@
               <option>IND_IND</option>
               <option>EVT_LINKS</option>
               <option>WEATHER</option>
+              <option>COUNTIES</option>
               <option>AUDIT_LOG</option>
             </select>
             <button id="verify-load-btn" class="btn-primary">Load</button>
@@ -152,5 +215,6 @@
 </div><!-- #admin-panel -->
 
 <script src="admin.js"></script>
+<script src="corrections.js"></script>
 </body>
 </html>
