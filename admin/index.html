@@ -53,7 +53,7 @@
         <div class="panel-card">
           <div class="card-header">
             <h2>Paste JSON from research session</h2>
-            <p class="card-hint">Array of entry objects, each with an <code>entry_type</code> field matching a sheet name.</p>
+            <p class="card-hint">Paste existing research JSON or correction operations. Updates, reassignments and deletions are previewed against the current spreadsheet.</p>
           </div>
           <textarea id="ingest-textarea" spellcheck="false" placeholder='[
   {
@@ -64,11 +64,18 @@
   }
 ]'></textarea>
           <div class="card-actions">
-            <button id="validate-btn" class="btn-primary">Validate</button>
+            <button id="validate-btn" class="btn-primary">Validate and preview</button>
             <button id="clear-btn" class="btn-ghost">Clear</button>
-            <span id="validate-status"></span>
+            <span id="validate-status" role="status"></span>
           </div>
         </div>
+        <details class="panel-card migration-controls">
+          <summary>Prepare permanent relationship IDs</summary>
+          <p>Use once for a table missing IDs, then validate the migration before applying.</p>
+          <label for="migration-sheet">Relationship table</label>
+          <select id="migration-sheet"><option>IND_PROPERTY</option><option>EVT_LINKS</option><option>IND_CHURCH</option><option>IND_UNIT</option><option>IND_IND</option></select>
+          <button id="prepare-ids-btn" class="btn-ghost">Prepare IDs</button>
+        </details>
       </div>
 
       <div class="ingest-preview-col">
@@ -79,9 +86,9 @@
           </div>
           <div id="preview-tables"></div>
           <div class="card-actions">
-            <button id="push-btn" class="btn-push" disabled>Confirm and Push</button>
-            <button id="push-overwrite-btn" class="btn-push-overwrite" disabled>Confirm with Overwrites</button>
-            <span id="push-status"></span>
+            <button id="push-btn" class="btn-push" disabled>Apply reviewed changes</button>
+
+            <span id="push-status" role="status"></span>
           </div>
         </div>
 
@@ -119,6 +126,7 @@
               <option>IND_IND</option>
               <option>EVT_LINKS</option>
               <option>WEATHER</option>
+              <option>COUNTIES</option>
               <option>AUDIT_LOG</option>
             </select>
             <button id="verify-load-btn" class="btn-primary">Load</button>
@@ -154,3 +162,4 @@
 <script src="admin.js"></script>
 </body>
 </html>
+

@@ -1,0 +1,58 @@
+[
+  {
+    "entry_type": "IND_CHURCH",
+    "action": "reassign",
+    "record_id": "ich_040",
+    "expected": {
+      "ind_id": "ind_060",
+      "ch_id": "ch_008",
+      "date_from": "1757"
+    },
+    "changes": {
+      "ind_id": "ind_112",
+      "date_from": "1760",
+      "date_to": "",
+      "role": "Founder (circa 1760; Smith)",
+      "source_ids": "SRC_PARKER_MARION|SRC_SMITH_2021",
+      "notes": "Smith 2021 p. 71 reports Major John James as an Indiantown founder around 1760; p. 90 note 64 cites Howe 1870 pp. 407, 412. Date is approximate, not an inspected admission date. Smith warns that the James genealogy is conflicting. Corrects a row whose notes described James but whose ID selected Francis Triplett. Burial does not prove lifelong membership."
+    },
+    "reason": "Correct James/Triplett identity mismatch; Smith pp. 71-72."
+  },
+  {
+    "entry_type": "IND_CHURCH",
+    "action": "delete",
+    "record_id": "ich_041",
+    "expected": {
+      "ind_id": "ind_065",
+      "ch_id": "ch_008"
+    },
+    "reason": "This Indiantown row describes Robert Wilson but selects Rev. John MacLeod. Remove only this erroneous link; retain MacLeod and his Cross Creek relationships. Wilson identity/source verification remains pending."
+  },
+  {
+    "entry_type": "IND_CHURCH",
+    "action": "update",
+    "record_id": "ich_047",
+    "expected": {
+      "ind_id": "ind_089",
+      "ch_id": "ch_008",
+      "date_from": "1757"
+    },
+    "changes": {
+      "date_from": "",
+      "date_to": "",
+      "role": "Active participant (Smith; membership dates unknown)",
+      "notes": "Smith 2021 p. 72 describes John James II as active in Indiantown. The former date 1757 is his reported birth year, not evidence of admission. Membership dates are unknown; session records have not been inspected. Smith qualifies the James genealogy on p. 71."
+    },
+    "reason": "Remove unsupported membership start date; Smith pp. 71-72."
+  },
+  {
+    "entry_type": "IND_IND",
+    "action": "delete",
+    "record_id": "iind_243",
+    "expected": {
+      "ind_id_a": "ind_112",
+      "ind_id_b": "ind_146"
+    },
+    "reason": "The inspected Smith pp. 71-72 and the cited roster do not establish Joshua James as Major John James's son. Remove the asserted kinship edge; preserve Joshua's separate roster identity."
+  }
+]
