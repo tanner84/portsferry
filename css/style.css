@@ -458,6 +458,132 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--font-sans) !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
 }
+
+/* ── River basin GIS overlay ──────────────────────────────────── */
+.leaflet-control-layers {
+  background: rgba(26, 32, 48, 0.94);
+  color: #d8dde6;
+  border: 1px solid #3a4f68;
+  border-radius: 0;
+  box-shadow: 0 2px 9px rgba(0,0,0,0.35);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+}
+.leaflet-control-layers-expanded { padding: 0.45rem 0.6rem; }
+.leaflet-control-layers label { margin: 0; cursor: pointer; }
+.leaflet-control-layers small {
+  color: #8091a8;
+  font-size: 0.62rem;
+  margin-left: 0.25rem;
+}
+.leaflet-control-layers-selector { accent-color: var(--accent-light); }
+
+.river-basin-label-marker {
+  background: transparent;
+  border: 0;
+}
+.river-basin-label-marker span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: 150px;
+  padding: 0.16rem 0.38rem;
+  color: #f4f0e6;
+  background: rgba(20, 25, 36, 0.78);
+  border: 1px solid var(--basin-color);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+  font-family: var(--font-serif);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: 0.025em;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+  white-space: normal;
+}
+
+.river-basin-legend {
+  padding: 0.55rem 0.65rem;
+  min-width: 190px;
+  color: #d8dde6;
+  background: rgba(26, 32, 48, 0.94);
+  border: 1px solid #3a4f68;
+  box-shadow: 0 2px 9px rgba(0,0,0,0.35);
+  font-family: var(--font-sans);
+}
+.river-basin-legend > strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #f4f0e6;
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+}
+.river-basin-legend ul { margin: 0; padding: 0; list-style: none; }
+.river-basin-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin: 0.2rem 0;
+  font-size: 0.68rem;
+}
+.river-basin-legend li span {
+  width: 18px;
+  height: 5px;
+  flex: 0 0 auto;
+  background: var(--basin-color);
+  border-radius: 1px;
+}
+.river-basin-legend small {
+  display: block;
+  margin-top: 0.35rem;
+  color: #8391a4;
+  font-size: 0.61rem;
+}
+
+.river-basin-popup-content h3 {
+  margin: 0 0 0.4rem;
+  padding-left: 0.5rem;
+  color: var(--text-primary);
+  border-left: 4px solid var(--basin-color);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+}
+.river-basin-popup-content p { margin: 0.45rem 0; line-height: 1.35; }
+.river-basin-popup-content dl { margin: 0.5rem 0; }
+.river-basin-popup-content dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.16rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.river-basin-popup-content dt { color: var(--text-muted); }
+.river-basin-popup-content dd { margin: 0; color: var(--text-primary); }
+.river-basin-popup-content .river-basin-caveat {
+  padding: 0.4rem 0.5rem;
+  color: #d7c49b;
+  background: rgba(173, 120, 50, 0.13);
+  border-left: 2px solid #ad7832;
+  font-size: 0.7rem;
+}
+.river-basin-popup-content a { color: #90abc9; font-size: 0.7rem; }
+.basin-tooltip-line { color: #94b5c8; font-size: 0.7rem; }
+
+@media (max-width: 767px) {
+  .river-basin-legend {
+    min-width: 0;
+    max-width: 170px;
+    padding: 0.4rem 0.5rem;
+  }
+  .river-basin-legend > strong { font-size: 0.72rem; }
+  .river-basin-legend li { font-size: 0.6rem; }
+  .river-basin-label-marker span {
+    max-width: 110px;
+    font-size: 0.64rem;
+  }
+}
 .pf-tooltip::before { display: none; }
 
 .leaflet-tooltip.pf-battle-tooltip {
@@ -1776,4 +1902,3 @@ button { font-family: inherit; cursor: pointer; }
     max-width: 300px;
   }
 }
-

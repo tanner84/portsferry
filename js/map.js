@@ -120,6 +120,12 @@ PF.map.init = function () {
 
   L.control.zoom({ position: 'topright' }).addTo(PF.map.instance);
 
+  /* One shared GIS overlay control. New research layers register here. */
+  PF.map.overlayControl = L.control.layers({}, {}, {
+    position:  'bottomright',
+    collapsed: window.innerWidth <= 767,
+  }).addTo(PF.map.instance);
+
   /* ── Data layer groups ──────────────────────────────────────── */
   PF.map.layers = {
     rumsey:      rumseyLayer,
@@ -179,6 +185,14 @@ PF.map.toggleBaseLayer = function () {
     PF.map._activeBase = 'rumsey';
     btn.textContent = 'OSM / Rumsey';
   }
+};
+
+/** Register a research overlay in the shared GIS layer control. */
+PF.map.registerOverlay = function (layer, label) {
+  if (!PF.map.overlayControl) {
+    throw new Error('Map overlay control is not initialized');
+  }
+  PF.map.overlayControl.addOverlay(layer, label);
 };
 
 /* ================================================================
@@ -281,11 +295,12 @@ PF.map.renderChurches = function (churches, date) {
     const burnedNote = burned
       ? `<br><em style="color:#e07040">Burned ${_mapEsc(ch.burned_date)}</em>`
       : '';
+    const basinNote = _basinTooltipLine(lat, lng);
 
     marker.bindTooltip(
       `<strong>${_mapEsc(ch.name || 'Church')}</strong>` +
       `<br>${_mapEsc(ch.denomination || '')} · est. ${ch.founded_yr || '?'}` +
-      burnedNote,
+      burnedNote + basinNote,
       { direction: 'top', offset: [0, -10], className: 'pf-tooltip' }
     );
 
@@ -320,7 +335,8 @@ PF.map.renderIndividuals = function (individuals) {
     marker.bindTooltip(
       `<strong>${_mapEsc(ind.full_name || 'Unknown')}</strong>` +
       `<br>${_mapEsc(ind.affiliation || 'Unknown')} · ${_mapEsc(ind.tier || '')}` +
-      (ind.rank ? `<br><em>${_mapEsc(ind.rank)}</em>` : ''),
+      (ind.rank ? `<br><em>${_mapEsc(ind.rank)}</em>` : '') +
+      _basinTooltipLine(lat, lng),
       { direction: 'top', offset: [0, -10], className: 'pf-tooltip' }
     );
 
@@ -492,7 +508,8 @@ PF.map.renderProperties = function (propLinks) {
       `<strong>${_mapEsc(property.name || property.prop_id)}</strong>` +
       (property.type ? `<br>${_mapEsc(property.type)}` : '') +
       acreageLine +
-      relLine,
+      relLine +
+      _basinTooltipLine(lat, lng),
       { direction: 'top', offset: [0, -10], className: 'pf-tooltip' }
     );
 
@@ -574,6 +591,12 @@ function _mapEsc(str) {
     .replace(/"/g, '&quot;');
 }
 
+function _basinTooltipLine(lat, lng) {
+  const basin = PF.basins?.lookup?.(lat, lng);
+  if (!basin) return '';
+  return `<br><span class="basin-tooltip-line">${_mapEsc(basin.basin_name)} basin</span>`;
+}
+
 /**
  * Parse a burned_date string to a Date object.
  * Accepts: "1779", "1780", "5/1/1779", "April 1781", ISO strings, etc.
@@ -644,10 +667,7 @@ PF.map.initCountyOriginLayer = function () {
       });
 
       /* Control added only after data loads — no widget appears if fetch fails */
-      L.control.layers(null, { 'NC Cowpens Origins (Table 2)': countyLayer }, {
-        position:  'bottomright',
-        collapsed: false,
-      }).addTo(PF.map.instance);
+      PF.map.registerOverlay(countyLayer, 'NC Cowpens Origins (Table 2)');
 
       console.info('[PF.map] County origin layer ready.',
         (data.counties || []).length, 'counties.');

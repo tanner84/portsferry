@@ -54,6 +54,7 @@ function _initMobileNav() {
     /* ── 1. Map ─────────────────────────────────────────────── */
     PF.map.init();
     PF.map.initCountyOriginLayer();   // county origin lines — Table 2, off by default
+    await PF.basins.init();            // four operational basins — USGS WBD, off by default
 
     /* ── 2. Data ────────────────────────────────────────────── */
     await PF.data.load();

@@ -15,6 +15,7 @@ Pure static site — no build step, no server, no bundler. Deployable to Netlify
 | Map engine | Leaflet.js 1.9.4 |
 | Historical base tiles | David Rumsey georeferenced maps (tile URL configured in `js/map.js`) |
 | Modern fallback tiles | OpenStreetMap |
+| Operational basin layer | Four dissolved USGS WBD polygons with coordinate-derived assignment |
 | Database | Google Sheets (public JSON via Sheets API v4) |
 | Timeline | Custom range slider + Leaflet.TimeDimension (loaded for Phase 3) |
 | Network graph | IND_IND junction table → Leaflet polylines |
@@ -35,10 +36,13 @@ portsferry/
 │   ├── app.js            Entry point — startup orchestration
 │   ├── data.js           Google Sheets loader + client-side query API
 │   ├── map.js            Leaflet initialization, tile layers, markers
+│   ├── basins.js         River-basin overlay, legend, labels, lookups
+│   ├── basin-geometry.js Point-in-polygon helper
 │   ├── network.js        IND_IND social network edge rendering
 │   ├── timeline.js       Timeline slider, date-driven layer refresh
 │   └── panels.js         Left browser, right story panel, source tray
 └── data/
+    ├── gis/              Generated USGS WBD river-basin GeoJSON
     └── seed/             Prototype seed data (JSON) used when Sheets not configured
         ├── individuals.json
         ├── churches.json
@@ -182,6 +186,20 @@ Netlify deploys automatically on push to `main`.
 | **Individual** | Click person pin | Property, parish, unit area; social network edges from IND_IND |
 | **Unit** | Unit view mode | Company commanders as pins; churches that fed the unit |
 | **Battle** | Click battle marker | Unit positions per phase; commanders cross-referenced to community network |
+
+## Operational river basins
+
+The map's GIS layer control includes four modern hydrologic reference polygons:
+Cape Fear, Pee Dee, Santee, and Charleston Harbor / Lowcountry. Checking the
+layer fits the map to the full framework; hovering identifies a basin and
+clicking explains its research scope and source. Entity tooltips derive their
+basin from coordinates against the same polygons rather than a manually entered
+zone.
+
+The bundled geometry comes from the USGS Watershed Boundary Dataset and can be
+regenerated with `npm run gis:basins`. Santee and Cooper boundaries carry an
+explicit caveat because the modern WBD reflects the Santee–Cooper diversion and
+later impoundments. See `data/gis/README.md` for the exact HUC aggregation.
 
 ---
 
