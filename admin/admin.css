@@ -360,6 +360,23 @@ body {
 .btn-push-overwrite:hover:not(:disabled) { background: #7a2020; }
 .btn-push-overwrite:disabled { opacity: 0.35; cursor: default; }
 
+.btn-push-corrections {
+  background: #7a1010;
+  color: #fff0f0;
+  border: 2px solid #4a0808;
+  padding: 0.4rem 1.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, opacity 0.12s;
+  border-radius: 2px;
+}
+.btn-push-corrections:hover:not(:disabled) { background: #a02020; }
+.btn-push-corrections:disabled { opacity: 0.35; cursor: default; }
+
 /* ══════════════════════════════════════════════════════════
    INGEST TAB
 ══════════════════════════════════════════════════════════ */
@@ -460,6 +477,9 @@ body {
 .row-invalid   { background: var(--red-bg); }
 .row-overwrite { background: var(--overwrite-bg); }
 .row-warn      { background: var(--orange-bg); }
+.row-update    { background: var(--green-bg); }
+.row-reassign  { background: #edf3fa; }
+.row-delete    { background: var(--overwrite-bg); }
 
 .row-badge {
   display: inline-block;
@@ -476,6 +496,45 @@ body {
 .badge-invalid   { background: var(--red-bg);        color: var(--red);        border: 1px solid var(--red-border); }
 .badge-overwrite { background: var(--overwrite-bg);  color: var(--overwrite);  border: 1px solid var(--overwrite-border); }
 .badge-warn      { background: var(--orange-bg);     color: var(--orange);     border: 1px solid var(--orange-border); }
+.badge-update    { background: var(--green-bg);       color: var(--green);      border: 1px solid var(--green-border); }
+.badge-reassign  { background: #edf3fa;               color: var(--accent);     border: 1px solid var(--accent-light); }
+.badge-delete    { background: var(--overwrite-bg);   color: var(--overwrite);  border: 1px solid var(--overwrite-border); }
+
+.correction-preview {
+  border: 1px solid var(--panel-border);
+  margin-bottom: 0.8rem;
+  background: #fffdf8;
+}
+
+.correction-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.65rem;
+  color: var(--text-primary);
+  background: var(--panel-bg-dark);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.correction-reason {
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  font-style: italic;
+  padding: 0.45rem 0.65rem 0;
+}
+
+.correction-errors {
+  color: var(--red);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  padding: 0.55rem 1.7rem 0.7rem;
+}
+
+.correction-diff { border: 0; }
+.correction-diff td:first-child { font-family: monospace; font-weight: 600; }
+.correction-diff .diff-before { background: #fff7e8; }
+.correction-diff .diff-after { background: var(--green-bg); }
+.correction-diff .diff-deleted { background: var(--overwrite-bg); color: var(--overwrite); font-weight: 600; }
 
 /* ── Results ────────────────────────────────────────────── */
 #results-body {
@@ -502,6 +561,9 @@ body {
 .result-title-skipped    { color: var(--yellow); }
 .result-title-error      { color: var(--red); }
 .result-title-overwritten{ color: var(--overwrite); }
+.result-title-updated    { color: var(--green); }
+.result-title-reassigned { color: var(--accent); }
+.result-title-deleted    { color: var(--overwrite); }
 
 .result-item {
   padding: 0.2rem 0;

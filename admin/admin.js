@@ -10,6 +10,9 @@
 
 const API_WRITE = '/.netlify/functions/sheets-write';
 const API_READ  = '/.netlify/functions/sheets-read';
+const API_CORRECT = '/api/admin/corrections';
+
+const CORRECTION_OPERATIONS = new Set(['update', 'reassign', 'delete']);
 
 const VALID_SHEETS = [
   'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
@@ -190,6 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('clear-btn').addEventListener('click', clearIngest);
   $('push-btn').addEventListener('click', runPush);
   $('push-overwrite-btn').addEventListener('click', runPushWithOverwrites);
+  $('push-corrections-btn').addEventListener('click', runCorrections);
 
   /* Verify tab */
   $('verify-load-btn').addEventListener('click', loadVerifySheet);
@@ -222,6 +226,7 @@ function switchTab(name) {
 ════════════════════════════════════════════════════════ */
 let _parsedEntries  = [];
 let _validatedRows  = [];  // { entry, status:'new'|'dup'|'overwrite'|'warn'|'invalid', errors }
+let _correctionPrepared = [];
 
 async function runValidation() {
   const raw = $('ingest-textarea').value.trim();
@@ -231,7 +236,9 @@ async function runValidation() {
   $('preview-panel').classList.add('hidden');
   $('push-btn').disabled = true;
   $('push-overwrite-btn').disabled = true;
+  $('push-corrections-btn').disabled = true;
   _validatedRows = [];
+  _correctionPrepared = [];
 
   let entries;
   try {
@@ -242,6 +249,20 @@ async function runValidation() {
     return;
   }
   _parsedEntries = entries;
+
+  const correctionCount = entries.filter(entry =>
+    CORRECTION_OPERATIONS.has(String(entry?.operation || '').toLowerCase())
+  ).length;
+  if (correctionCount > 0) {
+    if (correctionCount !== entries.length) {
+      $('validate-status').textContent = 'Do not mix corrections with ordinary ingest entries in one batch.';
+      return;
+    }
+    await runCorrectionValidation(entries);
+    return;
+  }
+
+  setPushMode('ingest');
 
   // Validate structure and ID patterns
   const withValidation = entries.map(entry => {
@@ -289,6 +310,40 @@ async function runValidation() {
   $('push-overwrite-btn').disabled = !clean || (nNew === 0 && nOverwrite === 0);
 }
 
+async function runCorrectionValidation(entries) {
+  setPushMode('correction');
+
+  try {
+    const response = await fetch(API_CORRECT, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ action: 'preview', operations: entries }),
+    });
+    const result = await response.json();
+
+    if (!Array.isArray(result.items)) {
+      throw new Error(result.error || `Preview failed (${response.status})`);
+    }
+
+    _correctionPrepared = result.valid ? result.prepared : [];
+    renderCorrectionPreview(result.items);
+    $('validate-status').textContent = result.valid
+      ? `${result.items.length} correction${result.items.length === 1 ? '' : 's'} ready for review.`
+      : 'Correction batch has errors. Nothing can be written.';
+    $('push-corrections-btn').disabled = !result.valid;
+  } catch (error) {
+    $('validate-status').textContent = `Correction preview error: ${error.message}`;
+    $('push-corrections-btn').disabled = true;
+  }
+}
+
+function setPushMode(mode) {
+  const correctionMode = mode === 'correction';
+  $('push-btn').classList.toggle('hidden', correctionMode);
+  $('push-overwrite-btn').classList.toggle('hidden', correctionMode);
+  $('push-corrections-btn').classList.toggle('hidden', !correctionMode);
+}
+
 /* ── Badge label map ───────────────────────────────────── */
 const BADGE_LABEL = {
   new:       'New',
@@ -296,7 +351,68 @@ const BADGE_LABEL = {
   overwrite: 'Overwrite',
   warn:      'Warning',
   invalid:   'Invalid',
+  update:    'Update',
+  reassign:  'Reassign',
+  delete:    'Delete',
 };
+
+function renderCorrectionPreview(items) {
+  const container = $('preview-tables');
+  container.innerHTML = '';
+
+  const counts = items.reduce((result, item) => {
+    result[item.status] = (result[item.status] || 0) + 1;
+    return result;
+  }, {});
+  $('preview-summary').innerHTML = [
+    counts.update ? `<span class="row-badge badge-update">${counts.update} update</span>` : '',
+    counts.reassign ? `<span class="row-badge badge-reassign">${counts.reassign} reassign</span>` : '',
+    counts.delete ? `<span class="row-badge badge-delete">${counts.delete} delete</span>` : '',
+    counts.invalid ? `<span class="row-badge badge-invalid">${counts.invalid} invalid</span>` : '',
+  ].filter(Boolean).join(' ');
+
+  items.forEach(item => {
+    const card = el('section', `correction-preview correction-${item.status}`);
+    const heading = el('div', 'correction-heading');
+    heading.appendChild(el('span', `row-badge badge-${item.status}`, BADGE_LABEL[item.status] || item.status));
+    heading.appendChild(el('strong', '', `${item.entry_type || 'UNKNOWN'} · ${item.record_id || '(missing ID)'}`));
+    card.appendChild(heading);
+
+    if (item.reason) card.appendChild(el('p', 'correction-reason', item.reason));
+
+    if (item.errors?.length) {
+      const list = el('ul', 'correction-errors');
+      item.errors.forEach(error => list.appendChild(el('li', '', error)));
+      card.appendChild(list);
+    } else {
+      const table = el('table', 'preview-table correction-diff');
+      const thead = el('thead');
+      const headerRow = el('tr');
+      ['Field', 'Before', 'After'].forEach(label => headerRow.appendChild(el('th', '', label)));
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = el('tbody');
+      const fields = item.operation === 'delete'
+        ? item.headers.filter(field => item.before?.[field] !== '')
+        : item.changed_fields;
+      fields.forEach(field => {
+        const row = el('tr', 'diff-changed');
+        row.appendChild(el('td', 'diff-field', field));
+        row.appendChild(el('td', 'diff-before', item.before?.[field] ?? ''));
+        row.appendChild(el('td', item.operation === 'delete' ? 'diff-deleted' : 'diff-after',
+          item.operation === 'delete' ? 'DELETED' : (item.after?.[field] ?? '')));
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+      card.appendChild(table);
+    }
+
+    container.appendChild(card);
+  });
+
+  $('preview-panel').classList.remove('hidden');
+}
 
 /* ── Render preview tables ─────────────────────────────── */
 function renderPreview(rows) {
@@ -380,8 +496,11 @@ function clearIngest() {
   $('results-panel').classList.add('hidden');
   $('push-btn').disabled = true;
   $('push-overwrite-btn').disabled = true;
+  $('push-corrections-btn').disabled = true;
+  setPushMode('ingest');
   _parsedEntries = [];
   _validatedRows = [];
+  _correctionPrepared = [];
 }
 
 /* ════════════════════════════════════════════════════════
@@ -394,6 +513,7 @@ async function _executePush(toWrite, buttonId) {
 
   $('push-btn').disabled = true;
   $('push-overwrite-btn').disabled = true;
+  $('push-corrections-btn').disabled = true;
   $('push-status').innerHTML = '<span class="spinner"></span>Writing to Google Sheets…';
 
   try {
@@ -438,6 +558,39 @@ async function runPushWithOverwrites() {
   await _executePush(toWrite, 'push-overwrite-btn');
 }
 
+async function runCorrections() {
+  if (_correctionPrepared.length === 0) return;
+
+  $('push-corrections-btn').disabled = true;
+  $('push-status').innerHTML = '<span class="spinner"></span>Applying corrections atomically…';
+
+  try {
+    const response = await fetch(API_CORRECT, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ action: 'apply', operations: _correctionPrepared }),
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        $('push-status').textContent = 'Conflict: a row changed after preview. Validate again; nothing was written.';
+      } else {
+        $('push-status').textContent = `Correction error: ${result.error || response.status}`;
+      }
+      return;
+    }
+
+    const affected = new Set(_correctionPrepared.map(operation => operation.entry_type));
+    affected.forEach(sheet => { delete _sheetCache[sheet]; });
+    _correctionPrepared = [];
+    renderResults(result);
+    $('push-status').textContent = 'Corrections applied and recorded in the audit log.';
+  } catch (error) {
+    $('push-status').textContent = `Network error: ${error.message}`;
+  }
+}
+
 /* ── Render push results ───────────────────────────────── */
 function renderResults(result) {
   const body = $('results-body');
@@ -455,6 +608,9 @@ function renderResults(result) {
     { key: 'overwritten',title: 'Updated (overwrites)',cls: 'result-title-overwritten'},
     { key: 'skipped',    title: 'Skipped (duplicates)',cls: 'result-title-skipped'    },
     { key: 'errors',     title: 'Errors',             cls: 'result-title-error'      },
+    { key: 'updated',    title: 'Corrected',          cls: 'result-title-updated'    },
+    { key: 'reassigned', title: 'Reassigned',         cls: 'result-title-reassigned' },
+    { key: 'deleted',    title: 'Deleted',            cls: 'result-title-deleted'    },
   ];
 
   sections.forEach(({ key, title, cls }) => {

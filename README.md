@@ -123,6 +123,31 @@ The spreadsheet must have exactly these 14 sheet tabs (case-sensitive):
 
 ---
 
+## Safe admin corrections
+
+The admin ingest box accepts a correction array as well as ordinary new-entry JSON:
+
+```json
+[
+  {
+    "entry_type": "IND_CHURCH",
+    "operation": "reassign",
+    "record_id": "ich_040",
+    "reason": "Source-qualified correction",
+    "changes": {
+      "ind_id": "ind_112",
+      "date_from": ""
+    }
+  }
+]
+```
+
+Supported operations are `update`, `reassign`, and `delete`. Relationship corrections are located by their stable `link_id` or `edge_id`, never a sheet row number or a changeable person/church/date combination. Validation loads the live row, checks referenced entities, and displays a before → after preview. Apply rechecks the complete original row; if it changed after preview, the entire batch is rejected with no writes. Updates, deletions, and their full before/after audit record are submitted in one Google Sheets batch.
+
+The four pending Indiantown manual operations are staged in `data/corrections/indiantown-manual-corrections.json`. Staged means ready to preview, not applied.
+
+---
+
 ## Deployment
 
 ### Initial setup (one time)

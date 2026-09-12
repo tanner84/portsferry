@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin.css?v=20260912a" />
 </head>
 <body>
 
@@ -53,14 +53,14 @@
         <div class="panel-card">
           <div class="card-header">
             <h2>Paste JSON from research session</h2>
-            <p class="card-hint">Array of entry objects, each with an <code>entry_type</code> field matching a sheet name.</p>
+            <p class="card-hint">Paste ordinary ingest entries or stable-ID corrections using <code>operation</code>, <code>record_id</code>, and <code>changes</code>. Correction batches receive a before → after preview.</p>
           </div>
           <textarea id="ingest-textarea" spellcheck="false" placeholder='[
   {
-    "entry_type": "INDIVIDUALS",
-    "ind_id": "ind_015",
-    "full_name": "...",
-    ...
+    "entry_type": "IND_CHURCH",
+    "operation": "reassign",
+    "record_id": "ich_040",
+    "changes": { "ind_id": "ind_112" }
   }
 ]'></textarea>
           <div class="card-actions">
@@ -81,6 +81,7 @@
           <div class="card-actions">
             <button id="push-btn" class="btn-push" disabled>Confirm and Push</button>
             <button id="push-overwrite-btn" class="btn-push-overwrite" disabled>Confirm with Overwrites</button>
+            <button id="push-corrections-btn" class="btn-push-corrections hidden" disabled>Confirm Corrections</button>
             <span id="push-status"></span>
           </div>
         </div>
@@ -151,6 +152,6 @@
 
 </div><!-- #admin-panel -->
 
-<script src="admin.js"></script>
+<script src="admin.js?v=20260912a"></script>
 </body>
 </html>

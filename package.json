@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "description": "Ports Ferry Narrative GIS — Netlify Function dependencies",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
   "dependencies": {
     "googleapis": "^144.0.0"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^6.0.0"
   }
 }
