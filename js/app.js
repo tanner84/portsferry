@@ -4,6 +4,7 @@
  *
  * Initialization order:
  *   1. Map (no data needed — renders immediately)
+ *   1a. Geographic reference overlays (basins, county origins)
  *   2. Data load (Google Sheets or seed fallback)
  *   3. Timeline
  *   4. Panels (populates browser lists once data is available)
@@ -53,6 +54,7 @@ function _initMobileNav() {
   try {
     /* ── 1. Map ─────────────────────────────────────────────── */
     PF.map.init();
+    PF.basins.init();                 // USGS WBD research-region boundaries — off by default
     PF.map.initCountyOriginLayer();   // county origin lines — Table 2, off by default
 
     /* ── 2. Data ────────────────────────────────────────────── */
