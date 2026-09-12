@@ -1,0 +1,44 @@
+[
+  {
+    "operation": "reassign",
+    "entry_type": "IND_CHURCH",
+    "record_id": "ich_040",
+    "changes": {
+      "ind_id": "ind_112",
+      "ch_id": "ch_008",
+      "date_from": "1760",
+      "date_to": "",
+      "role": "Founder (circa 1760; Smith)",
+      "source_ids": "SRC_PARKER_MARION|SRC_SMITH_2021",
+      "notes": "Smith p. 71 reports Major John James as a founder around 1760; 1760 is approximate, not a verified admission date. Smith p. 90 n. 64 cites Howe 1870 pp. 407, 412. Earlier burial-based claim does not prove lifelong membership. Corrects the accidental Francis Triplett endpoint; do not edit Triplett's individual record."
+    },
+    "reason": "Correct the accidental Francis Triplett endpoint and assign the existing Indiantown founder relationship to Major John James without creating a duplicate row.",
+    "source_ids": "SRC_PARKER_MARION|SRC_SMITH_2021"
+  },
+  {
+    "operation": "delete",
+    "entry_type": "IND_CHURCH",
+    "record_id": "ich_041",
+    "reason": "Remove only the erroneous Indiantown relationship. Its notes describe Robert Wilson, but ind_065 is Rev. John MacLeod. Do not edit ind_065 or any Barbecue/Longstreet relationship. Reintroduce a Wilson link only after identity and source verification."
+  },
+  {
+    "operation": "update",
+    "entry_type": "IND_CHURCH",
+    "record_id": "ich_047",
+    "changes": {
+      "date_from": "",
+      "date_to": "",
+      "role": "Active participant (Smith; membership dates unknown)",
+      "source_ids": "SRC_SMITH_2021",
+      "notes": "Smith p. 72 describes John James II as active in Indiantown. 1757 is his reported birth year, not evidence of church admission. Father-founder connection is source-reported; session records have not been inspected."
+    },
+    "reason": "Remove the unsupported use of John James II's 1757 birth year as a church membership start date while retaining the sourced association.",
+    "source_ids": "SRC_SMITH_2021"
+  },
+  {
+    "operation": "delete",
+    "entry_type": "IND_IND",
+    "record_id": "iind_243",
+    "reason": "Remove the unsupported Major John James–Joshua James father-son edge while retaining Joshua James as an individual roster identity. No inspected source establishes this precise kinship."
+  }
+]
