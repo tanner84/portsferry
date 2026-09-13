@@ -28,6 +28,12 @@
   [headers.values]
     Cache-Control = "public, max-age=86400, stale-while-revalidate=3600"
 
+# Mouzon panels are content-fingerprinted; revised renders receive new URLs.
+[[headers]]
+  for = "/assets/maps/mouzon-1775/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 # ── Cache: seed data (short TTL — changes during development) ────
 [[headers]]
   for = "/data/*"

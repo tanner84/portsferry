@@ -13,7 +13,7 @@ Pure static site — no build step, no server, no bundler. Deployable to Netlify
 | Layer | Technology |
 |---|---|
 | Map engine | Leaflet.js 1.9.4 |
-| Historical base tiles | David Rumsey georeferenced maps (tile URL configured in `js/map.js`) |
+| Historical base map | Locally hosted Mouzon 1775 WebP panels, loaded by viewport from a provenance manifest |
 | Modern fallback tiles | OpenStreetMap |
 | Operational basin layer | Four dissolved USGS WBD polygons with coordinate-derived assignment |
 | Database | Google Sheets (public JSON via Sheets API v4) |
@@ -35,14 +35,16 @@ portsferry/
 ├── js/
 │   ├── app.js            Entry point — startup orchestration
 │   ├── data.js           Google Sheets loader + client-side query API
-│   ├── map.js            Leaflet initialization, tile layers, markers
+│   ├── map.js            Leaflet initialization, base layers, markers
+│   ├── mouzon.js         Lazy Mouzon panel loader and manifest validation
 │   ├── basins.js         River-basin overlay, legend, labels, lookups
 │   ├── basin-geometry.js Point-in-polygon helper
 │   ├── network.js        IND_IND social network edge rendering
 │   ├── timeline.js       Timeline slider, date-driven layer refresh
 │   └── panels.js         Left browser, right story panel, source tray
+├── assets/maps/          Fingerprinted, georeferenced Mouzon WebP panels
 └── data/
-    ├── gis/              Generated USGS WBD river-basin GeoJSON
+    ├── gis/              Basin GeoJSON and Mouzon provenance/alignment manifest
     └── seed/             Prototype seed data (JSON) used when Sheets not configured
         ├── individuals.json
         ├── churches.json
@@ -56,7 +58,7 @@ portsferry/
 
 ## Configuration
 
-Before connecting live data, set two values:
+Before connecting live data, set the Google Sheets values:
 
 ### 1. Google Sheets ID — `js/data.js`
 
@@ -75,17 +77,25 @@ Create a Google Cloud API key restricted to:
 - Sheets API v4
 - HTTP referrers: `portsferry.com`, `*.netlify.app`, `localhost`
 
-### 2. David Rumsey tile URL — `js/map.js`
+### Historical map source and regeneration
 
-```js
-const MAP_CONFIG = {
-  rumseyTileURL: 'RUMSEY_TILE_URL_PLACEHOLDER',   // ← replace
-  ...
-};
+The default base layer is Henry Mouzon's 1775 map of North and South Carolina,
+derived from the complete 11,000 × 7,864 scan held by the American Geographical
+Society Library at UWM. The site serves local, fingerprinted WebP panels rather
+than depending on MapWarper availability. Full source provenance, control
+points, measured residuals, panel hashes, and the regional-use warning are in
+`data/gis/mouzon-1775.json`.
+
+To rebuild the panels, install Pillow and run:
+
+```bash
+npm run gis:mouzon
 ```
 
-Provide the WMTS or tile endpoint for your selected period map
-(e.g., Mouzon 1775 or Price & Strother 1808).
+The script downloads the authoritative UWM IIIF scan into the ignored
+`scratch/` directory, applies one global affine fit from 17 named settlements,
+and excludes the non-geographic title cartouche and harbor insets. This is a
+regional historical backdrop; switch to OpenStreetMap for close measurement.
 
 ---
 

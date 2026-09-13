@@ -5,6 +5,7 @@
   "description": "Ports Ferry Narrative GIS — Netlify Function dependencies",
   "scripts": {
     "gis:basins": "node scripts/build-river-basins.mjs",
+    "gis:mouzon": "python3 scripts/build-mouzon-map.py",
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {

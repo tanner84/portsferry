@@ -1,0 +1,597 @@
+{
+  "schema_version": 1,
+  "id": "mouzon-1775",
+  "title": "An Accurate Map of North and South Carolina, 1775",
+  "creator": "Henry Mouzon and others",
+  "publisher": "Robert Sayer and John Bennett",
+  "repository": "American Geographical Society Library, UWM Libraries",
+  "source": {
+    "record_url": "https://collections.lib.uwm.edu/digital/collection/agdm/id/2583",
+    "iiif_info_url": "https://collections.lib.uwm.edu/iiif/2/agdm:2583/info.json",
+    "iiif_image_url": "https://collections.lib.uwm.edu/iiif/2/agdm:2583/full/11000,/0/default.jpg",
+    "digital_item_id": "agdm:2583",
+    "original_scale": "1:530,000",
+    "source_pixel_size": [
+      11000,
+      7864
+    ],
+    "source_sha256": "e494952a2196fea6df9c7cd8991ab35b610951d3e8e798d6b5193d262313ab68"
+  },
+  "georeferencing": {
+    "method": "single global affine transformation fit in EPSG:3857",
+    "control_point_count": 17,
+    "fitted_rms_km": 12.16,
+    "maximum_fitted_residual_km": 24.36,
+    "affine_coefficients": {
+      "mercator_x_from_source_x_neg_y_1": [
+        97.185639118,
+        1.911535982,
+        -9400783.964901008
+      ],
+      "mercator_y_from_source_x_neg_y_1": [
+        0.442022503,
+        84.473285823,
+        4392463.321994022
+      ]
+    },
+    "controls": [
+      {
+        "name": "Cross Creek",
+        "source_pixel": [
+          6438,
+          2500
+        ],
+        "target_lng_lat": [
+          -78.878292,
+          35.0525759
+        ],
+        "fitted_residual_km": 13.12
+      },
+      {
+        "name": "Wilmington",
+        "source_pixel": [
+          7397,
+          4052
+        ],
+        "target_lng_lat": [
+          -77.9487284,
+          34.2352853
+        ],
+        "fitted_residual_km": 14.27
+      },
+      {
+        "name": "Brunswick Town",
+        "source_pixel": [
+          7285,
+          4330
+        ],
+        "target_lng_lat": [
+          -77.9476,
+          34.0404
+        ],
+        "fitted_residual_km": 24.36
+      },
+      {
+        "name": "New Bern",
+        "source_pixel": [
+          8490,
+          2410
+        ],
+        "target_lng_lat": [
+          -77.0398762,
+          35.1068428
+        ],
+        "fitted_residual_km": 14.85
+      },
+      {
+        "name": "Bath",
+        "source_pixel": [
+          8924,
+          1960
+        ],
+        "target_lng_lat": [
+          -76.8116045,
+          35.4771094
+        ],
+        "fitted_residual_km": 13.52
+      },
+      {
+        "name": "Edenton",
+        "source_pixel": [
+          9083,
+          1100
+        ],
+        "target_lng_lat": [
+          -76.6077213,
+          36.057938
+        ],
+        "fitted_residual_km": 9.27
+      },
+      {
+        "name": "Halifax",
+        "source_pixel": [
+          7868,
+          773
+        ],
+        "target_lng_lat": [
+          -77.5894,
+          36.3285
+        ],
+        "fitted_residual_km": 15.28
+      },
+      {
+        "name": "Hillsborough",
+        "source_pixel": [
+          6204,
+          1051
+        ],
+        "target_lng_lat": [
+          -79.0993958,
+          36.075382
+        ],
+        "fitted_residual_km": 7.12
+      },
+      {
+        "name": "Salisbury",
+        "source_pixel": [
+          4558,
+          1592
+        ],
+        "target_lng_lat": [
+          -80.4742261,
+          35.6709727
+        ],
+        "fitted_residual_km": 5.2
+      },
+      {
+        "name": "Charlotte",
+        "source_pixel": [
+          4070,
+          2308
+        ],
+        "target_lng_lat": [
+          -80.8430827,
+          35.2272086
+        ],
+        "fitted_residual_km": 11.18
+      },
+      {
+        "name": "Camden",
+        "source_pixel": [
+          4395,
+          3888
+        ],
+        "target_lng_lat": [
+          -80.6070391,
+          34.2464886
+        ],
+        "fitted_residual_km": 8.91
+      },
+      {
+        "name": "Georgetown",
+        "source_pixel": [
+          6150,
+          5220
+        ],
+        "target_lng_lat": [
+          -79.2945,
+          33.3768
+        ],
+        "fitted_residual_km": 16.5
+      },
+      {
+        "name": "Charleston",
+        "source_pixel": [
+          5260,
+          6276
+        ],
+        "target_lng_lat": [
+          -79.9399309,
+          32.7884363
+        ],
+        "fitted_residual_km": 3.77
+      },
+      {
+        "name": "Orangeburg",
+        "source_pixel": [
+          4337,
+          5149
+        ],
+        "target_lng_lat": [
+          -80.8556476,
+          33.4918203
+        ],
+        "fitted_residual_km": 11.75
+      },
+      {
+        "name": "Ninety Six",
+        "source_pixel": [
+          2911,
+          4127
+        ],
+        "target_lng_lat": [
+          -82.024007,
+          34.1751267
+        ],
+        "fitted_residual_km": 8.84
+      },
+      {
+        "name": "Beaufort",
+        "source_pixel": [
+          4511,
+          6801
+        ],
+        "target_lng_lat": [
+          -80.6698,
+          32.4316
+        ],
+        "fitted_residual_km": 4.74
+      },
+      {
+        "name": "Savannah",
+        "source_pixel": [
+          4006,
+          7389
+        ],
+        "target_lng_lat": [
+          -81.0921335,
+          32.0790074
+        ],
+        "fitted_residual_km": 3.94
+      }
+    ],
+    "use_limit": "Regional historical context only. Settlement, shoreline, road, and river positions may differ by tens of kilometres; use modern GIS layers for close measurement."
+  },
+  "rendering": {
+    "projection": "EPSG:3857",
+    "resolution_metres_per_pixel": 120.0,
+    "requested_extent_wsen": [
+      -83.05,
+      31.9,
+      -76.25,
+      36.75
+    ],
+    "rendered_extent_wsen": [
+      -83.05,
+      31.8991294,
+      -76.2458007,
+      36.75
+    ],
+    "pixel_size": [
+      6312,
+      5452
+    ],
+    "grid": [
+      4,
+      4
+    ],
+    "excluded_non_geographic_content": [
+      "title cartouche",
+      "Port Royal harbor inset",
+      "Charlestown harbor inset"
+    ]
+  },
+  "panels": [
+    {
+      "id": "r0-c0",
+      "url": "assets/maps/mouzon-1775/panel-r0-c0-31cae459b0.webp",
+      "bounds": [
+        [
+          35.5637366,
+          -83.05
+        ],
+        [
+          36.75,
+          -81.3489502
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "31cae459b0047494a5021c4e85651c72e58d3cb4e3fccf74ceb190402c6f1389",
+      "bytes": 178406
+    },
+    {
+      "id": "r0-c1",
+      "url": "assets/maps/mouzon-1775/panel-r0-c1-eb3fde41f5.webp",
+      "bounds": [
+        [
+          35.5637366,
+          -81.3489502
+        ],
+        [
+          36.75,
+          -79.6479004
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "eb3fde41f52b736cd9bdb44905ca2207213a207be0d644323c497909e3792a3b",
+      "bytes": 461504
+    },
+    {
+      "id": "r0-c2",
+      "url": "assets/maps/mouzon-1775/panel-r0-c2-22ff5e9ba8.webp",
+      "bounds": [
+        [
+          35.5637366,
+          -79.6479004
+        ],
+        [
+          36.75,
+          -77.9468505
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "22ff5e9ba82cad6a48daff1660f6d99730dcd40836a652443252ff595e48c981",
+      "bytes": 398984
+    },
+    {
+      "id": "r0-c3",
+      "url": "assets/maps/mouzon-1775/panel-r0-c3-7f0a53e816.webp",
+      "bounds": [
+        [
+          35.5637366,
+          -77.9468505
+        ],
+        [
+          36.75,
+          -76.2458007
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "7f0a53e81631efce206f1298e31cd07e0918f3a362e6555d2f41bca4dde87e23",
+      "bytes": 474074
+    },
+    {
+      "id": "r1-c0",
+      "url": "assets/maps/mouzon-1775/panel-r1-c0-d264d9ebb4.webp",
+      "bounds": [
+        [
+          34.3596499,
+          -83.05
+        ],
+        [
+          35.5637366,
+          -81.3489502
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "d264d9ebb46f37592e030afb4e2b47b2a6be26be07f886f634f352a3fbbe7b9a",
+      "bytes": 410300
+    },
+    {
+      "id": "r1-c1",
+      "url": "assets/maps/mouzon-1775/panel-r1-c1-0e624ce148.webp",
+      "bounds": [
+        [
+          34.3596499,
+          -81.3489502
+        ],
+        [
+          35.5637366,
+          -79.6479004
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "0e624ce148e8c15113a4d5951d542600efa2819907c62464daa2015dc04b98cf",
+      "bytes": 391530
+    },
+    {
+      "id": "r1-c2",
+      "url": "assets/maps/mouzon-1775/panel-r1-c2-0cad25af30.webp",
+      "bounds": [
+        [
+          34.3596499,
+          -79.6479004
+        ],
+        [
+          35.5637366,
+          -77.9468505
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "0cad25af308558e8439be412c6ceb400168d5db27c8ea895b575176a6c870e63",
+      "bytes": 379912
+    },
+    {
+      "id": "r1-c3",
+      "url": "assets/maps/mouzon-1775/panel-r1-c3-a868bb1804.webp",
+      "bounds": [
+        [
+          34.3596499,
+          -77.9468505
+        ],
+        [
+          35.5637366,
+          -76.2458007
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "a868bb180407707094edda816ca7d8a400a5a15d4ac6294786d2309d6edf1356",
+      "bytes": 479240
+    },
+    {
+      "id": "r2-c0",
+      "url": "assets/maps/mouzon-1775/panel-r2-c0-fa2aa81eac.webp",
+      "bounds": [
+        [
+          33.1380117,
+          -83.05
+        ],
+        [
+          34.3596499,
+          -81.3489502
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "fa2aa81eac756bb87b9fa43feee66800ad2d282fbc23f75e1f8ab5afa98bffee",
+      "bytes": 398706
+    },
+    {
+      "id": "r2-c1",
+      "url": "assets/maps/mouzon-1775/panel-r2-c1-c8370c6435.webp",
+      "bounds": [
+        [
+          33.1380117,
+          -81.3489502
+        ],
+        [
+          34.3596499,
+          -79.6479004
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "c8370c6435f8391c0f86d824695ffcfa3f5b7e1399484bdb277c7930c09779d6",
+      "bytes": 524568
+    },
+    {
+      "id": "r2-c2",
+      "url": "assets/maps/mouzon-1775/panel-r2-c2-9e01127c39.webp",
+      "bounds": [
+        [
+          33.1380117,
+          -79.6479004
+        ],
+        [
+          34.3596499,
+          -77.9468505
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "9e01127c39ac3768a9e11507f30be3d384924ead89f741f5b44b1e962f699a55",
+      "bytes": 466564
+    },
+    {
+      "id": "r2-c3",
+      "url": "assets/maps/mouzon-1775/panel-r2-c3-4df614739a.webp",
+      "bounds": [
+        [
+          33.1380117,
+          -77.9468505
+        ],
+        [
+          34.3596499,
+          -76.2458007
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "4df614739ab070827232c22b7894ac7c5ff7c48862a0e55e3e7c46dd7e1f14ec",
+      "bytes": 156750
+    },
+    {
+      "id": "r3-c0",
+      "url": "assets/maps/mouzon-1775/panel-r3-c0-f948609e79.webp",
+      "bounds": [
+        [
+          31.8991294,
+          -83.05
+        ],
+        [
+          33.1380117,
+          -81.3489502
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "f948609e7997a6d19506002b10bb620df7a69e29cdcae364087dd7aaea83deed",
+      "bytes": 251776
+    },
+    {
+      "id": "r3-c1",
+      "url": "assets/maps/mouzon-1775/panel-r3-c1-da3fa2340a.webp",
+      "bounds": [
+        [
+          31.8991294,
+          -81.3489502
+        ],
+        [
+          33.1380117,
+          -79.6479004
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "da3fa2340ab7b40567a99538f70148a3dfdbd9d604350990797ff9fdd6838ff0",
+      "bytes": 547554
+    },
+    {
+      "id": "r3-c2",
+      "url": "assets/maps/mouzon-1775/panel-r3-c2-937173fad8.webp",
+      "bounds": [
+        [
+          31.8991294,
+          -79.6479004
+        ],
+        [
+          33.1380117,
+          -77.9468505
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "937173fad855d7c3892a46fa9666246b41afd7e9ba2b0289ab809feb3d238030",
+      "bytes": 162964
+    },
+    {
+      "id": "r3-c3",
+      "url": "assets/maps/mouzon-1775/panel-r3-c3-72a9b5bb50.webp",
+      "bounds": [
+        [
+          31.8991294,
+          -77.9468505
+        ],
+        [
+          33.1380117,
+          -76.2458007
+        ]
+      ],
+      "pixel_size": [
+        1578,
+        1363
+      ],
+      "sha256": "72a9b5bb50c7de39eff908d22fff4bc21818abe15c2ac2d8bb92e920be5043c9",
+      "bytes": 17152
+    }
+  ],
+  "generated_utc": "2026-09-13T00:33:04.975232Z"
+}

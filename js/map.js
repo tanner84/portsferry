@@ -16,13 +16,10 @@ const MAP_CONFIG = {
   minZoom: 6,
   maxZoom: 18,
 
-  /* ── Historic map tile layer (MapWarper georectification) ──────
-     Romans 1776 "A General Map of the Southern British Colonies"
-     Georectified via MapWarper: https://mapwarper.net/maps/105527
-     ─────────────────────────────────────────────────────────────── */
-  rumseyTileURL:       'https://mapwarper.net/maps/tile/105549/{z}/{x}/{y}.png',
-  rumseyAttribution:   'Historical map: <a href="https://mapwarper.net/maps/105549" target="_blank" rel="noopener">Historic map, via MapWarper</a>',
-  rumseyOpacity:       0.85,
+  /* Mouzon 1775 — locally hosted, globally affine regional fit.
+     Source/provenance and measured residuals live in the manifest. */
+  mouzonManifestURL:  'data/gis/mouzon-1775.json?v=20260913',
+  mouzonOpacity:      0.9,
 
   /* OSM fallback */
   osmTileURL:         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -82,31 +79,17 @@ const PIN_SIZES = {
    Initialization
    ================================================================ */
 PF.map.init = function () {
-  /* ── Base tile layers ───────────────────────────────────────── */
+  /* ── Base layers ────────────────────────────────────────────── */
   const osmLayer = L.tileLayer(MAP_CONFIG.osmTileURL, {
     attribution: MAP_CONFIG.osmAttribution,
     maxZoom:     MAP_CONFIG.maxZoom,
   });
 
-  const rumseyConfigured = MAP_CONFIG.rumseyTileURL !== 'RUMSEY_TILE_URL_PLACEHOLDER';
-
-  const rumseyLayer = rumseyConfigured
-    ? L.tileLayer(MAP_CONFIG.rumseyTileURL, {
-        attribution: MAP_CONFIG.rumseyAttribution,
-        maxZoom:     MAP_CONFIG.maxZoom,
-        opacity:     MAP_CONFIG.rumseyOpacity,
-      })
-    : L.tileLayer(MAP_CONFIG.osmTileURL, {
-        attribution:
-          MAP_CONFIG.osmAttribution +
-          ' &nbsp;|&nbsp; <em style="color:#aaa">Rumsey tile URL not yet configured</em>',
-        maxZoom: MAP_CONFIG.maxZoom,
-      });
-
-  if (!rumseyConfigured) {
-    console.info('[PF.map] Rumsey tile URL not configured — using OSM as placeholder. ' +
-                 'Set MAP_CONFIG.rumseyTileURL in js/map.js once you have the endpoint.');
-  }
+  const mouzonLayer = PF.mouzon.createLayer({
+    manifestURL: MAP_CONFIG.mouzonManifestURL,
+    opacity: MAP_CONFIG.mouzonOpacity,
+    pane: 'mouzonPane',
+  });
 
   /* ── Map instance ───────────────────────────────────────────── */
   PF.map.instance = L.map('map', {
@@ -114,9 +97,16 @@ PF.map.init = function () {
     zoom:       MAP_CONFIG.zoom,
     minZoom:    MAP_CONFIG.minZoom,
     maxZoom:    MAP_CONFIG.maxZoom,
-    layers:     [osmLayer],
+    layers:     [],
     zoomControl: false,          // repositioned below to avoid panel overlap
   });
+
+  /* Keep the already-parchment Mouzon scan out of the CSS filter used to
+     subdue modern OSM tiles. Research vectors and markers remain above it. */
+  const mouzonPane = PF.map.instance.createPane('mouzonPane');
+  mouzonPane.style.zIndex = '200';
+  mouzonLayer.addTo(PF.map.instance);
+  document.getElementById('map').classList.add('pf-base-mouzon');
 
   L.control.zoom({ position: 'topright' }).addTo(PF.map.instance);
 
@@ -128,7 +118,7 @@ PF.map.init = function () {
 
   /* ── Data layer groups ──────────────────────────────────────── */
   PF.map.layers = {
-    rumsey:      rumseyLayer,
+    mouzon:      mouzonLayer,
     osm:         osmLayer,
     churches:    L.layerGroup().addTo(PF.map.instance),
     individuals: L.layerGroup().addTo(PF.map.instance),
@@ -137,7 +127,20 @@ PF.map.init = function () {
     routes:      L.layerGroup().addTo(PF.map.instance),
   };
 
-  PF.map._activeBase = 'osm';
+  PF.map._activeBase = 'mouzon';
+  PF.map._mouzonFallbackTriggered = false;
+
+  const fallBackToModernMap = event => {
+    const detail = event && (event.error || event.panel || event);
+    console.error('[PF.map] Mouzon layer failed; showing OpenStreetMap.', detail);
+    if (PF.map._activeBase !== 'mouzon' || PF.map._mouzonFallbackTriggered) return;
+    PF.map._mouzonFallbackTriggered = true;
+    PF.map.setBaseLayer('osm');
+    const button = document.getElementById('layer-toggle');
+    button.title = 'Mouzon map unavailable — click to retry';
+  };
+  mouzonLayer.on('loaderror', fallBackToModernMap);
+  mouzonLayer.on('panelerror', fallBackToModernMap);
 
   /* ── Layer toggle button ────────────────────────────────────── */
   document.getElementById('layer-toggle').addEventListener('click', PF.map.toggleBaseLayer);
@@ -170,21 +173,32 @@ PF.map.init = function () {
 /* ================================================================
    Base layer toggle
    ================================================================ */
-PF.map.toggleBaseLayer = function () {
-  const { instance, layers, _activeBase } = PF.map;
+PF.map.setBaseLayer = function (base) {
+  const { instance, layers } = PF.map;
   const btn = document.getElementById('layer-toggle');
 
-  if (_activeBase === 'rumsey') {
-    instance.removeLayer(layers.rumsey);
+  if (base === 'osm') {
+    instance.removeLayer(layers.mouzon);
     instance.addLayer(layers.osm);
+    instance.getContainer().classList.remove('pf-base-mouzon');
     PF.map._activeBase = 'osm';
-    btn.textContent = 'Rumsey / OSM';
+    btn.textContent = 'Mouzon, 1775';
+    btn.title = 'Show Mouzon’s 1775 historical map';
+    btn.setAttribute('aria-label', 'Show Mouzon’s 1775 historical map');
   } else {
     instance.removeLayer(layers.osm);
-    instance.addLayer(layers.rumsey);
-    PF.map._activeBase = 'rumsey';
-    btn.textContent = 'OSM / Rumsey';
+    PF.map._mouzonFallbackTriggered = false;
+    instance.addLayer(layers.mouzon);
+    instance.getContainer().classList.add('pf-base-mouzon');
+    PF.map._activeBase = 'mouzon';
+    btn.textContent = 'Modern map';
+    btn.title = 'Show the modern OpenStreetMap base layer';
+    btn.setAttribute('aria-label', 'Show the modern OpenStreetMap base layer');
   }
+};
+
+PF.map.toggleBaseLayer = function () {
+  PF.map.setBaseLayer(PF.map._activeBase === 'mouzon' ? 'osm' : 'mouzon');
 };
 
 /** Register a research overlay in the shared GIS layer control. */

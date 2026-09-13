@@ -26,3 +26,25 @@ geometry reflects the Santee–Cooper diversion and later impoundments. It is a
 modern reference layer, not a claim that the drainage network looked identical
 in the 1780s; the Mouzon 1775 map is the historical comparison source.
 
+## Mouzon 1775 historical map
+
+`mouzon-1775.json` is the deployable provenance and alignment manifest for the
+default historical base map. It references 16 content-fingerprinted WebP panels
+under `assets/maps/mouzon-1775/`. The source is the complete UWM American
+Geographical Society Library scan, CONTENTdm item `agdm:2583` (11,000 × 7,864
+pixels), rather than a third-party MapWarper derivative.
+
+The panels use a single global affine fit in Web Mercator from 17 named
+settlement controls. The manifest records each source pixel, modern target,
+residual, source hash, panel hash, and generated extent. This measured fit is
+appropriate for regional historical comparison only; it is not evidence that
+an eighteenth-century road, shoreline, river, or settlement occupied a modern
+GIS coordinate exactly. The title cartouche and the two harbor inset charts are
+masked because they are not part of the geographic map plane.
+
+Regenerate the manifest and panels with:
+
+```bash
+python3 -m pip install Pillow
+npm run gis:mouzon
+```
