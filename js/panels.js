@@ -112,7 +112,7 @@ function _applyChipFiltersToMap() {
 
 function _searchAllEntities(q) {
   const lower = q.toLowerCase();
-  const results = { churches: [], individuals: [], units: [], battles: [], events: [] };
+  const results = { properties: [], churches: [], individuals: [], units: [], battles: [], events: [] };
 
   (PF.data.raw.CHURCHES || []).forEach(ch => {
     if ((ch.name || '').toLowerCase().includes(lower) ||
@@ -152,6 +152,7 @@ function _searchAllEntities(q) {
     }
   });
 
+  results.properties=(PF.data.raw.PROPERTIES||[]).filter(p=>(p.name||'').toLowerCase().includes(lower));
   return results;
 }
 
@@ -186,7 +187,9 @@ function _buildResultRow(entity, type) {
   let name = '';
   let meta = '';
 
-  if (type === 'church') {
+  if (type === 'property') {
+    name=h(entity.name);meta=h(entity.type||'Property');
+  } else if (type === 'church') {
     dot  = `<span class="dot dot-church"></span>`;
     name = h(entity.name || entity.ch_id);
     meta = h(entity.founded_yr || '');
@@ -220,7 +223,9 @@ function _openEntity(entity, type) {
   /* Mark active */
   document.querySelectorAll('#browser-results .sr-item').forEach(el => el.classList.remove('active'));
 
-  if (type === 'church') {
+  if (type === 'property') {
+    PF.panels.showProperty(entity);PF.map.focusOn(Number(entity.lat),Number(entity.lng),14);
+  } else if (type === 'church') {
     PF.panels.showChurch(entity);
   } else if (type === 'individual') {
     PF.panels.showIndividual(entity);
@@ -245,6 +250,7 @@ function _renderBrowser() {
   const entities = q.length >= 2 ? _searchAllEntities(q) : _getFocalEntities();
 
   const GROUPS = [
+    {key:'properties',label:'Properties',type:'property'},
     { key: 'churches',    label: 'Churches',     type: 'church'     },
     { key: 'individuals', label: 'Individuals',  type: 'individual' },
     { key: 'units',       label: 'Units',        type: 'unit'       },
@@ -1465,7 +1471,10 @@ PF.panels.showProperty = function (property, relationship) {
     </div>` : ''}
   `;
 
-  _showEntity(property.name || 'Property', html);
+  const owners=(PF.data.raw.IND_PROPERTY||[]).filter(r=>r.prop_id===property.prop_id).map(r=>({link:r,person:PF.data.getIndividualById(r.ind_id)})).filter(r=>r.person);
+  const links=owners.map(({link,person})=>`<p><button data-property-person="${h(person.ind_id)}">${h(person.full_name)}</button><br>${h(link.relationship)}</p>`).join('');
+  _showEntity(property.name || 'Property',html+`<div class="story-section"><div class="story-section-label">Associated people</div>${links}</div>`);
+  document.querySelectorAll('[data-property-person]').forEach(button=>button.onclick=()=>PF.panels.showIndividual(PF.data.getIndividualById(button.dataset.propertyPerson)));
 };
 
 /* ================================================================

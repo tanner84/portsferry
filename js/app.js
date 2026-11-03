@@ -71,6 +71,7 @@ function _initMobileNav() {
 
     /* ── 5. Panels ──────────────────────────────────────────── */
     await PF.journey.init();
+    PF.peachtree.init();
     PF.panels.init();
 
     /* ── 5a. Mobile tab nav (no-op above 767px) ─────────────── */
