@@ -124,6 +124,7 @@ PF.map.init = function () {
     individuals: L.layerGroup().addTo(PF.map.instance),
     network:     L.layerGroup().addTo(PF.map.instance),
     assembly:    L.layerGroup().addTo(PF.map.instance),
+    properties:  L.layerGroup().addTo(PF.map.instance),
     routes:      L.layerGroup().addTo(PF.map.instance),
   };
 
@@ -162,7 +163,7 @@ PF.map.init = function () {
     if (view !== 'individual') {
       PF.map.layers.individuals.clearLayers();
     }
-    if (!inBattle && view !== 'individual') {
+    if (!inBattle && view !== 'individual' && view !== 'property') {
       PF.map.renderChurches(PF.data.getMappableChurches(), date);
     }
   };
@@ -483,8 +484,8 @@ const PROPERTY_COLOR = '#c8a86b';
  *
  * @param {Array} propLinks — result of PF.data.getIndividualProperties()
  */
-PF.map.renderProperties = function (propLinks) {
-  PF.map.layers.routes.clearLayers();
+PF.map.renderProperties = function (propLinks, layer = PF.map.layers.routes) {
+  layer.clearLayers();
   PF.map._propertyMarkers = new Map();   // prop_id → marker
 
   propLinks.forEach(({ property, relationship, date_from, date_to }) => {
@@ -529,7 +530,7 @@ PF.map.renderProperties = function (propLinks) {
     );
 
     marker.on('click', () => PF.panels.showProperty(property, relationship));
-    PF.map.layers.routes.addLayer(marker);
+    layer.addLayer(marker);
     PF.map._propertyMarkers.set(property.prop_id, marker);
   });
 };

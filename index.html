@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=20260913" />
+  <link rel="stylesheet" href="css/style.css?v=20261103-properties1" />
 </head>
 <body>
 <div id="app">
@@ -32,6 +32,7 @@
       <button class="view-btn" data-view="individual">Individual</button>
       <button class="view-btn" data-view="unit">Unit</button>
       <button class="view-btn" data-view="battle">Battle</button>
+      <button class="view-btn" data-view="property">Properties</button>
     </nav>
     <div id="header-controls">
       <button id="layer-toggle" title="Show the modern OpenStreetMap base layer" aria-label="Show the modern OpenStreetMap base layer">
@@ -55,6 +56,10 @@
       <div class="panel-header">
         <h2>Browse</h2>
         <input type="search" id="entity-search" placeholder="Search names, places, units…" autocomplete="off" />
+        <div id="property-filters" class="hidden">
+          <label for="property-region">Region<select id="property-region"><option value="">All regions</option></select></label>
+          <label for="property-type">Property type<select id="property-type"><option value="">All types</option></select></label>
+        </div>
         <div id="filter-chips">
           <button class="filter-chip" data-chip="patriot">Patriot</button>
           <button class="filter-chip" data-chip="loyalist">Loyalist</button>
@@ -84,7 +89,7 @@
       <div id="story-content">
         <div id="story-default">
           <p class="story-intro">
-            Select a church, individual, unit, or battle from the map or browser
+            Select a church, individual, property, unit, or battle from the map or browser
             to open the narrative record.
           </p>
           <p class="story-intro">
@@ -184,15 +189,15 @@
 <script src="js/data.js?v=20261103"></script>
 <script src="js/basin-geometry.js?v=20260912"></script>
 <script src="js/mouzon.js?v=20260913"></script>
-<script src="js/map.js?v=20260913"></script>
+<script src="js/map.js?v=20261103-properties1"></script>
 <script src="js/basins.js?v=20260912"></script>
 <script src="js/network.js?v=20260408"></script>
 <script src="js/movement.js?v=20261103"></script>
 <script src="js/timeline.js?v=20261103"></script>
 <script src="js/journey.js?v=20261103c"></script>
-<script src="js/panels.js?v=20261103c"></script>
+<script src="js/panels.js?v=20261103-properties1"></script>
 <script src="js/battle.js?v=20260414b"></script>
-<script src="js/peachtree.js?v=20261103b"></script>
+<script src="js/peachtree.js?v=20261103-properties1"></script>
 <script src="js/app.js?v=20261103c"></script>
 <aside id="journey-card" hidden aria-live="polite"></aside>
 </body>
