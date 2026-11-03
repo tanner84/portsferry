@@ -15,13 +15,15 @@ const API_CORRECT = '/api/admin/corrections';
 const CORRECTION_OPERATIONS = new Set(['update', 'reassign', 'delete']);
 
 const VALID_SHEETS = [
-  'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
+  'PLACES', 'IND_LOCATIONS', 'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
   'SOURCES', 'BATTLES', 'UNIT_POSITIONS', 'BATTLE_PARTICIPANTS',
   'IND_CHURCH', 'IND_UNIT', 'IND_PROPERTY', 'IND_IND', 'EVT_LINKS',
   'WEATHER', 'COUNTIES',
 ];
 
 const PRIMARY_ID = {
+  PLACES: 'place_id',
+  IND_LOCATIONS: 'location_id',
   INDIVIDUALS:         'ind_id',
   CHURCHES:            'ch_id',
   PROPERTIES:          'prop_id',

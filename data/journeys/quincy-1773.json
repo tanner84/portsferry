@@ -1,0 +1,104 @@
+{
+  "start": "1773-02-28",
+  "end": "1773-03-21",
+  "source": {
+    "url": "https://www.colonialsociety.org/node/2791",
+    "title": "Josiah Quincy Jr., Southern Journal (1773)"
+  },
+  "places": [
+    {
+      "place_id": "place_charleston_harbor",
+      "name": "Charleston Harbor",
+      "type": "Harbor",
+      "lat": "32.775",
+      "lng": "-79.91",
+      "uncertainty_m": 2500,
+      "notes": "Approximate harbor reference point, not the vessel\u2019s recorded anchorage."
+    },
+    {
+      "place_id": "place_charles_town_coffeehouse",
+      "name": "Charles Town coffeehouse (unidentified)",
+      "type": "Unresolved site",
+      "lat": "32.777",
+      "lng": "-79.93",
+      "uncertainty_m": 1200,
+      "notes": "Town-level reference point; the coffeehouse building is unidentified."
+    },
+    {
+      "place_id": "place_lynch_santee_unidentified",
+      "name": "Lynch\u2019s Santee plantation (unidentified)",
+      "type": "Unresolved property",
+      "lat": "",
+      "lng": "",
+      "uncertainty_m": "",
+      "notes": "No map point assigned. Do not equate this visit with Peachtree."
+    },
+    {
+      "place_id": "place_georgetown_sc",
+      "name": "Georgetown",
+      "type": "Town",
+      "lat": "33.367",
+      "lng": "-79.284",
+      "uncertainty_m": 1500,
+      "notes": "Approximate town reference point, not the precise lodging."
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "quincy_location_1",
+      "ind_id": "quincy_1773",
+      "place_id": "place_charleston_harbor",
+      "date_from": "1773-02-28",
+      "date_to": "1773-02-28",
+      "date_precision": "day",
+      "sequence": 0,
+      "activity": "Arrival",
+      "evidence_status": "documented",
+      "source_ids": "quincy_southern_journal",
+      "source_page": "manuscript p. 41",
+      "notes": "Arrival in Charles Town harbor."
+    },
+    {
+      "location_id": "quincy_location_2",
+      "ind_id": "quincy_1773",
+      "place_id": "place_charles_town_coffeehouse",
+      "date_from": "1773-02-28",
+      "date_to": "1773-02-28",
+      "date_precision": "day",
+      "sequence": 1,
+      "activity": "Meeting",
+      "evidence_status": "documented",
+      "source_ids": "quincy_southern_journal",
+      "source_page": "manuscript pp. 41\u201342",
+      "notes": "Coffeehouse meeting with Levinus Clarkson; exact time and building unknown. Same-day order follows the account."
+    },
+    {
+      "location_id": "quincy_location_3",
+      "ind_id": "quincy_1773",
+      "place_id": "place_lynch_santee_unidentified",
+      "date_from": "1773-03-20",
+      "date_to": "1773-03-20",
+      "date_precision": "day",
+      "sequence": 0,
+      "activity": "Visit",
+      "evidence_status": "documented",
+      "source_ids": "quincy_southern_journal",
+      "source_page": "manuscript pp. 80\u201381",
+      "notes": "Travel with Thomas Lynch Sr. to his unnamed Santee plantation. Location unresolved; the marker is withheld."
+    },
+    {
+      "location_id": "quincy_location_4",
+      "ind_id": "quincy_1773",
+      "place_id": "place_georgetown_sc",
+      "date_from": "1773-03-21",
+      "date_to": "1773-03-21",
+      "date_precision": "day",
+      "sequence": 0,
+      "activity": "Lodging",
+      "evidence_status": "documented",
+      "source_ids": "quincy_southern_journal",
+      "source_page": "manuscript p. 81",
+      "notes": "Reached Georgetown after river crossings; subsequent weather delayed onward travel."
+    }
+  ]
+}

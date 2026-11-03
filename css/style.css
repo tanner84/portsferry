@@ -1903,3 +1903,7 @@ button { font-family: inherit; cursor: pointer; }
     max-width: 300px;
   }
 }
+
+#journey-card {position:fixed;right:20px;bottom:100px;z-index:1000;max-width:340px;padding:16px;background:#211e19;color:#f3ebdd;border:1px solid #bc8338;border-radius:4px;font-size:14px;box-shadow:0 3px 14px #0008;}
+#journey-card p {margin:8px 0;} #journey-card a {color:#e4be7b;}
+@media(max-width:767px){#journey-card{right:8px;bottom:145px;max-width:260px;font-size:12px;}#tl-quincy{font-size:11px;padding:3px;} }
