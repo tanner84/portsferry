@@ -28,7 +28,11 @@ PF.journey.render=function(){
   if(!o)return;
   const place=t.journey.places.find(p=>p.place_id===o.place_id);
   const status=document.createElement('p');status.textContent=`${o.last_known?'Last recorded stop':o.evidence_status==='inferred'?'Inferred identification':'Documented'}: ${o.date_from} · ${place.name}`;card.append(status);
-  const note=document.createElement('p');note.textContent=o.notes+' '+place.notes;card.append(note);
+  const note=document.createElement('p');note.textContent=place.place_id==='place_peachtree_santee' ? 'Visited Thomas Lynch’s Santee plantation; identified here as Peachtree from Tanner Port’s property research.' : o.notes;card.append(note);
+  const details=document.createElement('details'),summary=document.createElement('summary'),evidence=document.createElement('p');summary.textContent='Location and evidence notes';evidence.textContent=place.notes;details.append(summary,evidence);card.append(details);
+  if(place.place_id==='place_peachtree_santee'){
+    const button=document.createElement('button');button.className='story-action-btn';button.textContent='View location source';button.onclick=()=>PF.sourceImages.open(PF.sourceImages.records.prop_peachtree_santee[0]);card.append(button);
+  }
   const a=document.createElement('a');a.href=t.journey.source.url;a.target='_blank';a.rel='noopener';a.textContent=`Source: ${o.source_page}`;card.append(a);
   const lat=PF.movement.coordinate(place.lat),lng=PF.movement.coordinate(place.lng);
   if(lat!==null&&lng!==null){

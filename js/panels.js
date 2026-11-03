@@ -969,7 +969,7 @@ PF.panels.showIndividual = function (ind) {
   `;
 
   const journeyHtml = ind.ind_id === PF.journey?.personId
-    ? '<div class="story-section"><p>Follow Quincy’s documented 1773 journey. Approximate locations and gaps are identified at each stop.</p><button class="story-action-btn" id="story-follow-quincy">Animate journey</button><button class="story-action-btn hidden" id="story-exit-journey">Exit journey</button><p><a href="https://www.colonialsociety.org/node/2791" target="_blank" rel="noopener">Southern Journal (1773), manuscript pp. 41–42, 80–81</a></p></div>' : '';
+    ? '<div class="story-section"><p>Follow Quincy’s documented 1773 journey. Approximate locations and gaps are identified at each stop.</p><button class="story-action-btn" id="story-follow-quincy">Animate journey</button><button class="story-action-btn hidden" id="story-exit-journey">Exit journey</button><div id="journey-stop-slot"></div><p><a href="https://www.colonialsociety.org/node/2791" target="_blank" rel="noopener">Southern Journal (1773), manuscript pp. 41–42, 80–81</a></p></div>' : '';
   _showEntity(ind.full_name || 'Individual', journeyHtml + html);
   document.getElementById('story-follow-quincy')?.addEventListener('click',()=>{
     if(!PF.timeline.journey)PF.journey.toggle();
@@ -981,6 +981,7 @@ PF.panels.showIndividual = function (ind) {
     if(PF.timeline.journey)PF.journey.toggle();
   });
   PF.journey?.syncControls();
+  PF.journey?.render();
 
   /* Wire social neighbor clicks */
   document.querySelectorAll('#story-entity .conn-list li[data-ind-id]').forEach(li => {
@@ -1527,9 +1528,11 @@ PF.panels.showProperty = function (property, relationship) {
     </div>` : ''}
   `;
 
+  const figures = PF.sourceImages.forProperty(property);
   const owners=(PF.data.raw.IND_PROPERTY||[]).filter(r=>r.prop_id===property.prop_id).map(r=>({link:r,person:PF.data.getIndividualById(r.ind_id)})).filter(r=>r.person);
   const links=owners.map(({link,person})=>`<p><button data-property-person="${h(person.ind_id)}">${h(person.full_name)}</button><br>${h(link.relationship)}${link.date_from || link.date_to ? `<br><small>${h(link.date_from || '?')}–${h(link.date_to || '?')}</small>` : ''}</p>`).join('');
-  _showEntity(property.name || 'Property',html+`<div class="story-section"><div class="story-section-label">Associated people</div>${links}</div>`);
+  _showEntity(property.name || 'Property',html+`<div class="story-section">${figures.map((figure,index)=>`<button class="story-action-btn" data-source-image="${index}">${h(figure.title)}</button>`).join('')}</div><div class="story-section"><div class="story-section-label">Associated people</div>${links}</div>`);
+  document.querySelectorAll('[data-source-image]').forEach(button=>button.onclick=()=>PF.sourceImages.open(figures[Number(button.dataset.sourceImage)]));
   document.querySelectorAll('[data-property-person]').forEach(button=>button.onclick=()=>PF.panels.showIndividual(PF.data.getIndividualById(button.dataset.propertyPerson)));
 };
 
@@ -1923,7 +1926,11 @@ function _showEntity(title, html) {
 
   const entityEl = document.getElementById('story-entity');
   entityEl.classList.remove('hidden');
+  const journeyCard = document.getElementById('journey-card');
+  if (journeyCard) document.getElementById('story-content').append(journeyCard);
   entityEl.innerHTML = html;
+  const stopSlot = document.getElementById('journey-stop-slot');
+  if (stopSlot && journeyCard) stopSlot.append(journeyCard);
 
   /* Wire source refs */
   entityEl.querySelectorAll('.src-ref[data-src-id]').forEach(el => {

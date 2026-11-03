@@ -1904,12 +1904,23 @@ button { font-family: inherit; cursor: pointer; }
   }
 }
 
-#journey-card {position:fixed;right:20px;bottom:100px;z-index:1000;max-width:340px;padding:16px;background:#211e19;color:#f3ebdd;border:1px solid #bc8338;border-radius:4px;font-size:14px;box-shadow:0 3px 14px #0008;}
-#journey-card p {margin:8px 0;} #journey-card a {color:#e4be7b;}
-@media(max-width:767px){#journey-card{right:8px;bottom:145px;max-width:260px;font-size:12px;}#tl-quincy{font-size:11px;padding:3px;} }
+
 
 /* Property filters share the site's compact archival browser. */
 #property-filters { display: grid; gap: .5rem; margin-top: .6rem; }
 #property-filters.hidden { display: none; }
 #property-filters label { display: grid; gap: .2rem; font-size: .75rem; }
 #property-filters select { width: 100%; padding: .3rem; background: var(--bg-panel, #f4f1e9); color: inherit; border: 1px solid #d5cfc3; font: inherit; }
+
+#journey-card { position: static; margin: .75rem 0; padding: .75rem; background: #eee8dc; border-left: 3px solid #986a25; font-size: .85rem; color: #302b24; }
+#journey-card[hidden] { display: none; }
+#journey-card p { margin: .5rem 0; }
+#journey-card details { margin: .5rem 0; }
+#journey-card summary { cursor: pointer; }
+#source-image-dialog { margin: auto; width: min(900px, 94vw); max-height: 90vh; box-sizing: border-box; overflow: auto; padding: 1rem; color: #302b24; background: #f7f4ed; border: 1px solid #986a25; }
+#source-image-dialog::backdrop { background: #000a; }
+#source-image-dialog header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+#source-image-dialog h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+#source-image-dialog p { font-size: .9rem; line-height: 1.4; }
+.source-image-viewport { overflow: auto; max-height: 58vh; background: white; margin-top: .5rem; }
+.source-image-viewport img { display: block; width: 100%; max-width: none; height: 54vh; object-fit: contain; }
