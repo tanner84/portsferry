@@ -913,7 +913,14 @@ PF.panels.showIndividual = function (ind) {
     </div>` : ''}
   `;
 
-  _showEntity(ind.full_name || 'Individual', html);
+  const journeyHtml = ind.ind_id === PF.journey?.personId
+    ? '<div class="story-section"><p>Follow Quincy’s documented 1773 journey. Approximate locations and gaps are identified at each stop.</p><button id="story-follow-quincy">Follow Quincy · Play journey</button><p><a href="https://www.colonialsociety.org/node/2791" target="_blank" rel="noopener">Southern Journal (1773), manuscript pp. 41–42, 80–81</a></p></div>' : '';
+  _showEntity(ind.full_name || 'Individual', journeyHtml + html);
+  document.getElementById('story-follow-quincy')?.addEventListener('click',()=>{
+    if(!PF.timeline.journey)PF.journey.toggle();
+    PF.mob?.switchTab('map');
+    PF.timeline.play();
+  });
 
   /* Wire social neighbor clicks */
   document.querySelectorAll('#story-entity .conn-list li[data-ind-id]').forEach(li => {

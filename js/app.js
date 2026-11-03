@@ -70,8 +70,8 @@ function _initMobileNav() {
     PF.battle.init();
 
     /* ── 5. Panels ──────────────────────────────────────────── */
-    PF.panels.init();
     await PF.journey.init();
+    PF.panels.init();
 
     /* ── 5a. Mobile tab nav (no-op above 767px) ─────────────── */
     _initMobileNav();

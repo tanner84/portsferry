@@ -5,6 +5,10 @@ PF.journey.init=async function(){
   const j=PF.journey;
   try{const r=await fetch('data/journeys/quincy-1773.json');if(!r.ok)throw Error(r.status);j.example=await r.json();}
   catch(e){console.warn('Quincy journey unavailable',e);return;}
+  const people=PF.data.raw.INDIVIDUALS||(PF.data.raw.INDIVIDUALS=[]);
+  let person=people.find(p=>/josiah quincy/i.test(p.full_name||''));
+  if(!person){person={ind_id:'quincy_1773',full_name:'Josiah Quincy Jr.',birth_year:'1744',death_year:'1775',affiliation:'Patriot',tier:'Exception',rank:'Lawyer and traveler',evidence_type:'Primary',lat:'',lng:'',source_ids:''};people.push(person);}
+  j.personId=person.ind_id;
   j.layer=L.layerGroup().addTo(PF.map.instance);
   const button=document.getElementById('tl-quincy');button.disabled=false;
   button.onclick=()=>j.toggle();
