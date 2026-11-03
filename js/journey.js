@@ -10,16 +10,15 @@ PF.journey.init=async function(){
   if(!person){person={ind_id:'quincy_1773',full_name:'Josiah Quincy Jr.',birth_year:'1744',death_year:'1775',affiliation:'Patriot',tier:'Exception',rank:'Lawyer and traveler',evidence_type:'Primary',lat:'',lng:'',source_ids:''};people.push(person);}
   j.personId=person.ind_id;
   j.layer=L.layerGroup().addTo(PF.map.instance);
-  const button=document.getElementById('tl-quincy');button.disabled=false;
-  button.onclick=()=>j.toggle();
 };
 PF.journey.toggle=function(){
   const j=PF.journey,t=PF.timeline;t.pause();
   if(t.journey){t.journey=null;j.layer.clearLayers();document.getElementById('journey-card').hidden=true;
-    t.start=new Date(1758,0,1);t.end=new Date(1783,11,31);t.resolution='year';document.getElementById('tl-quincy').textContent='Follow Quincy';document.getElementById('tl-resolution').value='year';t.setYear(1770);return;}
+    t.start=new Date(1758,0,1);t.end=new Date(1783,11,31);t.resolution='year';document.getElementById('tl-resolution').value='year';t.setYear(1770);j.syncControls();return;}
   t.journey=j.example;t.start=PF.movement.parseDate(j.example.start);t.end=PF.movement.parseDate(j.example.end);t.resolution='stop';
-  document.getElementById('tl-resolution').value='stop';document.getElementById('tl-quincy').textContent='Exit Quincy';
+  document.getElementById('tl-resolution').value='stop';
   document.getElementById('journey-card').hidden=false;t.setDate(t.start,0);
+  j.syncControls();
   PF.map.instance.fitBounds([[32.72,-80.0],[33.45,-79.2]],{padding:[45,45]});
 };
 PF.journey.render=function(){
@@ -36,4 +35,9 @@ PF.journey.render=function(){
     L.circleMarker([lat,lng],{radius:9,color:'#fff',weight:2,fillColor:'#bc8338',fillOpacity:1}).addTo(j.layer).bindTooltip(status.textContent);
     if(Number(place.uncertainty_m)>0)L.circle([lat,lng],{radius:Number(place.uncertainty_m),color:'#bc8338',weight:1,dashArray:'5 5',fillOpacity:.05}).addTo(j.layer);
   }
+};
+
+PF.journey.syncControls=function(){
+ const exit=document.getElementById('story-exit-journey');
+ if(exit)exit.classList.toggle('hidden',!PF.timeline.journey);
 };
