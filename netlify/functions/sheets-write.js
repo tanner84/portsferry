@@ -28,7 +28,7 @@ function getPrivateKey() {
 
 /* ── Sheet registry ─────────────────────────────────────────────── */
 const VALID_SHEET_NAMES = [
-  'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
+  'PLACES', 'IND_LOCATIONS', 'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
   'SOURCES', 'BATTLES', 'UNIT_POSITIONS', 'BATTLE_PARTICIPANTS',
   'IND_CHURCH', 'IND_UNIT', 'IND_PROPERTY', 'IND_IND', 'EVT_LINKS',
   'WEATHER', 'COUNTIES',
@@ -36,6 +36,8 @@ const VALID_SHEET_NAMES = [
 
 // Primary ID field(s) per sheet — array means composite key
 const PRIMARY_ID = {
+  PLACES: 'place_id',
+  IND_LOCATIONS: 'location_id',
   INDIVIDUALS:         'ind_id',
   CHURCHES:            'ch_id',
   PROPERTIES:          'prop_id',
@@ -197,6 +199,14 @@ exports.handler = async (event) => {
       const toUpdate = [];
 
       for (const { data: rowData, isOverwrite } of rows) {
+        const unknown=Object.keys(rowData).filter(k=>!headers.includes(k));
+        if(unknown.length){results.errors.push({sheet:sheetName,error:`Unknown columns: ${unknown.join(', ')}. Add the matching headers before importing.`});continue;}
+        if(sheetName==='IND_LOCATIONS'){
+          const {validateLocation}=require('./_shared/location-schema.cjs');
+          const errors=validateLocation(rowData,isOverwrite);
+          if(errors.length){results.errors.push({sheet:sheetName,error:errors.join('; ')});continue;}
+        }
+
         const key = keyFromData(idField, rowData);
         const exists = key && existingKeys.has(key);
 

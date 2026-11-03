@@ -350,6 +350,7 @@ PF.map.renderIndividuals = function (individuals) {
       `<strong>${_mapEsc(ind.full_name || 'Unknown')}</strong>` +
       `<br>${_mapEsc(ind.affiliation || 'Unknown')} · ${_mapEsc(ind.tier || '')}` +
       (ind.rank ? `<br><em>${_mapEsc(ind.rank)}</em>` : '') +
+      (ind.location_observation ? `<br>${ind.location_observation.last_known ? 'Last documented' : 'Documented'}: ${_mapEsc(ind.location_observation.date_from)} · ${_mapEsc(ind.location_place?.name || '')}<br>${_mapEsc(ind.location_observation.source_page || '')}` : '') +
       _basinTooltipLine(lat, lng),
       { direction: 'top', offset: [0, -10], className: 'pf-tooltip' }
     );

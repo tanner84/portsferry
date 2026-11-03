@@ -137,10 +137,11 @@
   ════════════════════════════════════════════════════ -->
   <footer id="timeline-bar" aria-label="Timeline controls">
     <div id="timeline-controls">
+      <button id="tl-quincy" disabled>Follow Quincy</button>
       <button id="tl-play"      title="Play timeline"  aria-label="Play">&#9654;</button>
       <button id="tl-pause"     title="Pause"          aria-label="Pause" class="hidden">&#9646;&#9646;</button>
-      <button id="tl-step-back" title="Step back one year" aria-label="Step back">&#9664;</button>
-      <button id="tl-step-fwd"  title="Step forward one year" aria-label="Step forward">&#9654;&#9654;</button>
+      <button id="tl-step-back" title="Step back" aria-label="Step back">&#9664;</button>
+      <button id="tl-step-fwd"  title="Step forward" aria-label="Step forward">&#9654;&#9654;</button>
     </div>
     <div id="timeline-slider-wrap">
       <span class="tl-bound-label">1758</span>
@@ -150,6 +151,7 @@
     <div id="timeline-resolution">
       <label for="tl-resolution">Resolution</label>
       <select id="tl-resolution" aria-label="Timeline resolution">
+        <option value="stop">Next documented stop</option>
         <option value="year" selected>Year</option>
         <option value="month">Month</option>
         <option value="day">Day</option>
@@ -179,15 +181,18 @@
 <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
 
 <!-- Application modules -->
-<script src="js/data.js?v=20260408"></script>
+<script src="js/data.js?v=20261103"></script>
 <script src="js/basin-geometry.js?v=20260912"></script>
 <script src="js/mouzon.js?v=20260913"></script>
 <script src="js/map.js?v=20260913"></script>
 <script src="js/basins.js?v=20260912"></script>
 <script src="js/network.js?v=20260408"></script>
-<script src="js/timeline.js?v=20260408"></script>
+<script src="js/movement.js?v=20261103"></script>
+<script src="js/timeline.js?v=20261103"></script>
+<script src="js/journey.js?v=20261103"></script>
 <script src="js/panels.js?v=20260414"></script>
 <script src="js/battle.js?v=20260414b"></script>
-<script src="js/app.js?v=20260912"></script>
+<script src="js/app.js?v=20261103"></script>
+<aside id="journey-card" hidden aria-live="polite"></aside>
 </body>
 </html>

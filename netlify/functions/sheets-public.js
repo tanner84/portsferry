@@ -20,7 +20,7 @@ function getPrivateKey() {
 }
 
 const VALID_SHEETS = [
-  'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
+  'PLACES', 'IND_LOCATIONS', 'INDIVIDUALS', 'CHURCHES', 'PROPERTIES', 'UNITS', 'EVENTS',
   'SOURCES', 'BATTLES', 'UNIT_POSITIONS', 'BATTLE_PARTICIPANTS',
   'IND_CHURCH', 'IND_UNIT', 'IND_PROPERTY', 'IND_IND', 'EVT_LINKS',
   'WEATHER',
@@ -81,6 +81,7 @@ exports.handler = async (event) => {
     });
     return json(200, { sheet, rows, count: rows.length });
   } catch (err) {
+    if (['PLACES','IND_LOCATIONS'].includes(sheet) && /Unable to parse range/.test(err.message)) return json(200,{sheet,rows:[],count:0,setup_required:true});
     return json(500, { error: err.message });
   }
 };

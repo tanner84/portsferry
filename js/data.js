@@ -26,6 +26,8 @@ const SHEETS_CONFIG = {
 
   /* Sheet tab names — must match Google Sheets exactly (case-sensitive) */
   SHEET_NAMES: [
+    'PLACES',
+    'IND_LOCATIONS',
     'INDIVIDUALS',
     'CHURCHES',
     'PROPERTIES',
@@ -156,6 +158,8 @@ PF.data._loadSheets = async function () {
 /** Load seed JSON files from data/seed/ as fallback. */
 PF.data._loadSeedData = async function () {
   const seedMap = {
+    PLACES: 'data/seed/places.json',
+    IND_LOCATIONS: 'data/seed/ind_locations.json',
     INDIVIDUALS:        'data/seed/individuals.json',
     CHURCHES:           'data/seed/churches.json',
     PROPERTIES:         'data/seed/properties.json',
@@ -210,6 +214,12 @@ PF.data.getIndividualsByDate = function (date) {
     if (from !== null && year < from) return false;
     if (to   !== null && year > to)   return false;
     return true;
+  }).map(ind => {
+    const records=(PF.data.raw.IND_LOCATIONS||[]).filter(r=>r.ind_id===ind.ind_id);
+    if(!records.length)return ind;
+    const observation=PF.movement.at(records,date);
+    const place=observation && (PF.data.raw.PLACES||[]).find(p=>p.place_id===observation.place_id);
+    return {...ind,lat:place?.lat||'',lng:place?.lng||'',location_observation:observation,location_place:place};
   });
 };
 

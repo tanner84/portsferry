@@ -8,6 +8,8 @@ export function correctionSchema() {
   return {
     operations: new Set(['update', 'reassign', 'delete']),
     stableIds: {
+      PLACES: 'place_id',
+      IND_LOCATIONS: 'location_id',
       INDIVIDUALS: 'ind_id',
       CHURCHES: 'ch_id',
       PROPERTIES: 'prop_id',
@@ -26,6 +28,7 @@ export function correctionSchema() {
       COUNTIES: 'county_id',
     },
     references: {
+      place_id: ['PLACES', 'place_id'],
       ind_id: ['INDIVIDUALS', 'ind_id'],
       ind_id_a: ['INDIVIDUALS', 'ind_id'],
       ind_id_b: ['INDIVIDUALS', 'ind_id'],
