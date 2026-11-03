@@ -25,13 +25,13 @@
       "notes": "Town-level reference point; the coffeehouse building is unidentified."
     },
     {
-      "place_id": "place_lynch_santee_unidentified",
-      "name": "Lynch\u2019s Santee plantation (unidentified)",
-      "type": "Unresolved property",
-      "lat": "",
-      "lng": "",
-      "uncertainty_m": "",
-      "notes": "No map point assigned. Do not equate this visit with Peachtree."
+      "place_id": "place_peachtree_santee",
+      "name": "Peachtree Plantation",
+      "type": "Plantation",
+      "lat": "33.19047",
+      "lng": "-79.41236",
+      "uncertainty_m": 250,
+      "notes": "Approximate house site. Identification of Quincy\u2019s unnamed Santee stop as Peachtree is Tanner Port\u2019s research conclusion based on his review of Lynch property records; exact record citations pending."
     },
     {
       "place_id": "place_georgetown_sc",
@@ -75,16 +75,16 @@
     {
       "location_id": "quincy_location_3",
       "ind_id": "quincy_1773",
-      "place_id": "place_lynch_santee_unidentified",
+      "place_id": "place_peachtree_santee",
       "date_from": "1773-03-20",
       "date_to": "1773-03-20",
       "date_precision": "day",
       "sequence": 0,
       "activity": "Visit",
-      "evidence_status": "documented",
+      "evidence_status": "inferred",
       "source_ids": "quincy_southern_journal",
       "source_page": "manuscript pp. 80\u201381",
-      "notes": "Travel with Thomas Lynch Sr. to his unnamed Santee plantation. Location unresolved; the marker is withheld."
+      "notes": "Quincy traveled with Thomas Lynch Sr. to his Santee plantation on March 20, 1773. Peachtree is the adopted identification based on Tanner Port\u2019s property-record research; the journal does not name the plantation."
     },
     {
       "location_id": "quincy_location_4",

@@ -3,7 +3,7 @@ window.PF=window.PF||{};
 PF.journey={};
 PF.journey.init=async function(){
   const j=PF.journey;
-  try{const r=await fetch('data/journeys/quincy-1773.json');if(!r.ok)throw Error(r.status);j.example=await r.json();}
+  try{const r=await fetch('data/journeys/quincy-1773.json?v=20261103b');if(!r.ok)throw Error(r.status);j.example=await r.json();}
   catch(e){console.warn('Quincy journey unavailable',e);return;}
   const people=PF.data.raw.INDIVIDUALS||(PF.data.raw.INDIVIDUALS=[]);
   let person=people.find(p=>/josiah quincy/i.test(p.full_name||''));
@@ -28,7 +28,7 @@ PF.journey.render=function(){
   const heading=document.createElement('strong');heading.textContent='Josiah Quincy Jr. · 1773';card.append(heading);
   if(!o)return;
   const place=t.journey.places.find(p=>p.place_id===o.place_id);
-  const status=document.createElement('p');status.textContent=`${o.last_known?'Last documented':'Documented'}: ${o.date_from} · ${place.name}`;card.append(status);
+  const status=document.createElement('p');status.textContent=`${o.last_known?'Last recorded stop':o.evidence_status==='inferred'?'Inferred identification':'Documented'}: ${o.date_from} · ${place.name}`;card.append(status);
   const note=document.createElement('p');note.textContent=o.notes+' '+place.notes;card.append(note);
   const a=document.createElement('a');a.href=t.journey.source.url;a.target='_blank';a.rel='noopener';a.textContent=`Source: ${o.source_page}`;card.append(a);
   const lat=PF.movement.coordinate(place.lat),lng=PF.movement.coordinate(place.lng);
