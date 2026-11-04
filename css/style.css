@@ -1924,3 +1924,6 @@ button { font-family: inherit; cursor: pointer; }
 #source-image-dialog p { font-size: .9rem; line-height: 1.4; }
 .source-image-viewport { overflow: auto; max-height: 58vh; background: white; margin-top: .5rem; }
 .source-image-viewport img { display: block; width: 100%; max-width: none; height: 54vh; object-fit: contain; }
+
+.parish-role { clear:both; font-size:.8rem; line-height:1.4; padding:.3rem 0; }
+.parish-role small { display:block; color:var(--text-muted); margin-top:.2rem; }

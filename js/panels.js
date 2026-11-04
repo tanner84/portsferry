@@ -905,6 +905,7 @@ PF.panels.showIndividual = function (ind) {
   );
 
   const propLinks = PF.data.getIndividualProperties(ind.ind_id);
+  const parishLinks = (PF.data.raw.IND_CHURCH || []).filter(link => link.ind_id === ind.ind_id && link.ch_id === 'ch_st_james_santee');
 
   const html = `
     <div class="story-section">
@@ -921,6 +922,7 @@ PF.panels.showIndividual = function (ind) {
       <div class="story-section-label">Biographical</div>
       ${_dataRow('Lived', `${h(ind.birth_year || '?')} – ${h(ind.death_year || '?')}`)}
       ${ind.evidence_type ? _dataRow('Evidence', h(ind.evidence_type)) : ''}
+      ${ind.occupation ? _dataRow('Occupation', h(ind.occupation)) : ''}
       ${ind.pension_filed === 'Y' ? _dataRow('Pension', 'Filed pension application') : ''}
     </div>
 
@@ -959,6 +961,8 @@ PF.panels.showIndividual = function (ind) {
       </ul>
     </div>` : ''}
 
+    ${parishLinks.length ? `<div class="story-section"><div class="story-section-label">St. James Santee parish records</div>${parishLinks.map(link => `<p class="story-prose"><strong>${h(link.role)} · ${h(link.date_from)}${link.date_to !== link.date_from ? ' to '+h(link.date_to) : ''}</strong><br>${h(link.notes)}</p>`).join('')}</div>` : ''}
+    ${ind.ind_id.startsWith('ind_sjs_') && ind.notes ? `<div class="story-section"><div class="story-section-label">Research notes</div><p class="story-prose">${h(ind.notes)}</p></div>` : ''}
     ${_buildPropertyHoldings(propLinks)}
 
     ${sources.length > 0 ? `
@@ -1184,6 +1188,9 @@ PF.panels.showChurch = function (ch) {
   const lat     = PF.data._parseCoord(ch.lat);
   const lng     = PF.data._parseCoord(ch.lng);
   const members = PF.data.getChurchMembers(ch.ch_id);
+  const parishRecords = ch.ch_id === 'ch_st_james_santee';
+  const churchLinks = (PF.data.raw.IND_CHURCH || []).filter(row => row.ch_id === ch.ch_id);
+  const locatedMembers = members.filter(m => PF.data._parseCoord(m.lat) !== null && PF.data._parseCoord(m.lng) !== null);
   const sources = PF.data.getSourcesForEntity(ch);
 
   /* Clear any prior church's assembly animation, then hide congregation
@@ -1217,8 +1224,8 @@ PF.panels.showChurch = function (ch) {
     </div>
 
     <div class="story-section">
-      <div class="story-section-label">Congregation (recorded)</div>
-      ${_dataRow('Total members', members.length)}
+      <div class="story-section-label">${parishRecords ? 'Parish network (recorded)' : 'Congregation (recorded)'}</div>
+      ${_dataRow(parishRecords ? 'People recorded' : 'Total members', members.length)}
       ${members.length > 0 ? `
         ${_dataRow('Loyalist',  loyalists)}
         ${_dataRow('Patriot',   patriots)}
@@ -1233,17 +1240,19 @@ PF.panels.showChurch = function (ch) {
 
     ${members.length > 0 ? `
     <div class="story-section">
-      <div class="story-section-label">Known members</div>
-      <ul class="conn-list">
-        ${members.slice(0, 16).map(m => `
+      <div class="story-section-label">${parishRecords ? 'Documented roles and dates' : 'Known members'}</div>
+      ${parishRecords ? '<p class="story-prose">Selected register households and construction commissioners. Entries span different dates; this is not a simultaneous attendance roll. Residences remain unlocated.</p>' : ''}
+      <ul class="conn-list" style="max-height:420px;overflow-y:auto">
+        ${(parishRecords ? members : members.slice(0, 16)).map(m => `
           <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
             <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>
             ${h(m.full_name || 'Unknown')}
             <span class="conn-rel">${h(m.affiliation || '')}</span>
+            ${parishRecords ? churchLinks.filter(link => link.ind_id === m.ind_id).map(link => `<div class="parish-role">${h(link.role)} · ${h(link.date_from)}${link.date_to !== link.date_from ? ' to ' + h(link.date_to) : ''}<small>${h(link.notes)}</small></div>`).join('') : ''}
           </li>`).join('')}
-        ${members.length > 16 ? `<li style="font-style:italic;color:var(--text-muted)">…and ${members.length - 16} more</li>` : ''}
+        ${!parishRecords && members.length > 16 ? `<li style="font-style:italic;color:var(--text-muted)">…and ${members.length - 16} more</li>` : ''}
       </ul>
-      <button class="story-action-btn" id="btn-assemble">Animate congregation assembly</button>
+      ${!parishRecords || locatedMembers.length ? '<button class="story-action-btn" id="btn-assemble">' + (parishRecords ? 'Show people with located residences' : 'Animate congregation assembly') + '</button>' : '<p class="story-prose">Residence animation will become available as properties are located. No residential dots are invented around the church.</p>'}
     </div>` : ''}
 
     ${sources.length > 0 ? `
@@ -1269,7 +1278,7 @@ PF.panels.showChurch = function (ch) {
   const assembleBtn = document.getElementById('btn-assemble');
   if (assembleBtn && lat !== null && lng !== null) {
     assembleBtn.addEventListener('click', () => {
-      PF.map.animateAssembly(members, lat, lng);
+      PF.map.animateAssembly(parishRecords ? locatedMembers : members, lat, lng);
     });
   }
 };

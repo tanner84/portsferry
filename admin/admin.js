@@ -67,9 +67,9 @@ async function checkAuth(pw) {
 
 /* ── ID-pattern rules ──────────────────────────────────── */
 const ID_PATTERNS = [
-  { field: 'ind_id',  re: /^ind_\d{3}$/,              hint: 'ind_### (three zero-padded digits)' },
-  { field: 'edge_id', re: /^iind_\d{3}$/,             hint: 'iind_### (three zero-padded digits)' },
-  { field: 'ch_id',   re: /^(ch_\d{3}|ch_old_bluff)$/,hint: 'ch_### or ch_old_bluff' },
+  { field: 'ind_id',  re: /^ind_[a-z0-9_]+$/i,              hint: 'ind_ followed by letters, digits or underscores' },
+  { field: 'edge_id', re: /^iind_[a-z0-9_]+$/i,             hint: 'iind_ followed by letters, digits or underscores' },
+  { field: 'ch_id',   re: /^ch_[a-z0-9_]+$/i,hint: 'ch_ followed by letters, digits or underscores' },
 ];
 
 /* ── Validate entry structure ──────────────────────────── */
@@ -191,6 +191,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   /* Ingest tab */
+  $('load-stjames-btn').addEventListener('click', async () => {
+    try {
+      const response = await fetch('/data/imports/st-james-santee-1916.json', {cache:'no-store'});
+      if (!response.ok) throw new Error('Research batch could not be loaded.');
+      $('ingest-textarea').value = JSON.stringify(await response.json(), null, 2);
+      Object.keys(_sheetCache).forEach(key => delete _sheetCache[key]);
+      await runValidation();
+    } catch(error) { $('validate-status').textContent = error.message; }
+  });
   $('validate-btn').addEventListener('click', runValidation);
   $('clear-btn').addEventListener('click', clearIngest);
   $('push-btn').addEventListener('click', runPush);
