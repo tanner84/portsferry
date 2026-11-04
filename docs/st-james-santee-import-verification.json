@@ -1,0 +1,15 @@
+{
+  "session_id": "sess_1793758817533_laooh3",
+  "records_written": 140,
+  "exact_public_readback_matches": 140,
+  "mismatches": [],
+  "table_totals": {
+    "CHURCHES": 64,
+    "INDIVIDUALS": 198,
+    "IND_CHURCH": 121,
+    "IND_IND": 266,
+    "IND_PROPERTY": 54,
+    "PROPERTIES": 56,
+    "SOURCES": 170
+  }
+}

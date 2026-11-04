@@ -1220,7 +1220,7 @@ PF.panels.showChurch = function (ch) {
     <div class="story-section">
       <div class="story-name">${h(ch.name || 'Church')}</div>
       <div class="story-role">${h(ch.denomination || '')} · est. ${h(ch.founded_yr || '?')}</div>
-      ${coordNote}
+      ${parishRecords ? `<details><summary>Location and record scope</summary>${coordNote}</details>` : coordNote}
     </div>
 
     <div class="story-section">
@@ -1242,7 +1242,7 @@ PF.panels.showChurch = function (ch) {
     <div class="story-section">
       <div class="story-section-label">${parishRecords ? 'Documented roles and dates' : 'Known members'}</div>
       ${parishRecords ? '<p class="story-prose">Selected register households and construction commissioners. Entries span different dates; this is not a simultaneous attendance roll. Residences remain unlocated.</p>' : ''}
-      <ul class="conn-list" style="max-height:420px;overflow-y:auto">
+      <ul class="conn-list ${parishRecords ? 'parish-connections' : ''}" style="max-height:420px;overflow-y:auto">
         ${(parishRecords ? members : members.slice(0, 16)).map(m => `
           <li data-ind-id="${h(m.ind_id)}" role="button" tabindex="0">
             <span class="dot dot-${PF.map.affiliationClass(m.affiliation)}"></span>

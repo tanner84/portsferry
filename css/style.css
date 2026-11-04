@@ -1927,3 +1927,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .parish-role { clear:both; font-size:.8rem; line-height:1.4; padding:.3rem 0; }
 .parish-role small { display:block; color:var(--text-muted); margin-top:.2rem; }
+
+.parish-connections li { display:block; padding:.6rem 0; }
+.parish-connections .dot { display:inline-block; margin-right:.3rem; }
+.parish-connections .conn-rel { float:right; }

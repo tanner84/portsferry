@@ -1,6 +1,6 @@
 # St. James Santee initial research import — 4 November 2026
 
-Status: prepared for authenticated import; publication of this file does not mean Google Sheets has been written.
+Status: all 140 entries imported to Google Sheets on 4 November 2026, session sess_1793758817533_laooh3. All 140 records matched an exact public API readback. Live church panel verified with 42 people. See st-james-santee-import-verification.json.
 
 ## Scope
 
